@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.dayplanner">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Dayplanner">
+
+        <!-- MainActivity with android:exported attribute -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"> <!-- This is required for Android 12 and above -->
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- AddNoteActivity: Not ekleme sayfası -->
+        <activity
+            android:name=".AddNoteActivity"
+            android:exported="true" /> <!-- Bu sayfa not ekleme işlemi için -->
+
+        <!-- ProfileActivity: Kullanıcı profili sayfası -->
+        <activity
+            android:name=".ProfileActivity"
+            android:exported="true" /> <!-- Kullanıcı profil sayfası -->
+
+        <!-- Diğer aktiviteleri buraya ekleyebilirsiniz -->
+        <!-- Örnek:
+        <activity android:name=".OtherActivity" android:exported="true" />
+        -->
+
+    </application>
+
+</manifest>
