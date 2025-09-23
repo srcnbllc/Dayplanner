@@ -2,6 +2,7 @@ package com.example.dayplanner
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -80,9 +81,21 @@ class NoteAdapter(
                 true
             }
 
-                binding.pinButton.setOnClickListener { onPinToggle(note) }
-                binding.lockButton.setOnClickListener { onLockToggle(note) }
-                binding.moreButton.setOnClickListener { onMoreClick(note) }
+            binding.pinButton.setOnClickListener { 
+                android.util.Log.d("NoteAdapter", "Pin button clicked for note: ${note.title}")
+                Toast.makeText(binding.root.context, "Pin butonu tıklandı: ${note.title}", Toast.LENGTH_SHORT).show()
+                onPinToggle(note) 
+            }
+            binding.lockButton.setOnClickListener { 
+                android.util.Log.d("NoteAdapter", "Lock button clicked for note: ${note.title}")
+                Toast.makeText(binding.root.context, "Lock butonu tıklandı: ${note.title}", Toast.LENGTH_SHORT).show()
+                onLockToggle(note) 
+            }
+            binding.moreButton.setOnClickListener { 
+                android.util.Log.d("NoteAdapter", "More button clicked for note: ${note.title}")
+                Toast.makeText(binding.root.context, "More butonu tıklandı: ${note.title}", Toast.LENGTH_SHORT).show()
+                onMoreClick(note) 
+            }
         }
     }
 

@@ -51,12 +51,7 @@ android {
             viewBinding = true
         }
 
-        // Room schema location
-        kapt {
-            arguments {
-                arg("room.schemaLocation", "$projectDir/schemas")
-            }
-        }
+        // Room schema location - not needed for Room 2.6+
 
     packaging {
         jniLibs {

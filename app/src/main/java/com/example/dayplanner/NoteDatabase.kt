@@ -60,7 +60,6 @@ abstract class NoteDatabase : RoomDatabase() {
                     "note_database"
                 )
                     .fallbackToDestructiveMigration()
-                    .addMigrations()
                     .build()
                 INSTANCE = instance
                 instance

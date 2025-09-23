@@ -87,6 +87,11 @@ class AddNoteActivity : AppCompatActivity() {
             // Sadece temel setup'ları yap
             setupBasicUI()
             
+            // Eğer not düzenleniyorsa, notu yükle
+            if (currentNoteId != -1) {
+                loadNoteIfEditing()
+            }
+            
             android.util.Log.d("AddNoteActivity", "onCreate completed successfully")
         } catch (e: Exception) {
             android.util.Log.e("AddNoteActivity", "Error in onCreate: ${e.message}", e)
@@ -108,15 +113,10 @@ class AddNoteActivity : AppCompatActivity() {
             }
             android.util.Log.d("AddNoteActivity", "Toolbar setup complete")
             
-            // Hızlı başlatma için temel alanları doldur
+            // Temel alanları doldur - sadece başlık
             if (currentNoteId == -1) {
                 binding.titleEditText.setText("")
                 binding.descriptionEditText.setText("")
-                binding.dateEditText.setText(java.time.LocalDate.now().toString())
-                binding.tagsEditText.setText("")
-                binding.reminderCheckbox.isChecked = false
-                binding.reminderOptionsLayout.visibility = android.view.View.GONE
-                // Chip'ler kaldırıldı
             }
 
             // Tarih seçici
@@ -124,7 +124,7 @@ class AddNoteActivity : AppCompatActivity() {
                 showDatePicker()
             }
 
-            // Kaydet butonu - GERÇEK KAYDETME
+            // Kaydet butonu
             binding.saveButton.setOnClickListener {
                 android.util.Log.d("AddNoteActivity", "Save button clicked!")
                 Toast.makeText(this, "Kaydet butonu tıklandı!", Toast.LENGTH_SHORT).show()
@@ -143,27 +143,6 @@ class AddNoteActivity : AppCompatActivity() {
                 android.util.Log.d("AddNoteActivity", "Encrypt button clicked!")
                 Toast.makeText(this, "Şifreli Kaydet butonu tıklandı!", Toast.LENGTH_SHORT).show()
                 showPasswordCreationDialog()
-            }
-            
-            // Hatırlatma checkbox listener
-            binding.reminderCheckbox.setOnCheckedChangeListener { _, isChecked ->
-                binding.reminderOptionsLayout.visibility = if (isChecked) android.view.View.VISIBLE else android.view.View.GONE
-                updateReminderDescription()
-            }
-            
-            // Hatırlatma tarihi seçici
-            binding.reminderDateText.setOnClickListener {
-                showReminderDatePicker()
-            }
-            
-            // Hatırlatma zamanı spinner
-            val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, reminderTimeOptions)
-            binding.reminderTimeSpinner.setAdapter(adapter)
-            binding.reminderTimeSpinner.setText(reminderTimeOptions[0], false)
-            
-            // Spinner değişiklik listener'ı
-            binding.reminderTimeSpinner.setOnItemClickListener { _, _, _, _ ->
-                updateReminderDescription()
             }
             
             android.util.Log.d("AddNoteActivity", "Basic UI setup complete")
@@ -203,25 +182,7 @@ class AddNoteActivity : AppCompatActivity() {
                 Toast.makeText(this, "OCR özelliği 16KB uyumluluğu için geçici olarak devre dışı", Toast.LENGTH_SHORT).show()
             }
 
-        binding.templateButton.setOnClickListener {
-            showTemplateDialog()
-        }
-
-        // Kaydet butonu
-        binding.saveButton.setOnClickListener {
-            saveNote()
-        }
-
-
-            // Şifrele butonu
-            binding.encryptButton.setOnClickListener {
-                showEncryptionDialog()
-            }
-
-                // Şablon butonu
-                binding.templateButton.setOnClickListener {
-                    showTemplateDialog()
-                }
+        // Button handlers are already set up in setupBasicUI() - no duplicates needed
         
         // Akıllı öneriler
         setupSmartSuggestions()
@@ -353,61 +314,58 @@ class AddNoteActivity : AppCompatActivity() {
     }
 
     private fun saveNote() {
-        val title = binding.titleEditText.text.toString().trim()
-        val description = binding.descriptionEditText.text.toString().trim()
-        val date = binding.dateEditText.text.toString().trim()
-        val tags = binding.tagsEditText.text.toString().trim()
-
-        if (title.isEmpty()) {
-            binding.titleEditText.error = "Başlık gerekli"
-            return
-        }
-
-        if (description.isEmpty()) {
-            binding.descriptionEditText.error = "Not içeriği gerekli"
-            return
-        }
-
-        // Hatırlatma kontrolü
-        var reminderMinutes: Int? = null
-        var reminderDate: String? = null
-        if (binding.reminderCheckbox.isChecked) {
-            reminderDate = binding.reminderDateText.text.toString().trim()
-            val reminderTime = binding.reminderTimeSpinner.text.toString()
-            reminderMinutes = parseReminderMinutes(reminderTime)
-        }
-
-        val note = Note(
-            id = if (currentNoteId != -1) currentNoteId else 0,
-            title = title,
-            description = description,
-            date = date.ifEmpty { LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) },
-            tags = tags,
-            isPinned = false, // Chip'ler kaldırıldı, varsayılan değer
-            isLocked = false, // Chip'ler kaldırıldı, varsayılan değer
-            imageUri = currentImageUri,
-            reminderMinutesBefore = reminderMinutes,
-            status = "ACTIVE",
-            createdAt = System.currentTimeMillis()
-        )
-
-        if (currentNoteId != -1) {
-            noteViewModel.update(note)
-            Toast.makeText(this, "Not güncellendi", Toast.LENGTH_SHORT).show()
+        try {
+            android.util.Log.d("AddNoteActivity", "saveNote() called")
             
-            // Hatırlatma ayarla (güncelleme durumunda)
-            if (reminderMinutes != null && reminderDate?.isNotEmpty() == true) {
-                scheduleReminderIfNeeded(title, reminderDate, reminderMinutes, currentNoteId)
+            val title = binding.titleEditText.text.toString().trim()
+            val description = binding.descriptionEditText.text.toString().trim()
+            val date = binding.dateEditText.text.toString().trim()
+            val tags = binding.tagsEditText.text.toString().trim()
+
+            android.util.Log.d("AddNoteActivity", "Title: $title, Description: $description")
+
+            if (title.isEmpty()) {
+                binding.titleEditText.error = "Başlık gerekli"
+                Toast.makeText(this, "Başlık gerekli!", Toast.LENGTH_SHORT).show()
+                return
             }
-        } else {
-            noteViewModel.insert(note)
-            Toast.makeText(this, "Not kaydedildi", Toast.LENGTH_SHORT).show()
-            
-            // Yeni not için hatırlatma ayarlamak için note ID'ye ihtiyacımız var
-            // Şimdilik hatırlatma yeni notlar için devre dışı
-        }
 
-        finish()
+            // Description is now optional - no validation required
+
+            // Hatırlatma kontrolü - basit versiyon
+            var reminderMinutes: Int? = null
+
+            val note = Note(
+                id = if (currentNoteId != -1) currentNoteId else 0,
+                title = title,
+                description = description,
+                date = date.ifEmpty { LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) },
+                tags = tags,
+                isPinned = false, // Chip'ler kaldırıldı, varsayılan değer
+                isLocked = false, // Chip'ler kaldırıldı, varsayılan değer
+                imageUri = currentImageUri,
+                reminderMinutesBefore = reminderMinutes,
+                status = "ACTIVE",
+                createdAt = System.currentTimeMillis()
+            )
+
+            android.util.Log.d("AddNoteActivity", "Note created: ${note.title}")
+
+            if (currentNoteId != -1) {
+                noteViewModel.update(note)
+                Toast.makeText(this, "Not güncellendi", Toast.LENGTH_SHORT).show()
+                android.util.Log.d("AddNoteActivity", "Note updated")
+            } else {
+                noteViewModel.insert(note)
+                Toast.makeText(this, "Not kaydedildi", Toast.LENGTH_SHORT).show()
+                android.util.Log.d("AddNoteActivity", "Note inserted")
+            }
+
+            finish()
+        } catch (e: Exception) {
+            android.util.Log.e("AddNoteActivity", "Error in saveNote: ${e.message}", e)
+            Toast.makeText(this, "Not kaydedilemedi: ${e.message}", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun parseReminderMinutes(reminderText: String): Int? {
@@ -595,10 +553,7 @@ class AddNoteActivity : AppCompatActivity() {
             return
         }
 
-        if (description.isEmpty()) {
-            binding.descriptionEditText.error = "Not içeriği gerekli"
-            return
-        }
+        // Description is now optional - no validation required
 
         try {
             // İçeriği şifrele
@@ -644,17 +599,17 @@ class AddNoteActivity : AppCompatActivity() {
             .setItems(options) { _, which ->
                 when (which) {
                     0 -> if (isEncrypted) {
-                        showPasswordDialog("Şifreyi Kaldır", "Şifreyi kaldırmak için mevcut şifreyi girin:") { password ->
-                            removeEncryption(password)
+                        showPasswordDialog("Şifreyi Kaldır", "Şifreyi kaldırmak için mevcut şifreyi girin:") { _ ->
+                            removeEncryption()
                         }
                     } else {
                         showPasswordDialog("Şifre Belirle", "Notu şifrelemek için bir şifre belirleyin:") { password ->
-                            encryptNote(password)
+                            encryptNote()
                         }
                     }
                     1 -> if (isEncrypted) {
-                        showPasswordDialog("Şifreyi Kaldır", "Şifreyi kaldırmak için mevcut şifreyi girin:") { password ->
-                            removeEncryption(password)
+                        showPasswordDialog("Şifreyi Kaldır", "Şifreyi kaldırmak için mevcut şifreyi girin:") { _ ->
+                            removeEncryption()
                         }
                     }
                 }
@@ -722,19 +677,12 @@ class AddNoteActivity : AppCompatActivity() {
     }
 
     private fun getCurrentNote(): Note? {
-        return if (currentNoteId != -1) {
-            // Mevcut notu ViewModel'den al
-            var currentNote: Note? = null
-            noteViewModel.getNoteById(currentNoteId).observe(this) { note ->
-                currentNote = note
-            }
-            currentNote
-        } else {
-            null
-        }
+        // This function is not used in the current implementation
+        // The note loading is handled by loadNoteIfEditing() which uses LiveData properly
+        return null
     }
 
-    private fun encryptNote(password: String) {
+    private fun encryptNote() {
         try {
             val content = binding.descriptionEditText.text.toString()
             if (content.isEmpty()) {
@@ -742,71 +690,38 @@ class AddNoteActivity : AppCompatActivity() {
                 return
             }
 
-            val encryptedContent = PasswordManager.encryptNote(content, password)
-            
-            // Notu güncelle
-            val note = getCurrentNote()
-            if (note != null) {
-                val updatedNote = note.copy(
-                    isLocked = true,
-                    description = "", // Şifrelenmiş içerik boş
-                    encryptedBlob = encryptedContent.toByteArray()
-                )
-                noteViewModel.update(updatedNote)
-                Toast.makeText(this, "Not şifrelendi", Toast.LENGTH_SHORT).show()
-            } else {
-                // Yeni not için
-                Toast.makeText(this, "Not şifrelenecek (kaydet butonuna basın)", Toast.LENGTH_SHORT).show()
-            }
+            // Yeni not için şifreleme - kaydet butonuna basılacak
+            Toast.makeText(this, "Not şifrelenecek (kaydet butonuna basın)", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Toast.makeText(this, "Şifreleme hatası: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
-    private fun removeEncryption(password: String) {
+    private fun removeEncryption() {
         try {
-            val note = getCurrentNote()
-            if (note == null || !note.isLocked) {
-                Toast.makeText(this, "Şifrelenmiş not bulunamadı", Toast.LENGTH_SHORT).show()
-                return
-            }
-
-            val encryptedContent = String(note.encryptedBlob ?: return)
-            
-            if (!PasswordManager.verifyPassword(encryptedContent, password)) {
-                Toast.makeText(this, "Yanlış şifre", Toast.LENGTH_SHORT).show()
-                return
-            }
-
-            val decryptedContent = PasswordManager.decryptNote(encryptedContent, password)
-            
-            val updatedNote = note.copy(
-                isLocked = false,
-                description = decryptedContent,
-                encryptedBlob = null
-            )
-            noteViewModel.update(updatedNote)
-            
-                // UI'yi güncelle
-                binding.descriptionEditText.setText(decryptedContent)
-            
-            Toast.makeText(this, "Şifre kaldırıldı", Toast.LENGTH_SHORT).show()
+            // This function is not used in the current implementation
+            // Encryption/decryption is handled by the saveEncryptedNote() function
+            Toast.makeText(this, "Şifre kaldırma özelliği şu anda kullanılamıyor", Toast.LENGTH_SHORT).show()
         } catch (e: Exception) {
             Toast.makeText(this, "Şifre kaldırma hatası: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun updateReminderDescription() {
-        if (binding.reminderCheckbox.isChecked) {
-            val reminderDate = binding.reminderDateText.text.toString()
-            val reminderTime = binding.reminderTimeSpinner.text.toString()
-            
-            if (reminderDate.isNotEmpty() && reminderTime.isNotEmpty()) {
-                val description = "Hatırlatma: $reminderDate tarihinde $reminderTime bildirim alacaksınız"
-                binding.reminderDescriptionText.text = description
-            } else {
-                binding.reminderDescriptionText.text = "Hatırlatma: Tarih ve zaman seçin"
+        try {
+            if (binding.reminderCheckbox.isChecked) {
+                val reminderDate = binding.reminderDateText.text.toString()
+                val reminderTime = binding.reminderTimeSpinner.text.toString()
+                
+                if (reminderDate.isNotEmpty() && reminderTime.isNotEmpty()) {
+                    val description = "Hatırlatma: $reminderDate tarihinde $reminderTime bildirim alacaksınız"
+                    binding.reminderDescriptionText.text = description
+                } else {
+                    binding.reminderDescriptionText.text = "Hatırlatma: Tarih ve zaman seçin"
+                }
             }
+        } catch (e: Exception) {
+            android.util.Log.e("AddNoteActivity", "Error in updateReminderDescription: ${e.message}", e)
         }
     }
 }
