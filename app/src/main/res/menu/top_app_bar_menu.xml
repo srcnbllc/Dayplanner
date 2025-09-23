@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_add"
+        android:title="Yeni Not"
+        android:icon="@drawable/ic_add"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/action_filter"
+        android:title="Filtrele"
+        android:icon="@drawable/ic_search"
+        app:showAsAction="ifRoom">
+        <menu>
+            <item
+                android:id="@+id/filter_new"
+                android:title="Yeni Eklenenler"
+                android:icon="@drawable/ic_priority"/>
+            <item
+                android:id="@+id/filter_notes"
+                android:title="Tüm Notlar"
+                android:icon="@drawable/ic_note"/>
+            <item
+                android:id="@+id/filter_deleted"
+                android:title="Silinenler"
+                android:icon="@drawable/ic_delete"/>
+        </menu>
+    </item>
+    <item
+        android:id="@+id/action_settings"
+        android:title="Ayarlar"
+        android:icon="@drawable/ic_settings"
+        app:showAsAction="never"/>
+</menu>
+

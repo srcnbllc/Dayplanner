@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/notesFragment"
+    android:id="@+id/nav_graph">
+
+    <fragment
+        android:id="@+id/notesFragment"
+        android:name="com.example.dayplanner.ui.notes.NotesFragment"
+        android:label="Notlar">
+    </fragment>
+
+    <fragment
+        android:id="@+id/financeFragment"
+        android:name="com.example.dayplanner.ui.finance.FinanceFragment"
+        android:label="Finans" />
+
+    <fragment
+        android:id="@+id/passwordsFragment"
+        android:name="com.example.dayplanner.ui.passwords.PasswordsFragment"
+        android:label="Şifreler" />
+
+    <fragment
+        android:id="@+id/statsFragment"
+        android:name="com.example.dayplanner.ui.stats.StatsFragment"
+        android:label="Raporlar" />
+
+</navigation>
+
