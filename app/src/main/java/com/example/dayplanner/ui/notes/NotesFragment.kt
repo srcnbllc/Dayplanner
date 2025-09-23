@@ -412,7 +412,7 @@ class NotesFragment : Fragment() {
 
             androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle(title)
-                .setMessage("Şifreli notu açmak için 6 haneli şifrenizi girin")
+                .setMessage(message) // Parametreyi kullanıyoruz
                 .setView(input)
                 .setPositiveButton("Aç") { _, _ ->
                     val password = input.text.toString()
