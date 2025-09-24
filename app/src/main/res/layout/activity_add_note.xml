@@ -6,47 +6,79 @@
     android:layout_height="match_parent"
     tools:context=".AddNoteActivity">
 
-    <!-- Başlık EditText -->
-    <EditText
-        android:id="@+id/titleEditText"
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/scrollContainer"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Başlık"
+        android:layout_height="0dp"
+        android:fillViewport="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp"/>
+        app:layout_constraintBottom_toTopOf="@+id/buttonBar">
 
-    <!-- Açıklama EditText -->
-    <EditText
-        android:id="@+id/descriptionEditText"
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <!-- Başlık EditText -->
+            <EditText
+                android:id="@+id/titleEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Başlık" />
+
+            <!-- Açıklama EditText -->
+            <EditText
+                android:id="@+id/descriptionEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Notunuzu Yazabilirsiniz"
+                android:layout_marginTop="12dp" />
+
+            <!-- Tarih EditText -->
+            <EditText
+                android:id="@+id/dateEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Planlanan Tarih"
+                android:layout_marginTop="12dp"
+                android:focusable="false"
+                android:clickable="true" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Alt buton çubuğu: Kaydet ve Vazgeç -->
+    <LinearLayout
+        android:id="@+id/buttonBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Notunuzu Yazabilirsiniz"
-        app:layout_constraintTop_toBottomOf="@id/titleEditText"
+        android:orientation="horizontal"
+        android:padding="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp"/>
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <!-- Tarih EditText -->
-    <EditText
-        android:id="@+id/dateEditText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Planlanan Tarih"
-        app:layout_constraintTop_toBottomOf="@id/descriptionEditText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_margin="16dp"/>
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Vazgeç" />
 
-    <!-- Kaydet Butonu -->
-    <Button
-        android:id="@+id/saveButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Kaydet"
-        app:layout_constraintTop_toBottomOf="@id/dateEditText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        <Space
+            android:layout_width="12dp"
+            android:layout_height="wrap_content" />
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Kaydet" />
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

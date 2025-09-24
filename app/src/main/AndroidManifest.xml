@@ -23,7 +23,8 @@
         <!-- AddNoteActivity: Not ekleme sayfası -->
         <activity
             android:name=".AddNoteActivity"
-            android:exported="true" /> <!-- Bu sayfa not ekleme işlemi için -->
+            android:exported="true"
+            android:windowSoftInputMode="stateHidden|adjustResize" /> <!-- Bu sayfa not ekleme işlemi için -->
 
         <!-- ProfileActivity: Kullanıcı profili sayfası -->
         <activity
