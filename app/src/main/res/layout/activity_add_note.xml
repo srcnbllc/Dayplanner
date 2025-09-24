@@ -12,6 +12,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="Başlık"
+        android:inputType="textCapSentences"
+        android:maxLines="1"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,8 +23,11 @@
     <EditText
         android:id="@+id/descriptionEditText"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="120dp"
         android:hint="Notunuzu Yazabilirsiniz"
+        android:inputType="textMultiLine|textCapSentences"
+        android:gravity="top"
+        android:maxLines="6"
         app:layout_constraintTop_toBottomOf="@id/titleEditText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -33,20 +38,45 @@
         android:id="@+id/dateEditText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="Planlanan Tarih"
+        android:hint="Planlanan Tarih (GG/AA/YYYY)"
+        android:inputType="date"
+        android:maxLines="1"
         app:layout_constraintTop_toBottomOf="@id/descriptionEditText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_margin="16dp"/>
 
-    <!-- Kaydet Butonu -->
-    <Button
-        android:id="@+id/saveButton"
-        android:layout_width="wrap_content"
+    <!-- Butonlar için LinearLayout -->
+    <LinearLayout
+        android:id="@+id/buttonLayout"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Kaydet"
+        android:orientation="horizontal"
+        android:gravity="center"
         app:layout_constraintTop_toBottomOf="@id/dateEditText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="16dp">
+
+        <!-- Vazgeç Butonu -->
+        <Button
+            android:id="@+id/cancelButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Vazgeç"
+            android:layout_marginEnd="8dp"
+            style="@style/Widget.AppCompat.Button.Colored"/>
+
+        <!-- Kaydet Butonu -->
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Kaydet"
+            android:layout_marginStart="8dp"/>
+
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
