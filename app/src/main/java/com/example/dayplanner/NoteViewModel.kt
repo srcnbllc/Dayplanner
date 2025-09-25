@@ -64,4 +64,100 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
         currentStatus = status
         return repository.getNotesByStatus(status)
     }
+
+    // Silinen notlar için metodlar
+    fun getDeletedNotes(): LiveData<List<Note>> {
+        return repository.getDeletedNotes()
+    }
+
+    suspend fun restoreNote(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.restoreNote(id)
+        }
+    }
+
+    suspend fun deleteNotePermanently(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteNotePermanently(id)
+        }
+    }
+
+    suspend fun softDeleteNote(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.softDeleteNote(id, System.currentTimeMillis())
+        }
+    }
+
+    suspend fun moveToTrashIfDecrypted(noteId: Int): Result<Unit> {
+        return repository.moveToTrashIfDecrypted(noteId)
+    }
+
+    suspend fun deleteOldDeletedNotes() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val thirtyDaysAgo = System.currentTimeMillis() - (30 * 24 * 60 * 60 * 1000L)
+            repository.deleteOldDeletedNotes(thirtyDaysAgo)
+        }
+    }
+
+    // Search functionality
+    fun searchNotes(query: String): LiveData<List<Note>> {
+        return repository.searchNotes(query)
+    }
+
+    // Sorting functionality
+    fun getNotesByStatusSortedByDate(status: String): LiveData<List<Note>> {
+        return repository.getNotesByStatusSortedByDate(status)
+    }
+
+    fun getNotesByStatusSortedByTitle(status: String): LiveData<List<Note>> {
+        return repository.getNotesByStatusSortedByTitle(status)
+    }
+
+    fun getNotesByStatusSortedByLastEdited(status: String): LiveData<List<Note>> {
+        return repository.getNotesByStatusSortedByLastEdited(status)
+    }
+
+    // Auto-move NEW notes to NOTES after 2 days
+    suspend fun moveNewNotesToNotes() {
+        viewModelScope.launch(Dispatchers.IO) {
+            val twoDaysAgo = System.currentTimeMillis() - (2 * 24 * 60 * 60 * 1000L)
+            repository.moveNewNotesToNotes(twoDaysAgo)
+        }
+    }
+
+    // Export/Import functionality
+    suspend fun getAllNotesSync(): List<Note> {
+        return repository.getAllNotesSync()
+    }
+
+    // Additional convenience methods
+    fun softDeleteNote(note: Note) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.softDeleteNote(note.id, System.currentTimeMillis())
+        }
+    }
+
+    fun restoreNote(note: Note) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.restoreNote(note.id)
+        }
+    }
+
+    fun deleteNotePermanently(note: Note) {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteNotePermanently(note.id)
+        }
+    }
+
+    fun restoreAllNotes() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.restoreAllNotes()
+        }
+    }
+
+    fun deleteAllNotesPermanently() {
+        viewModelScope.launch(Dispatchers.IO) {
+            repository.deleteAllNotesPermanently()
+        }
+    }
 }

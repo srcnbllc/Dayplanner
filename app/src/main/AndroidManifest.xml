@@ -1,5 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Bildirim izni -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <!-- 16 KB page size support -->
     <supports-screens
         android:anyDensity="true"

@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,6 +23,8 @@ import com.example.dayplanner.passwords.Password
 import com.example.dayplanner.passwords.PasswordDao
 import com.example.dayplanner.NoteDatabase
 import java.security.SecureRandom
+import android.util.Log
+import com.example.dayplanner.utils.CustomToast
 
 class PasswordsFragment : Fragment() {
 
@@ -185,9 +186,8 @@ class PasswordsFragment : Fragment() {
                         notes = notes.ifEmpty { null }
                     )
                     viewModel.addPassword(passwordObj)
-                    Toast.makeText(requireContext(), "Şifre eklendi", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(requireContext(), "Gerekli alanları doldurun", Toast.LENGTH_SHORT).show()
+                    CustomToast.show(requireContext(), "Gerekli alanları doldurun")
                 }
             }
             .setNegativeButton("İptal", null)
@@ -283,9 +283,8 @@ class PasswordsFragment : Fragment() {
                         notes = notes.ifEmpty { null }
                     )
                     viewModel.updatePassword(updatedPassword)
-                    Toast.makeText(requireContext(), "Şifre güncellendi", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(requireContext(), "Gerekli alanları doldurun", Toast.LENGTH_SHORT).show()
+                    CustomToast.show(requireContext(), "Gerekli alanları doldurun")
                 }
             }
             .setNegativeButton("İptal", null)
@@ -297,7 +296,7 @@ class PasswordsFragment : Fragment() {
         val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         val clip = ClipData.newPlainText("Password", decryptedPassword)
         clipboard.setPrimaryClip(clip)
-        Toast.makeText(requireContext(), "Şifre panoya kopyalandı", Toast.LENGTH_SHORT).show()
+        // Password copied to clipboard
     }
 
     private fun showDeleteConfirmation(password: Password) {
@@ -306,7 +305,6 @@ class PasswordsFragment : Fragment() {
             .setMessage("Bu şifreyi silmek istediğinizden emin misiniz?")
             .setPositiveButton("Sil") { _, _ ->
                 viewModel.deletePassword(password)
-                Toast.makeText(requireContext(), "Şifre silindi", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("İptal") { _, _ ->
                 // Refresh the adapter to restore the item

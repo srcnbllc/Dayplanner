@@ -7,7 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,6 +21,8 @@ import com.example.dayplanner.finance.TransactionType
 import com.example.dayplanner.NoteDatabase
 import java.text.NumberFormat
 import java.util.*
+import android.util.Log
+import com.example.dayplanner.utils.CustomToast
 
 class FinanceFragment : Fragment() {
 
@@ -184,12 +185,11 @@ class FinanceFragment : Fragment() {
                             date = System.currentTimeMillis()
                         )
                         viewModel.addTransaction(transaction)
-                        Toast.makeText(requireContext(), "İşlem eklendi", Toast.LENGTH_SHORT).show()
                     } catch (e: NumberFormatException) {
-                        Toast.makeText(requireContext(), "Geçerli bir tutar girin", Toast.LENGTH_SHORT).show()
+                        CustomToast.show(requireContext(), "Geçerli bir tutar girin")
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Tüm alanları doldurun", Toast.LENGTH_SHORT).show()
+                    CustomToast.show(requireContext(), "Tüm alanları doldurun")
                 }
             }
             .setNegativeButton("İptal", null)
@@ -242,12 +242,11 @@ class FinanceFragment : Fragment() {
                             type = type
                         )
                         viewModel.updateTransaction(updatedTransaction)
-                        Toast.makeText(requireContext(), "İşlem güncellendi", Toast.LENGTH_SHORT).show()
                     } catch (e: NumberFormatException) {
-                        Toast.makeText(requireContext(), "Geçerli bir tutar girin", Toast.LENGTH_SHORT).show()
+                        CustomToast.show(requireContext(), "Geçerli bir tutar girin")
                     }
                 } else {
-                    Toast.makeText(requireContext(), "Tüm alanları doldurun", Toast.LENGTH_SHORT).show()
+                    CustomToast.show(requireContext(), "Tüm alanları doldurun")
                 }
             }
             .setNegativeButton("İptal", null)
@@ -260,7 +259,6 @@ class FinanceFragment : Fragment() {
             .setMessage("Bu işlemi silmek istediğinizden emin misiniz?")
             .setPositiveButton("Sil") { _, _ ->
                 viewModel.deleteTransaction(transaction)
-                Toast.makeText(requireContext(), "İşlem silindi", Toast.LENGTH_SHORT).show()
             }
             .setNegativeButton("İptal", null)
             .show()

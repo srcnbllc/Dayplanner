@@ -17,6 +17,24 @@ object PasswordManager {
     private const val KEY_SIZE = 256
 
     /**
+     * Şifre validasyonu - 6 haneli rakam olmalı
+     */
+    fun isValidPassword(password: String): Boolean {
+        return password.length == 6 && password.all { it.isDigit() }
+    }
+
+    /**
+     * Şifre validasyon hatası mesajı
+     */
+    fun getPasswordValidationError(password: String): String? {
+        return when {
+            password.length != 6 -> "Şifre tam olarak 6 haneli olmalıdır"
+            !password.all { it.isDigit() } -> "Şifre sadece rakamlardan oluşmalıdır"
+            else -> null
+        }
+    }
+
+    /**
      * Kullanıcı şifresinden AES anahtarı oluşturur
      */
     fun generateKeyFromPassword(password: String): SecretKey {

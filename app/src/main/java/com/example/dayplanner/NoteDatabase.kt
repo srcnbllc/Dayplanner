@@ -4,20 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.example.dayplanner.finance.FinanceDao
-import com.example.dayplanner.finance.FinanceRecord
-import com.example.dayplanner.finance.Installment
-import com.example.dayplanner.finance.PaymentReminder
-import com.example.dayplanner.finance.Transaction
-import com.example.dayplanner.finance.Category
-import com.example.dayplanner.passwords.PasswordDao
-import com.example.dayplanner.passwords.PasswordHistory
-import com.example.dayplanner.passwords.PasswordItem
-import com.example.dayplanner.passwords.Password
-import com.example.dayplanner.passwords.PasswordCategory
-import com.example.dayplanner.tags.NoteTag
-import com.example.dayplanner.tags.Tag
-import com.example.dayplanner.tags.TagDao
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
+import com.example.dayplanner.finance.*
+import com.example.dayplanner.passwords.*
+import com.example.dayplanner.tags.*
 
 @Database(
     entities = [
@@ -36,11 +27,12 @@ import com.example.dayplanner.tags.TagDao
         NoteTag::class,
         ActivityLog::class
     ],
-    version = 7,
+    version = 8,
     exportSchema = false
 )
 abstract class NoteDatabase : RoomDatabase() {
 
+    // DAO tanımları
     abstract fun noteDao(): NoteDao
     abstract fun folderDao(): FolderDao
     abstract fun financeDao(): FinanceDao
@@ -52,13 +44,23 @@ abstract class NoteDatabase : RoomDatabase() {
         @Volatile
         private var INSTANCE: NoteDatabase? = null
 
+        // Migration from version 7 to 8 - Add isEncrypted field
+        private val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE note_table ADD COLUMN isEncrypted INTEGER NOT NULL DEFAULT 0")
+            }
+        }
+
         fun getDatabase(context: Context): NoteDatabase {
+            // Eğer INSTANCE null ise synchronized içinde oluştur
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     NoteDatabase::class.java,
                     "note_database"
                 )
+                    .addMigrations(MIGRATION_7_8)
+                    // 🔄 Şema değiştiğinde migration yoksa db'yi sıfırla
                     .fallbackToDestructiveMigration()
                     .build()
                 INSTANCE = instance

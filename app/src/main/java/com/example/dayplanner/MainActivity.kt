@@ -1,15 +1,16 @@
 package com.example.dayplanner
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.os.bundleOf
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.navigation.ui.setupWithNavController as setupToolbar
 import com.example.dayplanner.databinding.ActivityMainBinding
+import com.example.dayplanner.utils.CustomToast
 import com.example.dayplanner.notifications.NotificationHelper
 import com.example.dayplanner.theme.ThemeManager
+import com.example.dayplanner.TrashManager
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,6 +43,15 @@ class MainActivity : AppCompatActivity() {
                 android.util.Log.d("MainActivity", "Theme applied")
             } catch (e: Exception) {
                 android.util.Log.e("MainActivity", "Theme error: ${e.message}")
+            }
+            
+            // Initialize trash cleanup
+            try {
+                android.util.Log.d("MainActivity", "Initializing trash cleanup")
+                TrashManager.scheduleCleanup(this)
+                android.util.Log.d("MainActivity", "Trash cleanup initialized")
+            } catch (e: Exception) {
+                android.util.Log.e("MainActivity", "Trash cleanup error: ${e.message}")
             }
 
             // Setup navigation (simplified)
@@ -88,7 +98,6 @@ class MainActivity : AppCompatActivity() {
                             startActivity(Intent(this, SettingsActivity::class.java))
                         } catch (e: Exception) {
                             android.util.Log.e("MainActivity", "Settings activity error: ${e.message}")
-                            Toast.makeText(this, "Ayarlar açılamadı: ${e.message}", Toast.LENGTH_SHORT).show()
                         }
                         true
                     }
@@ -99,7 +108,6 @@ class MainActivity : AppCompatActivity() {
             android.util.Log.d("MainActivity", "onCreate completed successfully")
         } catch (e: Exception) {
             android.util.Log.e("MainActivity", "Error in onCreate: ${e.message}", e)
-            Toast.makeText(this, "Uygulama başlatılamadı: ${e.message}", Toast.LENGTH_LONG).show()
             finish()
         }
     }

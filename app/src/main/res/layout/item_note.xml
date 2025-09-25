@@ -18,7 +18,8 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:minHeight="120dp">
 
             <!-- Header with title and status indicators -->
             <LinearLayout
@@ -28,12 +29,12 @@
                 android:gravity="center_vertical"
                 android:layout_marginBottom="8dp">
 
-                <!-- Seçim Checkbox (Gizli) -->
-                <com.google.android.material.checkbox.MaterialCheckBox
-                    android:id="@+id/selectionCheckbox"
+                <!-- Selection Checkbox -->
+                <CheckBox
+                    android:id="@+id/selectionCheckBox"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
+                    android:layout_marginEnd="8dp"
                     android:visibility="gone" />
 
                 <TextView
@@ -41,7 +42,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
                     android:textColor="?attr/colorOnSurface"
                     android:maxLines="1"
@@ -64,21 +65,14 @@
                     android:visibility="gone"
                     app:tint="?attr/colorPrimary" />
 
-                    <ImageView
-                        android:id="@+id/lockIndicator"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_lock"
-                        android:visibility="gone"
-                        app:tint="?attr/colorError" />
-
-                    <ImageView
-                        android:id="@+id/encryptedIndicator"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@drawable/ic_lock"
-                        android:visibility="gone"
-                        app:tint="?attr/colorPrimary" />
+                <ImageView
+                    android:id="@+id/lockIndicator"
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_marginEnd="4dp"
+                    android:src="@drawable/ic_lock"
+                    android:visibility="gone"
+                    app:tint="@android:color/holo_red_dark" />
 
             </LinearLayout>
 
@@ -91,9 +85,10 @@
                 android:layout_height="wrap_content"
                 android:textSize="14sp"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:maxLines="3"
+                android:maxLines="2"
                 android:ellipsize="end"
                 android:lineSpacingExtra="2dp"
+                android:layout_marginTop="4dp"
                 android:text="Description" />
 
             <!-- Tags -->
@@ -134,31 +129,33 @@
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/pinButton"
                         style="@style/Widget.Material3.Button.IconButton"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginEnd="4dp"
                         android:contentDescription="Pin/Unpin"
                         app:icon="@drawable/ic_pin"
-                        app:iconSize="20dp"
+                        app:iconSize="18dp"
                         app:iconTint="?attr/colorOnSurfaceVariant" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/lockButton"
                         style="@style/Widget.Material3.Button.IconButton"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_marginEnd="4dp"
                         android:contentDescription="Lock/Unlock"
                         app:icon="@drawable/ic_lock"
-                        app:iconSize="20dp"
+                        app:iconSize="18dp"
                         app:iconTint="?attr/colorOnSurfaceVariant" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/moreButton"
                         style="@style/Widget.Material3.Button.IconButton"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
                         android:contentDescription="Daha fazla"
                         app:icon="@drawable/ic_more_vert"
-                        app:iconSize="20dp"
+                        app:iconSize="18dp"
                         app:iconTint="?attr/colorOnSurfaceVariant" />
 
                 </LinearLayout>

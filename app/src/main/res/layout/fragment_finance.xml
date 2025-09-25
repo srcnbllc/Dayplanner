@@ -140,7 +140,7 @@
             android:layout_height="wrap_content"
             android:text="+ Ekle"
             android:layout_marginStart="8dp"
-            style="@style/Widget.Material3.Button" />
+            style="@style/Widget.App.Button" />
 
     </LinearLayout>
 

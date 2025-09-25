@@ -52,4 +52,44 @@
         <item name="cardCornerRadius">12dp</item>
     </style>
 
+    <!-- Common TextInputLayout Style -->
+    <style name="Widget.App.TextInputLayout" parent="Widget.Material3.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">@dimen/input_corner_radius</item>
+        <item name="boxCornerRadiusTopEnd">@dimen/input_corner_radius</item>
+        <item name="boxCornerRadiusBottomStart">@dimen/input_corner_radius</item>
+        <item name="boxCornerRadiusBottomEnd">@dimen/input_corner_radius</item>
+        <item name="hintTextColor">?attr/colorPrimary</item>
+        <item name="startIconTint">?attr/colorOnSurface</item>
+        <item name="endIconTint">?attr/colorOnSurface</item>
+        <item name="android:paddingStart">@dimen/input_horizontal_padding</item>
+        <item name="android:paddingEnd">@dimen/input_horizontal_padding</item>
+    </style>
+
+    <!-- Common Button Style -->
+    <style name="Widget.App.Button" parent="Widget.Material3.Button">
+        <item name="android:minHeight">@dimen/default_button_height</item>
+        <item name="android:paddingLeft">@dimen/button_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/button_padding_horizontal</item>
+        <item name="android:textSize">@dimen/text_size_body</item>
+        <item name="iconPadding">@dimen/button_icon_padding</item>
+        <item name="cornerRadius">@dimen/card_corner</item>
+    </style>
+
+    <!-- Common Outlined Button Style -->
+    <style name="Widget.App.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:minHeight">@dimen/default_button_height</item>
+        <item name="android:paddingLeft">@dimen/button_padding_horizontal</item>
+        <item name="android:paddingRight">@dimen/button_padding_horizontal</item>
+        <item name="android:textSize">@dimen/text_size_body</item>
+        <item name="iconPadding">@dimen/button_icon_padding</item>
+        <item name="cornerRadius">@dimen/card_corner</item>
+    </style>
+
+    <!-- Common Icon Button Style -->
+    <style name="Widget.App.Button.Icon" parent="Widget.Material3.Button.IconButton">
+        <item name="android:minWidth">@dimen/default_button_height</item>
+        <item name="android:minHeight">@dimen/default_button_height</item>
+        <item name="iconSize">@dimen/icon_size</item>
+    </style>
+
 </resources>

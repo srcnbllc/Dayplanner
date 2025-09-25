@@ -4,19 +4,19 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.EditText
-import android.widget.Toast
+import com.example.dayplanner.utils.CustomToast
 import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.core.widget.addTextChangedListener
 import com.example.dayplanner.AddNoteActivity
-import com.example.dayplanner.SimpleAddNoteActivity
 import com.example.dayplanner.NoteAdapter
 import com.example.dayplanner.NoteViewModel
 import com.example.dayplanner.R
@@ -26,6 +26,8 @@ import com.example.dayplanner.security.SecurityKeyManager
 import com.example.dayplanner.security.CryptoUtils
 import com.example.dayplanner.security.PasswordManager
 import com.example.dayplanner.features.ModernFeatures
+import com.example.dayplanner.QuickPreviewDialog
+import kotlinx.coroutines.launch
 import java.security.SecureRandom
 
 class NotesFragment : Fragment() {
@@ -59,41 +61,51 @@ class NotesFragment : Fragment() {
             setupSearch()
             setupTopBarFilters()
             setupSelectionMode()
-            setupDeletedNotesButton()
-            setupFilterChips()
+            setupFilterSpinner()
     }
 
     private fun setupRecyclerView() {
-            noteAdapter = NoteAdapter(
-                onClick = { note ->
-                    if (note.encryptedBlob != null) {
-                        // Şifreli not - pin girme ekranı göster
-                        showPasswordDialog("Şifreli Not", "Bu notu açmak için şifrenizi girin:") { password ->
-                            openEncryptedNote(note, password)
-                        }
-                    } else {
-                        // Normal not - düzenleme ekranına git
-                        val intent = Intent(requireContext(), AddNoteActivity::class.java)
-                        intent.putExtra("noteId", note.id)
-                        startActivity(intent)
+        noteAdapter = NoteAdapter(
+            onClick = { note ->
+                if (note.isEncrypted || note.encryptedBlob != null) {
+                    // Şifreli not - şifre girme ekranı göster
+                    showPasswordDialog("Şifreli Not", "Bu notu açmak için şifrenizi girin:") { password ->
+                        openEncryptedNote(note, password)
                     }
-                },
-                onPinToggle = { note ->
-                    android.util.Log.d("NotesFragment", "Pin toggle clicked for note: ${note.title}")
-                    Toast.makeText(requireContext(), "Pin durumu değiştirildi: ${note.title}", Toast.LENGTH_SHORT).show()
-                    noteViewModel.setPinned(note.id, !note.isPinned)
-                },
-                onLockToggle = { note ->
-                    handleLockUnlock(note)
-                },
-                onMoreClick = { note ->
-                    showNoteOptionsMenu(note)
+                } else {
+                    // Normal not - düzenleme ekranına git
+                    val intent = Intent(requireContext(), AddNoteActivity::class.java)
+                    intent.putExtra("noteId", note.id)
+                    startActivity(intent)
                 }
-            )
+            },
+            onPinToggle = { note ->
+                noteViewModel.setPinned(note.id, !note.isPinned)
+            },
+            onLockToggle = { note ->
+                handleLockUnlock(note)
+            },
+            onMoreClick = { note ->
+                showNoteOptionsMenu(note)
+            },
+            onLongPress = { note ->
+                showQuickPreview(note)
+            },
+            onSwipeLeft = { note ->
+                showDeleteConfirmation(note)
+            },
+            onSwipeRight = { note ->
+                noteViewModel.setPinned(note.id, !note.isPinned)
+            },
+            onSelectionModeChanged = { enabled ->
+                binding.selectionBar.visibility = if (enabled) View.VISIBLE else View.GONE
+            },
+            isSelectionMode = isSelectionMode,
+            selectedNotes = selectedNotes
+        )
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = noteAdapter
-        attachSwipeActions()
 
         noteViewModel.allNotes.observe(viewLifecycleOwner) { notes ->
             allNotesCache = notes
@@ -102,114 +114,48 @@ class NotesFragment : Fragment() {
     }
 
     private fun handleLockUnlock(note: com.example.dayplanner.Note) {
-        val activity = requireActivity()
         if (!note.isLocked) {
-            // Lock
-            if (BiometricHelper.canAuthenticate(activity)) {
-                BiometricHelper.prompt(
-                    activity,
-                    "Kilitle",
-                    onSuccess = {
-                        val key = SecurityKeyManager.getAppAesKey(requireContext())
-                        val iv = ByteArray(12).also { SecureRandom().nextBytes(it) }
-                        val cipher = CryptoUtils.encryptAesGcm(
-                            key,
-                            note.description.toByteArray(),
-                            iv
-                        )
-                        val combined = iv + cipher
-                        noteViewModel.update(
-                            note.copy(
-                                isLocked = true,
-                                encryptedBlob = combined,
-                                description = ""
-                            )
-                        )
-                    },
-                    onError = {
-                        // Ignore error
-                    }
-                )
-            } else {
-                noteViewModel.update(note.copy(isLocked = true))
+            // Lock - show password dialog
+            showPasswordDialog("Notu Kilitle", "Bu notu kilitlemek için 6 haneli şifre belirleyin:") { password ->
+                encryptNote(note, password)
             }
         } else {
-            // Unlock
-            val blob = note.encryptedBlob
-            if (blob != null && blob.size > 12 && BiometricHelper.canAuthenticate(activity)) {
-                BiometricHelper.prompt(
-                    activity,
-                    "Kilidi Aç",
-                    onSuccess = {
-                        val key = SecurityKeyManager.getAppAesKey(requireContext())
-                        val iv = blob.copyOfRange(0, 12)
-                        val cipher = blob.copyOfRange(12, blob.size)
-                        val plain = CryptoUtils.decryptAesGcm(key, cipher, iv)
-                        noteViewModel.update(
-                            note.copy(
-                                isLocked = false,
-                                encryptedBlob = null,
-                                description = String(plain)
-                            )
-                        )
-                    },
-                    onError = {
-                        // Ignore error
-                    }
-                )
-            } else {
-                noteViewModel.update(note.copy(isLocked = false))
+            // Unlock - show password dialog
+            showPasswordDialog("Kilidi Aç", "Bu notu açmak için şifrenizi girin:") { password ->
+                removeEncryption(note, password)
             }
         }
     }
 
-    private fun attachSwipeActions() {
-        val callback = object : ItemTouchHelper.SimpleCallback(
-            0,
-            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
-        ) {
-            override fun onMove(
-                rv: RecyclerView,
-                vh: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean = false
-
-            override fun onSwiped(vh: RecyclerView.ViewHolder, dir: Int) {
-                val position = vh.bindingAdapterPosition
-                val note = noteAdapter.currentList.getOrNull(position) ?: return
-                if (dir == ItemTouchHelper.RIGHT) {
-                    android.util.Log.d("NotesFragment", "Swipe right - Pin toggle: ${note.title}")
-                    Toast.makeText(requireContext(), "Pin durumu değiştirildi: ${note.title}", Toast.LENGTH_SHORT).show()
-                    noteViewModel.setPinned(note.id, !note.isPinned)
-                } else if (dir == ItemTouchHelper.LEFT) {
-                    android.util.Log.d("NotesFragment", "Swipe left - Delete: ${note.title}")
-                    Toast.makeText(requireContext(), "Not silindi: ${note.title}", Toast.LENGTH_SHORT).show()
-                    noteViewModel.delete(note)
-                }
-            }
-        }
-        ItemTouchHelper(callback).attachToRecyclerView(binding.recyclerView)
-    }
 
         private fun setupFab() {
             try {
-                android.util.Log.d("NotesFragment", "Setting up add note button")
+                
+                // Yeni Not butonu
                 binding.addNoteButton.setOnClickListener {
                     try {
-                        android.util.Log.d("NotesFragment", "Add Note button clicked!")
-                        android.util.Log.d("NotesFragment", "Starting AddNoteActivity")
                         val intent = Intent(requireContext(), AddNoteActivity::class.java)
                         startActivity(intent)
-                        android.util.Log.d("NotesFragment", "SimpleAddNoteActivity started successfully")
                     } catch (e: Exception) {
-                        android.util.Log.e("NotesFragment", "Error starting SimpleAddNoteActivity: ${e.message}", e)
-                        Toast.makeText(requireContext(), "Not ekleme ekranı açılamadı: ${e.message}", Toast.LENGTH_SHORT).show()
+                        android.util.Log.e("NotesFragment", "Error starting AddNoteActivity: ${e.message}", e)
                     }
                 }
-                android.util.Log.d("NotesFragment", "Add note button setup complete")
+                
+                // Sil butonu
+                binding.deleteButton.setOnClickListener {
+                    try {
+                        isSelectionMode = true
+                        noteAdapter.setSelectionMode(true)
+                        binding.selectionModeLayout.visibility = View.VISIBLE
+                        android.util.Log.d("NotesFragment", "Delete button clicked - selection mode enabled")
+                    } catch (e: Exception) {
+                        android.util.Log.e("NotesFragment", "Error in delete button click: ${e.message}", e)
+                    }
+                }
+                
+                android.util.Log.d("NotesFragment", "Action buttons setup completed")
             } catch (e: Exception) {
-                android.util.Log.e("NotesFragment", "Error setting up add note button: ${e.message}", e)
-                Toast.makeText(requireContext(), "Buton ayarlanamadı: ${e.message}", Toast.LENGTH_SHORT).show()
+                android.util.Log.e("NotesFragment", "Error setting up action buttons: ${e.message}", e)
             }
         }
 
@@ -249,11 +195,13 @@ class NotesFragment : Fragment() {
             }
         }
         
-        // Chip filtresi
+        // Dropdown filtresi
         list = when (currentFilter) {
             "PINNED" -> list.filter { it.isPinned }
             "ENCRYPTED" -> list.filter { it.encryptedBlob != null }
-            "RECENT" -> list.sortedByDescending { it.createdAt }.take(10)
+            "UNENCRYPTED" -> list.filter { it.encryptedBlob == null }
+            "OLDEST" -> list.sortedBy { it.createdAt }
+            "RECENT" -> list.sortedByDescending { it.createdAt }
             else -> list
         }
         
@@ -369,12 +317,12 @@ class NotesFragment : Fragment() {
                         }
                         1 -> {
                             // Şifrele/Şifre Kaldır
-                            if (note.isLocked) {
+                            if (note.isEncrypted || note.encryptedBlob != null) {
                                 showPasswordDialog("Şifreyi Kaldır", "Şifreyi kaldırmak için mevcut şifreyi girin:") { password ->
                                     removeEncryption(note, password)
                                 }
                             } else {
-                                showPasswordDialog("Şifre Belirle", "Notu şifrelemek için bir şifre belirleyin:") { password ->
+                                showPasswordDialog("Şifre Belirle", "Notu şifrelemek için 6 haneli şifre belirleyin:") { password ->
                                     encryptNote(note, password)
                                 }
                             }
@@ -412,14 +360,15 @@ class NotesFragment : Fragment() {
 
             androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle(title)
-                .setMessage(message) // Parametreyi kullanıyoruz
+                .setMessage(message)
                 .setView(input)
                 .setPositiveButton("Aç") { _, _ ->
                     val password = input.text.toString()
-                    if (password.length == 6) {
+                    if (com.example.dayplanner.security.PasswordManager.isValidPassword(password)) {
                         onConfirm(password)
                     } else {
-                        Toast.makeText(requireContext(), "6 haneli şifre girin", Toast.LENGTH_SHORT).show()
+                        val errorMessage = com.example.dayplanner.security.PasswordManager.getPasswordValidationError(password)
+                        CustomToast.show(requireContext(), errorMessage ?: "Geçersiz şifre")
                     }
                 }
                 .setNegativeButton("İptal", null)
@@ -430,35 +379,35 @@ class NotesFragment : Fragment() {
             try {
                 val content = note.description
                 if (content.isEmpty()) {
-                    Toast.makeText(requireContext(), "Şifrelenecek içerik bulunamadı", Toast.LENGTH_SHORT).show()
+                    CustomToast.show(requireContext(), "Şifrelenecek içerik bulunamadı")
                     return
                 }
 
                 val encryptedContent = PasswordManager.encryptNote(content, password)
                 
                 val updatedNote = note.copy(
-                    isLocked = true,
+                    isLocked = false,
+                    isEncrypted = true,
                     description = "", // Şifrelenmiş içerik boş
                     encryptedBlob = encryptedContent.toByteArray()
                 )
                 noteViewModel.update(updatedNote)
-                Toast.makeText(requireContext(), "Not şifrelendi", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Şifreleme hatası: ${e.message}", Toast.LENGTH_SHORT).show()
+                CustomToast.show(requireContext(), "Şifreleme hatası: ${e.message}")
             }
         }
 
         private fun removeEncryption(note: com.example.dayplanner.Note, password: String) {
             try {
-                if (!note.isLocked) {
-                    Toast.makeText(requireContext(), "Şifrelenmiş not bulunamadı", Toast.LENGTH_SHORT).show()
+                if (!note.isEncrypted && note.encryptedBlob == null) {
+                    CustomToast.show(requireContext(), "Şifrelenmiş not bulunamadı")
                     return
                 }
 
                 val encryptedContent = String(note.encryptedBlob ?: return)
                 
                 if (!PasswordManager.verifyPassword(encryptedContent, password)) {
-                    Toast.makeText(requireContext(), "Yanlış şifre", Toast.LENGTH_SHORT).show()
+                    CustomToast.show(requireContext(), "Yanlış şifre")
                     return
                 }
 
@@ -466,13 +415,13 @@ class NotesFragment : Fragment() {
                 
                 val updatedNote = note.copy(
                     isLocked = false,
+                    isEncrypted = false,
                     description = decryptedContent,
                     encryptedBlob = null
                 )
                 noteViewModel.update(updatedNote)
-                Toast.makeText(requireContext(), "Şifre kaldırıldı", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Şifre kaldırma hatası: ${e.message}", Toast.LENGTH_SHORT).show()
+                CustomToast.show(requireContext(), "Şifre kaldırma hatası: ${e.message}")
             }
         }
 
@@ -481,7 +430,7 @@ class NotesFragment : Fragment() {
                 val encryptedContent = String(note.encryptedBlob ?: return)
                 
                 if (!PasswordManager.verifyPassword(encryptedContent, password)) {
-                    Toast.makeText(requireContext(), "Yanlış şifre", Toast.LENGTH_SHORT).show()
+                    CustomToast.show(requireContext(), "Yanlış şifre")
                     return
                 }
 
@@ -497,7 +446,7 @@ class NotesFragment : Fragment() {
                 startActivity(intent)
                 
             } catch (e: Exception) {
-                Toast.makeText(requireContext(), "Not açma hatası: ${e.message}", Toast.LENGTH_SHORT).show()
+                CustomToast.show(requireContext(), "Not açma hatası: ${e.message}")
             }
         }
 
@@ -507,7 +456,7 @@ class NotesFragment : Fragment() {
                 .setMessage("Bu not silinecek ve 30 gün sonra kalıcı olarak silinecek. Geri yüklemek için 'Silinenler' bölümünü kontrol edin.")
                 .setPositiveButton("Sil") { _, _ ->
                     softDeleteNote(note)
-                    Toast.makeText(requireContext(), "Not silindi (30 gün sonra kalıcı olarak silinecek)", Toast.LENGTH_SHORT).show()
+                    CustomToast.show(requireContext(), "Not silindi (30 gün sonra kalıcı olarak silinecek)")
                 }
                 .setNegativeButton("İptal", null)
                 .show()
@@ -518,97 +467,96 @@ class NotesFragment : Fragment() {
                 .setTitle("Kalıcı Olarak Sil")
                 .setMessage("Bu notu kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz!")
                 .setPositiveButton("Kalıcı Olarak Sil") { _, _ ->
-                    noteViewModel.delete(note)
-                    Toast.makeText(requireContext(), "Not kalıcı olarak silindi", Toast.LENGTH_SHORT).show()
+                    lifecycleScope.launch {
+                        try {
+                            noteViewModel.delete(note)
+                        } catch (e: Exception) {
+                            android.util.Log.e("NotesFragment", "Error permanently deleting note: ${e.message}", e)
+                        }
+                    }
                 }
                 .setNegativeButton("İptal", null)
                 .show()
         }
 
         private fun softDeleteNote(note: com.example.dayplanner.Note) {
-            val updatedNote = note.copy(
-                status = "DELETED",
-                deletedAt = System.currentTimeMillis()
-            )
-            noteViewModel.update(updatedNote)
-            
-            // 30 gün sonra kalıcı silme için WorkManager
-            schedulePermanentDeletion(note.id)
-        }
-
-        private fun schedulePermanentDeletion(noteId: Int) {
-            // WorkManager ile 30 gün sonra kalıcı silme
-            // Bu özellik daha sonra implement edilecek
-            android.util.Log.d("NotesFragment", "Permanent deletion scheduled for note $noteId in 30 days")
+            lifecycleScope.launch {
+                try {
+                    val result = noteViewModel.moveToTrashIfDecrypted(note.id)
+                if (result.isSuccess) {
+                    // Note moved to trash successfully
+                } else {
+                    val error = result.exceptionOrNull()
+                    if (error?.message == "ENCRYPTED") {
+                        // Encrypted note cannot be deleted
+                    } else {
+                        // Other deletion error
+                    }
+                }
+                } catch (e: Exception) {
+                    android.util.Log.e("NotesFragment", "Error soft deleting note: ${e.message}", e)
+                }
+            }
         }
 
         private fun restoreNote(note: com.example.dayplanner.Note) {
-            val updatedNote = note.copy(
-                status = "ACTIVE",
-                deletedAt = null
-            )
-            noteViewModel.update(updatedNote)
-            Toast.makeText(requireContext(), "Not geri yüklendi", Toast.LENGTH_SHORT).show()
+            lifecycleScope.launch {
+                try {
+                    noteViewModel.restoreNote(note.id)
+                } catch (e: Exception) {
+                    android.util.Log.e("NotesFragment", "Error restoring note: ${e.message}", e)
+                }
+            }
         }
 
         private fun setupSelectionMode() {
-            binding.selectModeButton.setOnClickListener {
-                toggleSelectionMode()
-            }
-            
+            // Selection mode buttons
             binding.cancelSelectionButton.setOnClickListener {
                 exitSelectionMode()
             }
             
-            binding.deleteSelectedButton.setOnClickListener {
-                showDeleteSelectedConfirmation()
+            binding.selectAllButton.setOnClickListener {
+                toggleSelectAll()
             }
             
-            binding.encryptSelectedButton.setOnClickListener {
-                showEncryptSelectedConfirmation()
+            binding.deleteSelectedButton.setOnClickListener {
+                if (selectedNotes.isNotEmpty()) {
+                    showDeleteSelectedConfirmation()
+                } else {
+                    CustomToast.show(requireContext(), "Lütfen silinecek notları seçin")
+                }
             }
         }
 
-        private fun toggleSelectionMode() {
-            isSelectionMode = !isSelectionMode
+        private fun selectAllNotes() {
             selectedNotes.clear()
-            
-            if (isSelectionMode) {
-                binding.selectionModeLayout.visibility = android.view.View.VISIBLE
-                binding.selectModeButton.text = "İptal"
-                binding.selectModeButton.setIconResource(android.R.drawable.ic_menu_close_clear_cancel)
-                android.util.Log.d("NotesFragment", "Selection mode ON")
-                Toast.makeText(requireContext(), "Çoklu seçim modu açıldı", Toast.LENGTH_SHORT).show()
-            } else {
-                binding.selectionModeLayout.visibility = android.view.View.GONE
-                binding.selectModeButton.text = "Seç"
-                binding.selectModeButton.setIconResource(R.drawable.ic_check_box)
-                android.util.Log.d("NotesFragment", "Selection mode OFF")
-                Toast.makeText(requireContext(), "Çoklu seçim modu kapandı", Toast.LENGTH_SHORT).show()
+            noteAdapter.currentList.forEach { note ->
+                selectedNotes.add(note.id)
             }
-            
-            // Adapter'ı güncelle
+            noteAdapter.notifyDataSetChanged()
+        }
+
+        private fun deselectAllNotes() {
+            selectedNotes.clear()
             noteAdapter.notifyDataSetChanged()
         }
 
         private fun exitSelectionMode() {
             isSelectionMode = false
             selectedNotes.clear()
-            binding.selectionModeLayout.visibility = android.view.View.GONE
-            binding.selectModeButton.text = "Seç"
-            binding.selectModeButton.setIconResource(R.drawable.ic_check_box)
-            noteAdapter.notifyDataSetChanged()
+            binding.selectionModeLayout.visibility = View.GONE
+            noteAdapter.setSelectionMode(false)
         }
+
 
         private fun showDeleteSelectedConfirmation() {
             if (selectedNotes.isEmpty()) {
-                Toast.makeText(requireContext(), "Silinecek not seçin", Toast.LENGTH_SHORT).show()
                 return
             }
             
             androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle("Seçilen Notları Sil")
-                .setMessage("${selectedNotes.size} not silinecek ve 30 gün sonra kalıcı olarak silinecek. Emin misiniz?")
+                .setMessage("${selectedNotes.size} not silinecek ve silinenler bölümüne taşınacak. Emin misiniz?")
                 .setPositiveButton("Sil") { _, _ ->
                     deleteSelectedNotes()
                 }
@@ -616,92 +564,105 @@ class NotesFragment : Fragment() {
                 .show()
         }
 
+        private fun toggleSelectAll() {
+            val allNoteIds = allNotesCache.map { it.id }.toSet()
+            val isAllSelected = allNoteIds.all { selectedNotes.contains(it) }
+            
+            if (isAllSelected) {
+                // Deselect all
+                selectedNotes.clear()
+                binding.selectAllButton.text = "Tümünü Seç"
+            } else {
+                // Select all notes
+                selectedNotes.addAll(allNoteIds)
+                binding.selectAllButton.text = "Seçimi Kaldır"
+            }
+            
+            noteAdapter.notifyDataSetChanged()
+        }
+
         private fun deleteSelectedNotes() {
-            selectedNotes.forEach { noteId ->
-                val note = allNotesCache.find { it.id == noteId }
-                note?.let {
-                    softDeleteNote(it)
-                }
-            }
-            exitSelectionMode()
-            Toast.makeText(requireContext(), "${selectedNotes.size} not silindi", Toast.LENGTH_SHORT).show()
-        }
-
-        private fun showEncryptSelectedConfirmation() {
-            if (selectedNotes.isEmpty()) {
-                Toast.makeText(requireContext(), "Şifrelenecek not seçin", Toast.LENGTH_SHORT).show()
-                return
-            }
-            
-            androidx.appcompat.app.AlertDialog.Builder(requireContext())
-                .setTitle("Seçilen Notları Şifrele")
-                .setMessage("${selectedNotes.size} not şifrelenecek. Şifre belirleyin:")
-                .setView(android.widget.EditText(requireContext()).apply {
-                    hint = "Şifre girin"
-                    inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
-                })
-                .setPositiveButton("Şifrele") { _, _ ->
-                    // Şifreleme işlemi burada yapılacak
-                    Toast.makeText(requireContext(), "${selectedNotes.size} not şifrelendi", Toast.LENGTH_SHORT).show()
+            lifecycleScope.launch {
+                try {
+                    var successCount = 0
+                    var encryptedCount = 0
+                    
+                    selectedNotes.forEach { noteId ->
+                        val result = noteViewModel.moveToTrashIfDecrypted(noteId)
+                        if (result.isSuccess) {
+                            successCount++
+                        } else {
+                            if (result.exceptionOrNull()?.message == "ENCRYPTED") {
+                                encryptedCount++
+                            }
+                        }
+                    }
+                    
                     exitSelectionMode()
-                }
-                .setNegativeButton("İptal", null)
-                .show()
-        }
-
-        private fun setupDeletedNotesButton() {
-            binding.deletedNotesButton.setOnClickListener {
-                // Silinenler fragment'ini göster
-                val fragment = DeletedNotesFragment()
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.nav_host_fragment, fragment)
-                    .addToBackStack("deleted_notes")
-                    .commit()
-            }
-        }
-
-        private fun setupFilterChips() {
-            binding.filterAllChip.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    currentFilter = "ALL"
-                    android.util.Log.d("NotesFragment", "Filter: ALL")
-                    Toast.makeText(requireContext(), "Tüm notlar gösteriliyor", Toast.LENGTH_SHORT).show()
-                    clearOtherChips(binding.filterAllChip)
-                    applyFiltersAndSearch()
-                }
-            }
-            
-            binding.filterPinnedChip.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    currentFilter = "PINNED"
-                    clearOtherChips(binding.filterPinnedChip)
-                    applyFiltersAndSearch()
-                }
-            }
-            
-            binding.filterEncryptedChip.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    currentFilter = "ENCRYPTED"
-                    clearOtherChips(binding.filterEncryptedChip)
-                    applyFiltersAndSearch()
-                }
-            }
-            
-            binding.filterRecentChip.setOnCheckedChangeListener { _, isChecked ->
-                if (isChecked) {
-                    currentFilter = "RECENT"
-                    clearOtherChips(binding.filterRecentChip)
-                    applyFiltersAndSearch()
+                    
+                    // Notes deleted successfully
+                } catch (e: Exception) {
+                    android.util.Log.e("NotesFragment", "Error deleting selected notes: ${e.message}", e)
                 }
             }
         }
 
-        private fun clearOtherChips(selectedChip: com.google.android.material.chip.Chip) {
-            if (selectedChip != binding.filterAllChip) binding.filterAllChip.isChecked = false
-            if (selectedChip != binding.filterPinnedChip) binding.filterPinnedChip.isChecked = false
-            if (selectedChip != binding.filterEncryptedChip) binding.filterEncryptedChip.isChecked = false
-            if (selectedChip != binding.filterRecentChip) binding.filterRecentChip.isChecked = false
+
+
+        private fun setupFilterSpinner() {
+            val filterOptions = listOf(
+                "Tümü",
+                "Pinlenmiş", 
+                "Şifreli",
+                "Şifresiz",
+                "Tarih Sırasına Göre (İlk Kayıt)",
+                "Tarih Sırasına Göre (Son Kayıt)"
+            )
+            
+            val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, filterOptions)
+            binding.filterSpinner.setAdapter(adapter)
+            
+            binding.filterSpinner.setOnItemClickListener { _, _, position, _ ->
+                when (position) {
+                    0 -> currentFilter = "ALL"
+                    1 -> currentFilter = "PINNED"
+                    2 -> currentFilter = "ENCRYPTED"
+                    3 -> currentFilter = "UNENCRYPTED"
+                    4 -> currentFilter = "OLDEST"
+                    5 -> currentFilter = "RECENT"
+                }
+                applyFiltersAndSearch()
+            }
+            
+            // Default selection
+            binding.filterSpinner.setText(filterOptions[0], false)
         }
+
+        private fun showQuickPreview(note: com.example.dayplanner.Note) {
+            val dialog = QuickPreviewDialog.newInstance(
+                note = note,
+                onPinToggle = { note ->
+                    noteViewModel.setPinned(note.id, !note.isPinned)
+                    CustomToast.show(requireContext(), "Pin durumu değiştirildi: ${note.title}")
+                },
+                onEdit = { note ->
+                    if (note.isEncrypted || note.encryptedBlob != null) {
+                        showPasswordDialog("Şifreli Not", "Bu notu açmak için şifrenizi girin:") { password ->
+                            openEncryptedNote(note, password)
+                        }
+                    } else {
+                        val intent = Intent(requireContext(), AddNoteActivity::class.java)
+                        intent.putExtra("noteId", note.id)
+                        startActivity(intent)
+                    }
+                },
+                onDelete = { note ->
+                    showDeleteConfirmation(note)
+                }
+            )
+            dialog.show(parentFragmentManager, "quick_preview")
+        }
+
 
         override fun onDestroyView() {
             super.onDestroyView()

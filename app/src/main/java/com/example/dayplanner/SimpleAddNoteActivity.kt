@@ -2,7 +2,7 @@ package com.example.dayplanner
 
 import android.app.DatePickerDialog
 import android.os.Bundle
-import android.widget.Toast
+import com.example.dayplanner.utils.CustomToast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.example.dayplanner.databinding.ActivitySimpleAddNoteBinding
@@ -28,7 +28,7 @@ class SimpleAddNoteActivity : AppCompatActivity() {
             android.util.Log.d("SimpleAddNoteActivity", "Layout inflated")
             
             // Test mesajı
-            Toast.makeText(this, "Not ekleme sayfası açıldı!", Toast.LENGTH_SHORT).show()
+            CustomToast.show(this, "Not ekleme sayfası açıldı!", )
 
             // ViewModel initialization
             noteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
@@ -58,7 +58,7 @@ class SimpleAddNoteActivity : AppCompatActivity() {
             android.util.Log.d("SimpleAddNoteActivity", "onCreate completed successfully")
         } catch (e: Exception) {
             android.util.Log.e("SimpleAddNoteActivity", "Error in onCreate: ${e.message}", e)
-            Toast.makeText(this, "Hata: ${e.message}", Toast.LENGTH_LONG).show()
+            CustomToast.showLong(this, "Hata: ${e.message}")
             finish()
         }
     }
@@ -108,11 +108,11 @@ class SimpleAddNoteActivity : AppCompatActivity() {
 
         try {
             noteViewModel.insert(note)
-            Toast.makeText(this, "Not başarıyla kaydedildi!", Toast.LENGTH_SHORT).show()
+            CustomToast.show(this, "Not başarıyla kaydedildi!", )
             finish()
         } catch (e: Exception) {
             android.util.Log.e("SimpleAddNoteActivity", "Error saving note: ${e.message}", e)
-            Toast.makeText(this, "Not kaydedilemedi: ${e.message}", Toast.LENGTH_SHORT).show()
+            CustomToast.show(this, "Not kaydedilemedi: ${e.message}", )
         }
     }
 }

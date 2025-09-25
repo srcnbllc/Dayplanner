@@ -8,11 +8,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dayplanner.databinding.FragmentStatsBinding
+import com.example.dayplanner.utils.CustomToast
 import com.example.dayplanner.NoteDatabase
 import com.example.dayplanner.finance.FinanceDao
 import com.example.dayplanner.passwords.PasswordDao
 import com.example.dayplanner.ActivityLogViewModel
 import com.example.dayplanner.ActivityLog
+import com.example.dayplanner.R
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.*
 
@@ -45,6 +49,7 @@ class StatsFragment : Fragment() {
         setupRecyclerView()
         observeData()
         loadStats()
+        setupDeletedNotesCard()
     }
 
     private fun setupRecyclerView() {
@@ -110,6 +115,44 @@ class StatsFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+    
+    private fun setupDeletedNotesCard() {
+        // Silinen not sayısını güncelle
+        updateDeletedNotesCount()
+        
+        // Kart tıklama olayı
+        binding.deletedNotesCard.setOnClickListener {
+            try {
+                // Silinen notlar fragment'ını güvenli şekilde aç
+                val deletedFragment = com.example.dayplanner.ui.notes.DeletedNotesFragment()
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.nav_host_fragment, deletedFragment)
+                    .addToBackStack("deleted_notes")
+                    .commit()
+            } catch (e: Exception) {
+                android.util.Log.e("StatsFragment", "Error opening deleted notes: ${e.message}", e)
+                CustomToast.show(requireContext(), "Silinen notlar açılamadı: ${e.message}")
+            }
+        }
+    }
+    
+    private fun updateDeletedNotesCount() {
+        try {
+            val database = NoteDatabase.getDatabase(requireContext())
+            val noteDao = database.noteDao()
+            
+            // Silinen notları say
+            lifecycleScope.launch {
+                val deletedNotes = noteDao.getDeletedNotes()
+                deletedNotes.observe(viewLifecycleOwner) { notes ->
+                    binding.deletedNotesCount.text = "Silinen not sayısı: ${notes.size}"
+                }
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("StatsFragment", "Error updating deleted notes count: ${e.message}", e)
+            binding.deletedNotesCount.text = "Silinen not sayısı: 0"
+        }
     }
 }
 

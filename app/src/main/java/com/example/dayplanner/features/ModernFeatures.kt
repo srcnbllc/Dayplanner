@@ -1,7 +1,7 @@
 package com.example.dayplanner.features
 
 import android.content.Context
-import android.widget.Toast
+import com.example.dayplanner.utils.CustomToast
 import java.text.SimpleDateFormat
 import java.util.*
 

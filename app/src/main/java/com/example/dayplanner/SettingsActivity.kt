@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
+import com.example.dayplanner.utils.CustomToast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -82,9 +82,9 @@ class SettingsActivity : AppCompatActivity() {
             binding.exportDataButton.isEnabled = true
 
             if (success) {
-                Toast.makeText(this@SettingsActivity, "Veriler başarıyla dışa aktarıldı", Toast.LENGTH_SHORT).show()
+                CustomToast.show(this@SettingsActivity, "Veriler başarıyla dışa aktarıldı")
             } else {
-                Toast.makeText(this@SettingsActivity, "Dışa aktarma başarısız", Toast.LENGTH_SHORT).show()
+                CustomToast.show(this@SettingsActivity, "Dışa aktarma başarısız")
             }
         }
     }
@@ -100,9 +100,9 @@ class SettingsActivity : AppCompatActivity() {
             binding.importDataButton.isEnabled = true
 
             if (success) {
-                Toast.makeText(this@SettingsActivity, "Veriler başarıyla içe aktarıldı", Toast.LENGTH_SHORT).show()
+                CustomToast.show(this@SettingsActivity, "Veriler başarıyla içe aktarıldı")
             } else {
-                Toast.makeText(this@SettingsActivity, "İçe aktarma başarısız", Toast.LENGTH_SHORT).show()
+                CustomToast.show(this@SettingsActivity, "İçe aktarma başarısız")
             }
         }
     }
@@ -126,7 +126,7 @@ class SettingsActivity : AppCompatActivity() {
             .setSingleChoiceItems(themeNames, selectedIndex) { _, which ->
                 val selectedTheme = themes[which]
                 themeManager.setTheme(selectedTheme.id)
-                Toast.makeText(this, "Tema değiştirildi: ${selectedTheme.name}", Toast.LENGTH_SHORT).show()
+                CustomToast.show(this, "Tema değiştirildi: ${selectedTheme.name}")
             }
             .setNegativeButton("Kapat", null)
             .show()
@@ -139,9 +139,9 @@ class SettingsActivity : AppCompatActivity() {
             .setTitle("Yedekleme Seçenekleri")
             .setItems(options) { _, which ->
                 when (which) {
-                    0 -> Toast.makeText(this, "Google Drive yedekleme yakında eklenecek", Toast.LENGTH_SHORT).show()
-                    1 -> Toast.makeText(this, "Yerel yedekleme seçildi", Toast.LENGTH_SHORT).show()
-                    2 -> Toast.makeText(this, "Otomatik yedekleme ayarları yakında eklenecek", Toast.LENGTH_SHORT).show()
+                    0 -> CustomToast.show(this, "Google Drive yedekleme yakında eklenecek")
+                    1 -> CustomToast.show(this, "Yerel yedekleme seçildi")
+                    2 -> CustomToast.show(this, "Otomatik yedekleme ayarları yakında eklenecek")
                 }
             }
             .setNegativeButton("İptal", null)
