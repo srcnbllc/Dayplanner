@@ -30,6 +30,11 @@
             android:name=".ProfileActivity"
             android:exported="true" /> <!-- Kullanıcı profil sayfası -->
 
+        <!-- TrashActivity: Silinenler sayfası -->
+        <activity
+            android:name=".TrashActivity"
+            android:exported="true" />
+
         <!-- Diğer aktiviteleri buraya ekleyebilirsiniz -->
         <!-- Örnek:
         <activity android:name=".OtherActivity" android:exported="true" />

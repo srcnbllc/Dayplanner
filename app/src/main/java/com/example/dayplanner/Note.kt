@@ -10,7 +10,9 @@ data class Note(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,  // Otomatik artan birincil anahtar
     val title: String,                                 // Not başlığı
     val description: String,                           // Not açıklaması
-    val date: String                                    // Not tarihi (yyyy-MM-dd formatında)
+    val date: String,                                   // Not tarihi (yyyy-MM-dd formatında)
+    val isEncrypted: Boolean = false,                   // Not şifreli mi?
+    val isDeleted: Boolean = false                      // Not silinmiş (çöpte) mi?
 ) {
     // Tarihi daha kullanıcı dostu bir formata dönüştürme
     fun getFormattedDate(): String {

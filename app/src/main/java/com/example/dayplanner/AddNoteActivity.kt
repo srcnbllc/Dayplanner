@@ -21,6 +21,8 @@ class AddNoteActivity : AppCompatActivity() {
 
         // Get noteId from intent
         val noteId = intent.getIntExtra("noteId", -1)
+        var currentIsEncrypted = false
+        var currentIsDeleted = false
 
         // If noteId is valid, fetch existing note data and populate the fields
         if (noteId != -1) {
@@ -30,6 +32,8 @@ class AddNoteActivity : AppCompatActivity() {
                     binding.titleEditText.setText(it.title)
                     binding.descriptionEditText.setText(it.description)
                     binding.dateEditText.setText(it.date)
+                    currentIsEncrypted = it.isEncrypted
+                    currentIsDeleted = it.isDeleted
                 }
             }
         }
@@ -46,7 +50,9 @@ class AddNoteActivity : AppCompatActivity() {
                     id = if (noteId == -1) 0 else noteId,  // If the note is new, set id to 0 (auto-generated)
                     title = title,
                     description = description,
-                    date = date
+                    date = date,
+                    isEncrypted = currentIsEncrypted,
+                    isDeleted = currentIsDeleted
                 )
 
                 // Insert new note or update existing note

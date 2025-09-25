@@ -2,6 +2,8 @@ package com.example.dayplanner
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -20,12 +22,21 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         // NoteAdapter'ı RecyclerView'a bağlamak için oluşturduk
-        noteAdapter = NoteAdapter { note ->
+        noteAdapter = NoteAdapter(
+            onClick = { note ->
             // Herhangi bir not'a tıklandığında notu düzenlemek için AddNoteActivity'ye geçiş yapıyoruz
             val intent = Intent(this, AddNoteActivity::class.java)
             intent.putExtra("noteId", note.id)
             startActivity(intent)
-        }
+            },
+            onLockToggle = { note, shouldLock ->
+                val updated = note.copy(isEncrypted = shouldLock)
+                noteViewModel.update(updated)
+            },
+            onSoftDelete = { note ->
+                noteViewModel.softDeleteById(note.id)
+            }
+        )
 
         // RecyclerView'ın layout manager'ını ve adapter'ını ayarlıyoruz
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
@@ -40,6 +51,21 @@ class MainActivity : AppCompatActivity() {
         binding.addNoteButton.setOnClickListener {
             val intent = Intent(this, AddNoteActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_open_trash -> {
+                startActivity(Intent(this, TrashActivity::class.java))
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 }
