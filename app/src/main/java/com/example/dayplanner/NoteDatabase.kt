@@ -4,11 +4,31 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.dayplanner.finance.FinanceRecord
+import com.example.dayplanner.finance.Installment
+import com.example.dayplanner.finance.PaymentReminder
+import com.example.dayplanner.passwords.PasswordHistory
+import com.example.dayplanner.passwords.PasswordItem
+import com.example.dayplanner.finance.FinanceDao
+import com.example.dayplanner.passwords.PasswordDao
 
-@Database(entities = [Note::class], version = 1, exportSchema = false)
+@Database(
+    entities = [
+        Note::class,
+        FinanceRecord::class,
+        Installment::class,
+        PaymentReminder::class,
+        PasswordItem::class,
+        PasswordHistory::class
+    ],
+    version = 2,
+    exportSchema = false
+)
 abstract class NoteDatabase : RoomDatabase() {
 
     abstract fun noteDao(): NoteDao
+    abstract fun financeDao(): FinanceDao
+    abstract fun passwordDao(): PasswordDao
 
     companion object {
         @Volatile
@@ -20,7 +40,9 @@ abstract class NoteDatabase : RoomDatabase() {
                     context.applicationContext,
                     NoteDatabase::class.java,
                     "note_database"
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE = instance
                 instance
             }

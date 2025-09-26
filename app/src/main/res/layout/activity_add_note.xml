@@ -40,11 +40,15 @@
         android:layout_margin="16dp"/>
 
     <!-- Kaydet Butonu -->
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/saveButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Kaydet"
+        style="@style/Widget.Material3.Button"
+        android:singleLine="true"
+        android:maxLines="1"
+        android:ellipsize="end"
         app:layout_constraintTop_toBottomOf="@id/dateEditText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
