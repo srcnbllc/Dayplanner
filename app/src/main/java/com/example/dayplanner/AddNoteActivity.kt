@@ -16,8 +16,11 @@ class AddNoteActivity : AppCompatActivity() {
         binding = ActivityAddNoteBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // ViewModel initialization
-        noteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
+        // ViewModel initialization (ensure AndroidViewModel receives Application)
+        noteViewModel = ViewModelProvider(
+            this,
+            ViewModelProvider.AndroidViewModelFactory.getInstance(application)
+        ).get(NoteViewModel::class.java)
 
         // Get noteId from intent
         val noteId = intent.getIntExtra("noteId", -1)

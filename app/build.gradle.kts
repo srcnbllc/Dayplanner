@@ -46,6 +46,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("com.google.android.material:material:1.9.0")
 
+    // CardView for item_note.xml
+    implementation("androidx.cardview:cardview:1.0.0")
+
     // Room kütüphaneleri
     val roomVersion = "2.5.2"
     implementation("androidx.room:room-runtime:$roomVersion")
