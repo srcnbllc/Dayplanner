@@ -13,9 +13,34 @@ import com.example.dayplanner.databinding.ItemNoteBinding
 class NoteAdapter(
     private val onClick: (Note) -> Unit,
     private val onLockToggle: (Note, Boolean) -> Unit,
-    private val onSoftDelete: (Note) -> Unit
+    private val onSoftDelete: (Note) -> Unit,
+    private val onPinToggle: (Note, Boolean) -> Unit
 ) :
     ListAdapter<Note, NoteAdapter.NoteViewHolder>(NoteDiffCallback()) {
+
+    private var isSelectionMode = false
+    private var selectedNotes = mutableSetOf<Int>()
+    private var onSelectionChanged: ((Set<Int>) -> Unit)? = null
+
+    fun setSelectionMode(enabled: Boolean) {
+        isSelectionMode = enabled
+        if (!enabled) {
+            selectedNotes.clear()
+        }
+        notifyItemRangeChanged(0, itemCount)
+    }
+
+    fun setSelectedNotes(notes: Set<Int>) {
+        selectedNotes.clear()
+        selectedNotes.addAll(notes)
+        notifyItemRangeChanged(0, itemCount)
+    }
+
+    fun getSelectedNotes(): Set<Int> = selectedNotes.toSet()
+
+    fun setOnSelectionChangedListener(listener: (Set<Int>) -> Unit) {
+        onSelectionChanged = listener
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
         val binding = ItemNoteBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -35,22 +60,57 @@ class NoteAdapter(
             binding.descriptionTextView.text = note.description
             binding.dateTextView.text = note.getFormattedDate() // Formatlı tarih gösterimi
 
-            // Lock icon: red if locked, green if unlocked
+            // Selection checkbox - optimized
+            binding.selectionCheckbox.visibility = if (isSelectionMode) android.view.View.VISIBLE else android.view.View.GONE
+            binding.selectionCheckbox.isChecked = selectedNotes.contains(note.id)
+            
+            // Only set listener once, not on every bind
+            if (binding.selectionCheckbox.tag == null) {
+                binding.selectionCheckbox.tag = true
+                binding.selectionCheckbox.setOnCheckedChangeListener { _, isChecked ->
+                    val noteId = getItem(bindingAdapterPosition).id
+                    if (isChecked) {
+                        selectedNotes.add(noteId)
+                    } else {
+                        selectedNotes.remove(noteId)
+                    }
+                    onSelectionChanged?.invoke(selectedNotes.toSet())
+                }
+            }
+
+            // Lock icon: show only if encrypted, red if locked
             val lockIcon: ImageView = binding.lockImageView
-            val colorRes = if (note.isEncrypted) android.R.color.holo_red_dark else android.R.color.holo_green_dark
-            lockIcon.setColorFilter(ContextCompat.getColor(itemView.context, colorRes))
+            val isEncrypted = note.isEncrypted || note.encryptedBlob != null
+            lockIcon.visibility = if (isEncrypted) android.view.View.VISIBLE else android.view.View.GONE
+            if (isEncrypted) {
+                val colorRes = android.R.color.holo_red_dark
+                lockIcon.setColorFilter(ContextCompat.getColor(itemView.context, colorRes))
+            }
+
+            // Pin icon: show if pinned
+            val pinIcon: ImageView = binding.pinImageView
+            pinIcon.visibility = if (note.isPinned) android.view.View.VISIBLE else android.view.View.GONE
 
             itemView.setOnClickListener {
-                onClick(note)
+                if (isSelectionMode) {
+                    binding.selectionCheckbox.isChecked = !binding.selectionCheckbox.isChecked
+                } else {
+                    onClick(note)
+                }
             }
 
             // Overflow menu
             binding.overflowButton.setOnClickListener {
                 val popup = PopupMenu(itemView.context, binding.overflowButton)
                 popup.menuInflater.inflate(R.menu.menu_note_item, popup.menu)
-                // Show only relevant action
-                popup.menu.findItem(R.id.action_lock).isVisible = !note.isEncrypted
-                popup.menu.findItem(R.id.action_unlock).isVisible = note.isEncrypted
+                
+                // Show only relevant actions - single option per action type
+                val isEncrypted = note.isEncrypted || note.encryptedBlob != null
+                popup.menu.findItem(R.id.action_lock).isVisible = !isEncrypted
+                popup.menu.findItem(R.id.action_unlock).isVisible = isEncrypted
+                popup.menu.findItem(R.id.action_pin).isVisible = !note.isPinned
+                popup.menu.findItem(R.id.action_unpin).isVisible = note.isPinned
+                
                 popup.setOnMenuItemClickListener { item ->
                     when (item.itemId) {
                         R.id.action_lock -> {
@@ -59,6 +119,14 @@ class NoteAdapter(
                         }
                         R.id.action_unlock -> {
                             onLockToggle(note, false)
+                            true
+                        }
+                        R.id.action_pin -> {
+                            onPinToggle(note, true)
+                            true
+                        }
+                        R.id.action_unpin -> {
+                            onPinToggle(note, false)
                             true
                         }
                         R.id.action_delete -> {

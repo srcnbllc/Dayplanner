@@ -34,6 +34,9 @@ class TrashActivity : AppCompatActivity() {
             onSoftDelete = { note ->
                 // Kalıcı silme
                 viewModel.deleteNotePermanently(note.id)
+            },
+            onPinToggle = { note, shouldPin ->
+                viewModel.setPinned(note.id, shouldPin)
             }
         )
 

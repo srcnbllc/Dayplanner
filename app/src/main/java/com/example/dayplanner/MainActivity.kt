@@ -50,6 +50,9 @@ class MainActivity : AppCompatActivity() {
             },
             onSoftDelete = { note ->
                 noteViewModel.softDeleteById(note.id)
+            },
+            onPinToggle = { note, shouldPin ->
+                noteViewModel.setPinned(note.id, shouldPin)
             }
         )
 

@@ -19,6 +19,13 @@
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
+            <CheckBox
+                android:id="@+id/selectionCheckbox"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:visibility="gone" />
+
             <ImageView
                 android:id="@+id/lockImageView"
                 android:layout_width="20dp"
@@ -26,6 +33,15 @@
                 android:layout_marginEnd="8dp"
                 android:contentDescription="Lock State"
                 android:src="@drawable/ic_lock" />
+
+            <ImageView
+                android:id="@+id/pinImageView"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Pin State"
+                android:src="@drawable/ic_push_pin"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/titleTextView"

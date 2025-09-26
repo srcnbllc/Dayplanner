@@ -13,6 +13,13 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     private val repository: NoteRepository
     val allNotes: LiveData<List<Note>>
     val deletedNotes: LiveData<List<Note>>
+    
+    // Filter LiveData properties for Task 1
+    val allNotesSorted: LiveData<List<Note>>
+    val recentlyAddedNotes: LiveData<List<Note>>
+    val pinnedNotes: LiveData<List<Note>>
+    val encryptedNotes: LiveData<List<Note>>
+    val passwordProtectedNotes: LiveData<List<Note>>
 
     init {
         val noteDao = NoteDatabase.getDatabase(application).noteDao()
@@ -20,6 +27,13 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
         repository = NoteRepository(noteDao, folderDao)
         allNotes = repository.allNotes
         deletedNotes = repository.deletedNotes
+        
+        // Initialize filter LiveData
+        allNotesSorted = noteDao.getAllNotesSorted()
+        recentlyAddedNotes = noteDao.getRecentlyAddedNotes()
+        pinnedNotes = noteDao.getPinnedNotes()
+        encryptedNotes = noteDao.getEncryptedNotes()
+        passwordProtectedNotes = noteDao.getPasswordProtectedNotes()
     }
 
     // getNoteById fonksiyonu nullable dönebilir

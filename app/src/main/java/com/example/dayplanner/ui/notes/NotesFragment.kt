@@ -41,7 +41,7 @@ class NotesFragment : Fragment() {
     private var currentStatusFilter: String? = null
     private var isSelectionMode: Boolean = false
     private var selectedNotes: MutableSet<Int> = mutableSetOf()
-    private var currentFilter: String = "ALL" // ALL, PINNED, ENCRYPTED, RECENT
+    private var currentFilter: String = "ALL" // ALL, RECENTLY_ADDED, PINNED, ENCRYPTED, PASSWORD_PROTECTED
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -93,16 +93,25 @@ class NotesFragment : Fragment() {
             },
             onSoftDelete = { note ->
                 showDeleteConfirmation(note)
+            },
+            onPinToggle = { note, shouldPin ->
+                noteViewModel.setPinned(note.id, shouldPin)
+                val action = if (shouldPin) "pinned" else "unpinned"
+                CustomToast.show(requireContext(), "Note $action successfully")
             }
         )
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerView.adapter = noteAdapter
 
-        noteViewModel.allNotes.observe(viewLifecycleOwner) { notes ->
-            allNotesCache = notes
-            applyFiltersAndSearch()
+        // Set up selection listener
+        noteAdapter.setOnSelectionChangedListener { selectedIds ->
+            selectedNotes.clear()
+            selectedNotes.addAll(selectedIds)
         }
+
+        // Observe filtered notes based on current filter
+        observeFilteredNotes()
     }
 
     private fun handleLockUnlock(note: com.example.dayplanner.Note) {
@@ -145,10 +154,16 @@ class NotesFragment : Fragment() {
                 // Sil butonu
                 binding.deleteButton.setOnClickListener {
                     try {
-                    isSelectionMode = true
-                    // noteAdapter.setSelectionMode(true) // NoteAdapter doesn't have setSelectionMode
-                        binding.selectionModeLayout.visibility = View.VISIBLE
-                        android.util.Log.d("NotesFragment", "Delete button clicked - selection mode enabled")
+                        if (isSelectionMode && selectedNotes.isNotEmpty()) {
+                            // Already in selection mode with selections - show confirmation
+                            showDeleteSelectedConfirmation()
+                        } else {
+                            // Enter selection mode
+                            isSelectionMode = true
+                            noteAdapter.setSelectionMode(true)
+                            binding.selectionModeLayout.visibility = View.VISIBLE
+                            android.util.Log.d("NotesFragment", "Delete button clicked - selection mode enabled")
+                        }
                     } catch (e: Exception) {
                         android.util.Log.e("NotesFragment", "Error in delete button click: ${e.message}", e)
                     }
@@ -185,8 +200,31 @@ class NotesFragment : Fragment() {
         }
     }
 
+    private fun observeFilteredNotes() {
+        // Use single observer for better performance
+        noteViewModel.allNotesSorted.observe(viewLifecycleOwner) { notes ->
+            allNotesCache = notes
+            applyFiltersAndSearch()
+        }
+    }
+
     private fun applyFiltersAndSearch() {
+        // Empty list check to prevent crashes
+        if (allNotesCache.isEmpty()) {
+            android.util.Log.w("NotesFragment", "allNotesCache is empty, skipping filter")
+            return
+        }
+        
         var list = allNotesCache
+        
+        // Apply filter based on currentFilter for better performance
+        list = when (currentFilter) {
+            "RECENTLY_ADDED" -> list.take(50) // Limit to 50 most recent
+            "PINNED" -> list.filter { it.isPinned }
+            "ENCRYPTED" -> list.filter { it.isEncrypted }
+            "PASSWORD_PROTECTED" -> list.filter { it.isEncrypted || it.encryptedBlob != null }
+            else -> list // "ALL" - no additional filtering needed
+        }
         
         // Status filtresi
         currentStatusFilter?.let { status ->
@@ -196,37 +234,35 @@ class NotesFragment : Fragment() {
             }
         }
         
-        // Dropdown filtresi
-        list = when (currentFilter) {
-            "PINNED" -> list.filter { it.isPinned }
-            "ENCRYPTED" -> list.filter { it.encryptedBlob != null }
-            "UNENCRYPTED" -> list.filter { it.encryptedBlob == null }
-            "OLDEST" -> list.sortedBy { it.createdAt }
-            "RECENT" -> list.sortedByDescending { it.createdAt }
-            else -> list
-        }
-        
-        // Gelişmiş arama filtresi
+        // Optimized search - pre-compute lowercase query
         if (currentQuery.isNotEmpty()) {
             val q = currentQuery.lowercase()
             list = list.filter { note ->
-                // Başlık, açıklama, etiketler
-                note.title.lowercase().contains(q) || 
-                note.description.lowercase().contains(q) ||
-                note.tags?.lowercase()?.contains(q) == true ||
-                // Tarih arama (gg/aa/yyyy formatında)
+                // Pre-compute lowercase values for better performance
+                val titleLower = note.title.lowercase()
+                val descLower = note.description.lowercase()
+                val tagsLower = note.tags?.lowercase()
+                
+                titleLower.contains(q) || 
+                descLower.contains(q) ||
+                (tagsLower?.contains(q) == true) ||
+                // Optimized date search
                 note.createdAt.toString().contains(q) ||
-                // Şifreli notlar için özel arama
-                (note.isEncrypted && "şifreli".contains(q)) ||
-                (note.isLocked && "kilitli".contains(q)) ||
-                (note.isPinned && "sabitlenmiş".contains(q))
+                // Boolean checks (faster than string operations)
+                (note.isEncrypted && q.contains("şifreli")) ||
+                (note.isLocked && q.contains("kilitli")) ||
+                (note.isPinned && q.contains("sabitlenmiş"))
             }
         }
         
-        // Sıralama: Pinlenenler en üstte, sonra oluşturulma tarihine göre
-        val sorted = list.sortedWith(compareByDescending<com.example.dayplanner.Note> { it.isPinned }
-            .thenByDescending { it.createdAt }
-            .thenByDescending { it.id })
+        // Optimized sorting - only sort if needed
+        val sorted = if (list.size > 1) {
+            list.sortedWith(compareByDescending<com.example.dayplanner.Note> { it.isPinned }
+                .thenByDescending { it.createdAt }
+                .thenByDescending { it.id })
+        } else {
+            list
+        }
         noteAdapter.submitList(sorted)
         
         // Empty state göster/gizle
@@ -300,9 +336,9 @@ class NotesFragment : Fragment() {
             
             // Pin/Unpin
             if (note.isPinned) {
-                options.add("Sabitlemeyi Kaldır")
+                options.add("Unpin")
             } else {
-                options.add("Sabitle")
+                options.add("Pin")
             }
             
             // Sil/Geri Yükle
@@ -340,6 +376,8 @@ class NotesFragment : Fragment() {
                         2 -> {
                             // Pin/Unpin
                             noteViewModel.setPinned(note.id, !note.isPinned)
+                            val action = if (note.isPinned) "unpinned" else "pinned"
+                            CustomToast.show(requireContext(), "Note $action successfully")
                         }
                         3 -> {
                             // Sil/Geri Yükle/Kalıcı Sil
@@ -408,30 +446,43 @@ class NotesFragment : Fragment() {
         }
 
         private fun removeEncryption(note: com.example.dayplanner.Note, password: String) {
-            try {
-                if (!note.isEncrypted && note.encryptedBlob == null) {
-                    CustomToast.show(requireContext(), "Şifrelenmiş not bulunamadı")
-                    return
-                }
+            lifecycleScope.launch {
+                try {
+                    android.util.Log.d("NotesFragment", "Removing encryption from note: ${note.title}, isEncrypted: ${note.isEncrypted}, hasBlob: ${note.encryptedBlob != null}")
+                    
+                    if (!note.isEncrypted && note.encryptedBlob == null) {
+                        CustomToast.show(requireContext(), "Şifrelenmiş not bulunamadı")
+                        return@launch
+                    }
 
-                val encryptedContent = String(note.encryptedBlob ?: return)
-                
-                if (!PasswordManager.verifyPassword(encryptedContent, password)) {
-                    CustomToast.show(requireContext(), "Yanlış şifre")
-                    return
-                }
+                    val encryptedContent = String(note.encryptedBlob ?: return@launch)
+                    
+                    if (!PasswordManager.verifyPassword(encryptedContent, password)) {
+                        CustomToast.show(requireContext(), "Yanlış şifre")
+                        return@launch
+                    }
 
-                val decryptedContent = PasswordManager.decryptNote(encryptedContent, password)
-                
-                val updatedNote = note.copy(
-                    isLocked = false,
-                    isEncrypted = false,
-                    description = decryptedContent,
-                    encryptedBlob = null
-                )
-                noteViewModel.update(updatedNote)
-            } catch (e: Exception) {
-                CustomToast.show(requireContext(), "Şifre kaldırma hatası: ${e.message}")
+                    val decryptedContent = PasswordManager.decryptNote(encryptedContent, password)
+                    
+                    val updatedNote = note.copy(
+                        isLocked = false,
+                        isEncrypted = false,
+                        description = decryptedContent,
+                        encryptedBlob = null
+                    )
+                    
+                    android.util.Log.d("NotesFragment", "Updated note: isEncrypted: ${updatedNote.isEncrypted}, hasBlob: ${updatedNote.encryptedBlob != null}")
+                    
+                    noteViewModel.update(updatedNote)
+                    CustomToast.show(requireContext(), "Şifre başarıyla kaldırıldı")
+                    
+                    // Log success
+                    android.util.Log.d("NotesFragment", "Password removed from note: ${note.title}")
+                    
+                } catch (e: Exception) {
+                    android.util.Log.e("NotesFragment", "Error removing password: ${e.message}", e)
+                    CustomToast.show(requireContext(), "Şifre kaldırma hatası: ${e.message}")
+                }
             }
         }
 
@@ -529,13 +580,6 @@ class NotesFragment : Fragment() {
                 toggleSelectAll()
             }
             
-            binding.deleteSelectedButton.setOnClickListener {
-                if (selectedNotes.isNotEmpty()) {
-                showDeleteSelectedConfirmation()
-                } else {
-                    CustomToast.show(requireContext(), "Lütfen silinecek notları seçin")
-                }
-            }
         }
 
         private fun selectAllNotes() {
@@ -543,19 +587,19 @@ class NotesFragment : Fragment() {
             noteAdapter.currentList.forEach { note ->
                 selectedNotes.add(note.id)
             }
-            noteAdapter.notifyDataSetChanged()
+            noteAdapter.setSelectedNotes(selectedNotes)
         }
 
         private fun deselectAllNotes() {
             selectedNotes.clear()
-            noteAdapter.notifyDataSetChanged()
+            noteAdapter.setSelectedNotes(selectedNotes)
         }
 
         private fun exitSelectionMode() {
             isSelectionMode = false
             selectedNotes.clear()
+            noteAdapter.setSelectionMode(false)
             binding.selectionModeLayout.visibility = View.GONE
-            // noteAdapter.setSelectionMode(false) // NoteAdapter doesn't have setSelectionMode
         }
 
 
@@ -581,14 +625,14 @@ class NotesFragment : Fragment() {
             if (isAllSelected) {
                 // Deselect all
                 selectedNotes.clear()
-                binding.selectAllButton.text = "Tümünü Seç"
+                noteAdapter.setSelectedNotes(emptySet())
+                binding.selectAllButton.text = "Tümü"
             } else {
                 // Select all notes
                 selectedNotes.addAll(allNoteIds)
+                noteAdapter.setSelectedNotes(allNoteIds)
                 binding.selectAllButton.text = "Seçimi Kaldır"
             }
-            
-            noteAdapter.notifyDataSetChanged()
         }
 
         private fun deleteSelectedNotes() {
@@ -621,12 +665,11 @@ class NotesFragment : Fragment() {
 
         private fun setupFilterSpinner() {
             val filterOptions = listOf(
-                "Tümü",
-                "Pinlenmiş", 
-                "Şifreli",
-                "Şifresiz",
-                "Tarih Sırasına Göre (İlk Kayıt)",
-                "Tarih Sırasına Göre (Son Kayıt)"
+                "All",
+                "Recently Added", 
+                "Pinned",
+                "Encrypted",
+                "Password-Protected"
             )
             
             val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, filterOptions)
@@ -635,13 +678,12 @@ class NotesFragment : Fragment() {
             binding.filterSpinner.setOnItemClickListener { _, _, position, _ ->
                 when (position) {
                     0 -> currentFilter = "ALL"
-                    1 -> currentFilter = "PINNED"
-                    2 -> currentFilter = "ENCRYPTED"
-                    3 -> currentFilter = "UNENCRYPTED"
-                    4 -> currentFilter = "OLDEST"
-                    5 -> currentFilter = "RECENT"
+                    1 -> currentFilter = "RECENTLY_ADDED"
+                    2 -> currentFilter = "PINNED"
+                    3 -> currentFilter = "ENCRYPTED"
+                    4 -> currentFilter = "PASSWORD_PROTECTED"
                 }
-                applyFiltersAndSearch()
+                observeFilteredNotes()
             }
             
             // Default selection

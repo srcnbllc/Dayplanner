@@ -60,6 +60,10 @@ class TrashFragment : Fragment() {
             onSoftDelete = { note ->
                 // Permanent delete
                 showPermanentDeleteDialog(note)
+            },
+            onPinToggle = { note, shouldPin ->
+                // Pinleme işlemi çöp kutusunda yok
+                CustomToast.show(requireContext(), "Çöp kutusundaki notlar pinlenemez")
             }
         )
 

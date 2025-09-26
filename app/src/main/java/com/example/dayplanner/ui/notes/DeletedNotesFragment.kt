@@ -70,6 +70,9 @@ class DeletedNotesFragment : Fragment() {
             },
             onSoftDelete = { note ->
                 showPermanentDeleteDialog(note)
+            },
+            onPinToggle = { note, shouldPin ->
+                // Silinen notlarda pinleme işlemi yok
             }
         )
 

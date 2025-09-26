@@ -207,7 +207,7 @@
                         android:layout_width="0dp"
                         android:layout_height="48dp"
                         android:layout_weight="1"
-                        android:layout_marginEnd="4dp"
+                        android:layout_marginEnd="8dp"
                         android:text="Tümü"
                         android:textSize="12sp"
                         android:fontFamily="sans-serif-medium"
@@ -220,31 +220,12 @@
                         app:iconSize="16dp" />
 
                     <com.google.android.material.button.MaterialButton
-                        android:id="@+id/deleteSelectedButton"
-                        style="@style/Widget.Material3.Button.TextButton"
-                        android:layout_width="0dp"
-                        android:layout_height="48dp"
-                        android:layout_weight="1"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginEnd="4dp"
-                        android:text="Sil"
-                        android:textSize="12sp"
-                        android:fontFamily="sans-serif-medium"
-                        android:paddingStart="6dp"
-                        android:paddingEnd="6dp"
-                        android:paddingTop="8dp"
-                        android:paddingBottom="8dp"
-                        app:icon="@drawable/ic_delete"
-                        app:iconGravity="textStart"
-                        app:iconSize="16dp" />
-
-                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/cancelSelectionButton"
                         style="@style/Widget.Material3.Button.TextButton"
                         android:layout_width="0dp"
                         android:layout_height="48dp"
                         android:layout_weight="1"
-                        android:layout_marginStart="4dp"
+                        android:layout_marginStart="8dp"
                         android:text="Vazgeç"
                         android:textSize="12sp"
                         android:fontFamily="sans-serif-medium"

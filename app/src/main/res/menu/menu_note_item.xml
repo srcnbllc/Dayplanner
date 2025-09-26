@@ -15,13 +15,13 @@
     
     <item
         android:id="@+id/action_pin"
-        android:title="Sabitle"
+        android:title="Pinle"
         android:icon="@drawable/ic_pin"
         android:showAsAction="never" />
     
     <item
         android:id="@+id/action_unpin"
-        android:title="Sabitlemeyi Kaldır"
+        android:title="Pinleme Kaldır"
         android:icon="@drawable/ic_pin"
         android:showAsAction="never" />
     

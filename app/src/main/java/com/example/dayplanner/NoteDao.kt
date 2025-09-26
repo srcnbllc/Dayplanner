@@ -104,4 +104,20 @@ interface NoteDao {
     // Tüm notları senkron getirmek için
     @Query("SELECT * FROM note_table WHERE status != 'DELETED' ORDER BY id DESC")
     suspend fun getAllNotesSync(): List<Note>
+
+    // Filter queries for Task 1
+    @Query("SELECT * FROM note_table WHERE status != 'DELETED' ORDER BY isPinned DESC, createdAt DESC")
+    fun getAllNotesSorted(): LiveData<List<Note>>
+
+    @Query("SELECT * FROM note_table WHERE status != 'DELETED' ORDER BY createdAt DESC LIMIT 50")
+    fun getRecentlyAddedNotes(): LiveData<List<Note>>
+
+    @Query("SELECT * FROM note_table WHERE isPinned = 1 AND status != 'DELETED' ORDER BY createdAt DESC")
+    fun getPinnedNotes(): LiveData<List<Note>>
+
+    @Query("SELECT * FROM note_table WHERE isEncrypted = 1 AND status != 'DELETED' ORDER BY createdAt DESC")
+    fun getEncryptedNotes(): LiveData<List<Note>>
+
+    @Query("SELECT * FROM note_table WHERE (isEncrypted = 1 OR encryptedBlob IS NOT NULL) AND status != 'DELETED' ORDER BY createdAt DESC")
+    fun getPasswordProtectedNotes(): LiveData<List<Note>>
 }
