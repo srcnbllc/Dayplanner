@@ -62,34 +62,14 @@ class DeletedNotesFragment : Fragment() {
                     openDeletedNoteSafely(note)
                 } catch (e: Exception) {
                     android.util.Log.e("DeletedNotesFragment", "Error opening deleted note: ${e.message}", e)
-                    CustomToast.show(requireContext(), "Not açılamadı: ${e.message}", )
+                    CustomToast.show(requireContext(), "Not açılamadı: ${e.message}")
                 }
             },
-            onPinToggle = { note -> 
-                // Silinen notta pin toggle yok
-            },
-            onLockToggle = { note -> 
+            onLockToggle = { note, isLocked -> 
                 // Silinen notta lock toggle yok
             },
-            onMoreClick = { note -> 
-                try {
-                    showDeletedNoteOptions(note)
-                } catch (e: Exception) {
-                    android.util.Log.e("DeletedNotesFragment", "Error showing options: ${e.message}", e)
-                    CustomToast.show(requireContext(), "Seçenekler gösterilemedi: ${e.message}", )
-                }
-            },
-            onLongPress = { note ->
-                showDeletedNoteOptions(note)
-            },
-            onSwipeLeft = { note ->
+            onSoftDelete = { note ->
                 showPermanentDeleteDialog(note)
-            },
-            onSwipeRight = { note ->
-                restoreNote(note)
-            },
-            onSelectionModeChanged = { enabled ->
-                binding.selectionBar.visibility = if (enabled) View.VISIBLE else View.GONE
             }
         )
 
@@ -138,12 +118,12 @@ class DeletedNotesFragment : Fragment() {
             binding.selectionModeLayout.visibility = View.VISIBLE
             binding.selectModeButton.text = "İptal"
             binding.selectModeButton.setIconResource(android.R.drawable.ic_menu_close_clear_cancel)
-            CustomToast.show(requireContext(), "Çoklu seçim modu açıldı", )
+            CustomToast.show(requireContext(), "Çoklu seçim modu açıldı")
         } else {
             binding.selectionModeLayout.visibility = View.GONE
             binding.selectModeButton.text = "Seç"
             binding.selectModeButton.setIconResource(R.drawable.ic_check_box)
-            CustomToast.show(requireContext(), "Çoklu seçim modu kapandı", )
+            CustomToast.show(requireContext(), "Çoklu seçim modu kapandı")
         }
         
         noteAdapter.notifyDataSetChanged()
@@ -167,12 +147,12 @@ class DeletedNotesFragment : Fragment() {
         selectedNotes.clear()
         binding.selectionBar.visibility = View.GONE
         binding.checkboxSelectAll.isChecked = false
-        noteAdapter.setSelectionMode(false)
+        // noteAdapter.setSelectionMode(false) // NoteAdapter doesn't have setSelectionMode
     }
 
     private fun showRestoreSelectedConfirmation() {
         if (selectedNotes.isEmpty()) {
-            CustomToast.show(requireContext(), "Geri yüklenecek not seçin", )
+            CustomToast.show(requireContext(), "Geri yüklenecek not seçin")
             return
         }
         
@@ -188,7 +168,7 @@ class DeletedNotesFragment : Fragment() {
 
     private fun showDeleteSelectedConfirmation() {
         if (selectedNotes.isEmpty()) {
-            CustomToast.show(requireContext(), "Silinecek not seçin", )
+            CustomToast.show(requireContext(), "Silinecek not seçin")
             return
         }
         
@@ -209,9 +189,9 @@ class DeletedNotesFragment : Fragment() {
                     noteViewModel.restoreNote(noteId)
                 }
                 exitSelectionMode()
-                CustomToast.show(requireContext(), "${selectedNotes.size} not geri yüklendi", )
+                CustomToast.show(requireContext(), "${selectedNotes.size} not geri yüklendi")
             } catch (e: Exception) {
-                CustomToast.show(requireContext(), "Notlar geri yüklenemedi: ${e.message}", )
+                CustomToast.show(requireContext(), "Notlar geri yüklenemedi: ${e.message}")
             }
         }
     }
@@ -223,16 +203,16 @@ class DeletedNotesFragment : Fragment() {
                     noteViewModel.deleteNotePermanently(noteId)
                 }
                 exitSelectionMode()
-                CustomToast.show(requireContext(), "${selectedNotes.size} not kalıcı olarak silindi", )
+                CustomToast.show(requireContext(), "${selectedNotes.size} not kalıcı olarak silindi")
             } catch (e: Exception) {
-                CustomToast.show(requireContext(), "Notlar silinemedi: ${e.message}", )
+                CustomToast.show(requireContext(), "Notlar silinemedi: ${e.message}")
             }
         }
     }
 
     private fun observeDeletedNotes() {
         try {
-            noteViewModel.getDeletedNotes().observe(viewLifecycleOwner) { notes ->
+            noteViewModel.deletedNotes.observe(viewLifecycleOwner) { notes ->
                 try {
                     if (notes.isNullOrEmpty()) {
                         showEmptyState("Silinen not bulunamadı")
@@ -279,7 +259,7 @@ class DeletedNotesFragment : Fragment() {
         try {
             // Check if note is valid
             if (note.title.isBlank()) {
-                CustomToast.show(requireContext(), "Geçersiz not", )
+                CustomToast.show(requireContext(), "Geçersiz not")
                 return
             }
             
@@ -293,7 +273,7 @@ class DeletedNotesFragment : Fragment() {
                         // Show read-only view
                         showReadOnlyNoteDialog(note.title, decryptedContent)
                     } catch (e: Exception) {
-                        CustomToast.show(requireContext(), "Şifre yanlış veya not açılamadı", )
+                        CustomToast.show(requireContext(), "Şifre yanlış veya not açılamadı")
                     }
                 }
             } else {
@@ -302,7 +282,7 @@ class DeletedNotesFragment : Fragment() {
             }
         } catch (e: Exception) {
             android.util.Log.e("DeletedNotesFragment", "Error opening deleted note safely: ${e.message}", e)
-            CustomToast.show(requireContext(), "Not açılamadı: ${e.message}", )
+            CustomToast.show(requireContext(), "Not açılamadı: ${e.message}")
         }
     }
     
@@ -329,7 +309,7 @@ class DeletedNotesFragment : Fragment() {
                 if (password.isNotEmpty()) {
                     onPasswordEntered(password)
                 } else {
-                    CustomToast.show(requireContext(), "Şifre girin", )
+                    CustomToast.show(requireContext(), "Şifre girin")
                 }
             }
             .setNegativeButton("İptal", null)
@@ -365,9 +345,9 @@ class DeletedNotesFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 noteViewModel.restoreNote(note.id)
-                CustomToast.show(requireContext(), "Not geri yüklendi: ${note.title}", )
+                CustomToast.show(requireContext(), "Not geri yüklendi: ${note.title}")
             } catch (e: Exception) {
-                CustomToast.show(requireContext(), "Not geri yüklenemedi: ${e.message}", )
+                CustomToast.show(requireContext(), "Not geri yüklenemedi: ${e.message}")
             }
         }
     }
@@ -376,9 +356,9 @@ class DeletedNotesFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 noteViewModel.deleteNotePermanently(note.id)
-                CustomToast.show(requireContext(), "Not kalıcı olarak silindi: ${note.title}", )
+                CustomToast.show(requireContext(), "Not kalıcı olarak silindi: ${note.title}")
             } catch (e: Exception) {
-                CustomToast.show(requireContext(), "Not silinemedi: ${e.message}", )
+                CustomToast.show(requireContext(), "Not silinemedi: ${e.message}")
             }
         }
     }
@@ -389,7 +369,7 @@ class DeletedNotesFragment : Fragment() {
             .setMessage("Tüm silinen notları geri yüklemek istediğinizden emin misiniz?")
             .setPositiveButton("Geri Yükle") { _, _ ->
                 noteViewModel.restoreAllNotes()
-                CustomToast.show(requireContext(), "Tüm notlar geri yüklendi", )
+                CustomToast.show(requireContext(), "Tüm notlar geri yüklendi")
             }
             .setNegativeButton("İptal", null)
             .show()
@@ -401,7 +381,7 @@ class DeletedNotesFragment : Fragment() {
             .setMessage("Tüm silinen notları kalıcı olarak silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.")
             .setPositiveButton("Sil") { _, _ ->
                 noteViewModel.deleteAllNotesPermanently()
-                CustomToast.show(requireContext(), "Tüm notlar kalıcı olarak silindi", )
+                CustomToast.show(requireContext(), "Tüm notlar kalıcı olarak silindi")
             }
             .setNegativeButton("İptal", null)
             .show()

@@ -1,114 +1,124 @@
 package com.example.dayplanner
+
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
-import androidx.navigation.findNavController
-import androidx.navigation.ui.setupWithNavController
-import androidx.navigation.ui.setupWithNavController as setupToolbar
+import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dayplanner.databinding.ActivityMainBinding
-import com.example.dayplanner.utils.CustomToast
-import com.example.dayplanner.notifications.NotificationHelper
-import com.example.dayplanner.theme.ThemeManager
-import com.example.dayplanner.TrashManager
+import android.content.pm.ShortcutManager
+import android.content.pm.ShortcutInfo
+import android.graphics.drawable.Icon
+import android.os.Build
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.setupWithNavController
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+    private val noteViewModel: NoteViewModel by viewModels() // ViewModel'i kullanıyoruz
+    private lateinit var noteAdapter: NoteAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        android.util.Log.d("MainActivity", "onCreate started")
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         
-        try {
-            android.util.Log.d("MainActivity", "Inflating layout")
-            binding = ActivityMainBinding.inflate(layoutInflater)
-            setContentView(binding.root)
-            android.util.Log.d("MainActivity", "Layout set")
-            
-            // Initialize notification channels (simplified)
-            try {
-                android.util.Log.d("MainActivity", "Initializing notification channels")
-                NotificationHelper.initializeChannels(this)
-                android.util.Log.d("MainActivity", "Notification channels initialized")
-            } catch (e: Exception) {
-                android.util.Log.e("MainActivity", "Notification channels error: ${e.message}")
-            }
-            
-            // Apply theme (simplified)
-            try {
-                android.util.Log.d("MainActivity", "Applying theme")
-                val themeManager = ThemeManager(this)
-                themeManager.applyCurrentTheme()
-                android.util.Log.d("MainActivity", "Theme applied")
-            } catch (e: Exception) {
-                android.util.Log.e("MainActivity", "Theme error: ${e.message}")
-            }
-            
-            // Initialize trash cleanup
-            try {
-                android.util.Log.d("MainActivity", "Initializing trash cleanup")
-                TrashManager.scheduleCleanup(this)
-                android.util.Log.d("MainActivity", "Trash cleanup initialized")
-            } catch (e: Exception) {
-                android.util.Log.e("MainActivity", "Trash cleanup error: ${e.message}")
-            }
+        // Quick Actions (Shortcuts) ekle
+        setupQuickActions()
 
-            // Setup navigation (simplified)
-            try {
-                android.util.Log.d("MainActivity", "Setting up navigation")
-                val navController = findNavController(R.id.nav_host_fragment)
-                binding.bottomNavigation.setupWithNavController(navController)
-                android.util.Log.d("MainActivity", "Navigation setup complete")
-            } catch (e: Exception) {
-                android.util.Log.e("MainActivity", "Navigation error: ${e.message}")
-            }
-            
-            // Setup toolbar (simplified)
-            try {
-                android.util.Log.d("MainActivity", "Setting up toolbar")
-                setSupportActionBar(binding.topAppBar)
-                binding.topAppBar.inflateMenu(R.menu.top_app_bar_menu)
-                android.util.Log.d("MainActivity", "Toolbar setup complete")
-            } catch (e: Exception) {
-                android.util.Log.e("MainActivity", "Toolbar error: ${e.message}")
-            }
-            
-            
-            binding.topAppBar.setOnMenuItemClickListener { item ->
-                when (item.itemId) {
-                    R.id.action_add -> {
-                        startActivity(Intent(this, AddNoteActivity::class.java))
-                        true
-                    }
-                    R.id.filter_new -> {
-                        supportFragmentManager.setFragmentResult("filter_status", bundleOf("status" to "NEW"))
-                        true
-                    }
-                    R.id.filter_notes -> {
-                        supportFragmentManager.setFragmentResult("filter_status", bundleOf("status" to "NOTES"))
-                        true
-                    }
-                    R.id.filter_deleted -> {
-                        supportFragmentManager.setFragmentResult("filter_status", bundleOf("status" to "DELETED"))
-                        true
-                    }
-                    R.id.action_settings -> {
-                        try {
-                            startActivity(Intent(this, SettingsActivity::class.java))
-                        } catch (e: Exception) {
-                            android.util.Log.e("MainActivity", "Settings activity error: ${e.message}")
-                        }
-                        true
-                    }
-                    else -> false
+        // NoteAdapter'ı RecyclerView'a bağlamak için oluşturduk
+        noteAdapter = NoteAdapter(
+            onClick = { note ->
+                // Herhangi bir not'a tıklandığında notu düzenlemek için AddNoteActivity'ye geçiş yapıyoruz
+                val intent = Intent(this, AddNoteActivity::class.java)
+                intent.putExtra("noteId", note.id)
+                startActivity(intent)
+            },
+            onLockToggle = { note, shouldLock ->
+                if (shouldLock) {
+                    // Şifrele
+                    // Burada şifreleme dialog'u gösterilebilir
+                } else {
+                    // Şifre kaldır
+                    val updated = note.copy(isEncrypted = false, isLocked = false)
+                    noteViewModel.update(updated)
                 }
+            },
+            onSoftDelete = { note ->
+                noteViewModel.softDeleteById(note.id)
             }
-            
-            android.util.Log.d("MainActivity", "onCreate completed successfully")
-        } catch (e: Exception) {
-            android.util.Log.e("MainActivity", "Error in onCreate: ${e.message}", e)
-            finish()
+        )
+
+        // Navigation setup
+        setupNavigation()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_open_trash -> {
+                // Navigate to TrashActivity
+                val intent = Intent(this, TrashActivity::class.java)
+                startActivity(intent)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
+    }
+    
+    private fun setupQuickActions() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N_MR1) {
+            val shortcutManager = getSystemService(ShortcutManager::class.java)
+            
+            val shortcuts = listOf(
+                ShortcutInfo.Builder(this, "quick_add_note")
+                    .setShortLabel("Hızlı Not")
+                    .setLongLabel("Yeni Not Ekle")
+                    .setIcon(Icon.createWithResource(this, android.R.drawable.ic_input_add))
+                    .setIntent(Intent(this, AddNoteActivity::class.java).apply {
+                        action = Intent.ACTION_VIEW
+                    })
+                    .build(),
+                    
+                ShortcutInfo.Builder(this, "quick_add_finance")
+                    .setShortLabel("Hızlı Finans")
+                    .setLongLabel("Finans Kaydı Ekle")
+                    .setIcon(Icon.createWithResource(this, android.R.drawable.ic_menu_edit))
+                    .setIntent(Intent(this, AddNoteActivity::class.java).apply {
+                        action = Intent.ACTION_VIEW
+                        putExtra("type", "finance")
+                    })
+                    .build(),
+                    
+                ShortcutInfo.Builder(this, "quick_add_password")
+                    .setShortLabel("Hızlı Şifre")
+                    .setLongLabel("Şifre Kaydı Ekle")
+                    .setIcon(Icon.createWithResource(this, R.drawable.ic_lock))
+                    .setIntent(Intent(this, AddNoteActivity::class.java).apply {
+                        action = Intent.ACTION_VIEW
+                        putExtra("type", "password")
+                    })
+                    .build()
+            )
+            
+            shortcutManager.dynamicShortcuts = shortcuts
+        }
+    }
+    
+    private fun setupNavigation() {
+        val navHostFragment = supportFragmentManager
+            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController = navHostFragment.navController
+        
+        // Bottom navigation ile NavController'ı bağla
+        binding.bottomNavigation.setupWithNavController(navController)
     }
 }

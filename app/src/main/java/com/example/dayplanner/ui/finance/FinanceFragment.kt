@@ -31,9 +31,7 @@ class FinanceFragment : Fragment() {
 
     private lateinit var financeDao: FinanceDao
     private lateinit var transactionAdapter: TransactionAdapter
-    private val viewModel: FinanceViewModel by viewModels {
-        FinanceViewModelFactory(financeDao)
-    }
+    private lateinit var viewModel: FinanceViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -50,6 +48,9 @@ class FinanceFragment : Fragment() {
         // Initialize database
         val database = NoteDatabase.getDatabase(requireContext())
         financeDao = database.financeDao()
+        
+        // Initialize ViewModel after DAO is ready
+        viewModel = FinanceViewModel(financeDao)
 
         setupRecyclerView()
         setupAddButton()

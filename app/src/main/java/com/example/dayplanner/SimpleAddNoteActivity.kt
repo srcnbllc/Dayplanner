@@ -28,7 +28,7 @@ class SimpleAddNoteActivity : AppCompatActivity() {
             android.util.Log.d("SimpleAddNoteActivity", "Layout inflated")
             
             // Test mesajı
-            CustomToast.show(this, "Not ekleme sayfası açıldı!", )
+            CustomToast.show(this, "Not ekleme sayfası açıldı!")
 
             // ViewModel initialization
             noteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)

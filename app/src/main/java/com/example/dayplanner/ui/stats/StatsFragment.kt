@@ -1,5 +1,6 @@
 package com.example.dayplanner.ui.stats
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -124,12 +125,9 @@ class StatsFragment : Fragment() {
         // Kart tıklama olayı
         binding.deletedNotesCard.setOnClickListener {
             try {
-                // Silinen notlar fragment'ını güvenli şekilde aç
-                val deletedFragment = com.example.dayplanner.ui.notes.DeletedNotesFragment()
-                parentFragmentManager.beginTransaction()
-                    .replace(R.id.nav_host_fragment, deletedFragment)
-                    .addToBackStack("deleted_notes")
-                    .commit()
+                // Navigate to TrashActivity to avoid duplicates
+                val intent = Intent(requireContext(), com.example.dayplanner.TrashActivity::class.java)
+                startActivity(intent)
             } catch (e: Exception) {
                 android.util.Log.e("StatsFragment", "Error opening deleted notes: ${e.message}", e)
                 CustomToast.show(requireContext(), "Silinen notlar açılamadı: ${e.message}")

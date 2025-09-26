@@ -270,7 +270,7 @@
             android:id="@+id/checkbox_select_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tümünü Seç"
+            android:text="Tümü"
             android:textColor="?attr/colorOnSurface"
             android:layout_marginStart="16dp" />
 

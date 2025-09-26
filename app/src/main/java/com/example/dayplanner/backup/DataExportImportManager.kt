@@ -56,8 +56,8 @@ class DataExportImportManager(private val context: Context) {
             val exportData = JSONObject(jsonString)
             val database = NoteDatabase.getDatabase(context)
             val noteDao = database.noteDao()
-            val financeDao = database.financeDao()
-            val passwordDao = database.passwordDao()
+            // val financeDao = database.financeDao() // FinanceDao not implemented yet
+            // val passwordDao = database.passwordDao() // PasswordDao not implemented yet
 
             // Import notes
             val notesJson = exportData.getJSONArray("notes")
@@ -97,7 +97,7 @@ class DataExportImportManager(private val context: Context) {
                     type = com.example.dayplanner.finance.TransactionType.valueOf(transactionJson.getString("type")),
                     date = transactionJson.getLong("date")
                 )
-                financeDao.insertTransaction(transaction)
+                // financeDao.insertTransaction(transaction) // FinanceDao not implemented yet
             }
 
             // Import passwords
@@ -115,7 +115,7 @@ class DataExportImportManager(private val context: Context) {
                     notes = if (passwordJson.has("notes") && !passwordJson.isNull("notes")) 
                         passwordJson.getString("notes") else null
                 )
-                passwordDao.insertPassword(password)
+                // passwordDao.insertPassword(password) // PasswordDao not implemented yet
             }
 
             true

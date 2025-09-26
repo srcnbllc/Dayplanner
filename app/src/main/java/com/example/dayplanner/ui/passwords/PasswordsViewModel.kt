@@ -29,8 +29,9 @@ class PasswordsViewModel(private val passwordDao: PasswordDao) : ViewModel() {
 
     private fun loadPasswords() {
         viewModelScope.launch {
-            val allPasswords = passwordDao.getAllPasswords()
-            _passwords.value = allPasswords
+            passwordDao.getAllPasswords().observeForever { passwords ->
+                _passwords.value = passwords
+            }
         }
     }
 
@@ -79,11 +80,13 @@ class PasswordsViewModel(private val passwordDao: PasswordDao) : ViewModel() {
         _searchQuery.value = query
         viewModelScope.launch {
             val filteredPasswords = if (query.isEmpty()) {
-                passwordDao.getAllPasswords()
+                passwordDao.getAllPasswords().observeForever { passwords ->
+                    _passwords.value = passwords
+                }
             } else {
-                passwordDao.searchPasswords(query)
+                val searchResults = passwordDao.searchPasswords(query)
+                _passwords.value = searchResults
             }
-            _passwords.value = filteredPasswords
         }
     }
 
@@ -94,7 +97,9 @@ class PasswordsViewModel(private val passwordDao: PasswordDao) : ViewModel() {
             } else {
                 passwordDao.getPasswordsByCategory(category)
             }
-            _passwords.value = filteredPasswords
+            filteredPasswords.observeForever { passwords ->
+                _passwords.value = passwords
+            }
         }
     }
 

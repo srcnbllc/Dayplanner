@@ -112,7 +112,7 @@
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:startIconDrawable="@android:drawable/ic_menu_sort_by_size"
+                    app:startIconDrawable="@drawable/ic_refresh"
                     app:endIconMode="dropdown_menu">
 
                     <AutoCompleteTextView
@@ -178,7 +178,7 @@
                         android:layout_height="48dp"
                         android:layout_weight="1"
                         android:layout_marginEnd="6dp"
-                        android:text="Silinenlere Taşı"
+                        android:text="Sil"
                         android:textSize="12sp"
                         android:fontFamily="sans-serif-medium"
                         android:paddingStart="6dp"
@@ -208,7 +208,7 @@
                         android:layout_height="48dp"
                         android:layout_weight="1"
                         android:layout_marginEnd="4dp"
-                        android:text="Tümünü Seç"
+                        android:text="Tümü"
                         android:textSize="12sp"
                         android:fontFamily="sans-serif-medium"
                         android:paddingStart="6dp"
@@ -227,7 +227,7 @@
                         android:layout_weight="1"
                         android:layout_marginStart="4dp"
                         android:layout_marginEnd="4dp"
-                        android:text="Seçilenleri Sil"
+                        android:text="Sil"
                         android:textSize="12sp"
                         android:fontFamily="sans-serif-medium"
                         android:paddingStart="6dp"
@@ -359,7 +359,7 @@
             android:id="@+id/checkbox_select_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tümünü Seç"
+            android:text="Tümü"
             android:textColor="?attr/colorOnSurface"
             android:layout_marginStart="16dp" />
 

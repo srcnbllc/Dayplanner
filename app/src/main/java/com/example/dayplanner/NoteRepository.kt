@@ -7,6 +7,7 @@ import kotlinx.coroutines.withContext
 class NoteRepository(private val noteDao: NoteDao, private val folderDao: FolderDao) {
 
     val allNotes: LiveData<List<Note>> = noteDao.getAllNotes()
+    val deletedNotes: LiveData<List<Note>> = noteDao.getDeletedNotes()
 
     // getNoteById fonksiyonu, nullable (null olabilen) LiveData döndürecek
     fun getNoteById(noteId: Int): LiveData<Note?> {
@@ -22,7 +23,7 @@ class NoteRepository(private val noteDao: NoteDao, private val folderDao: Folder
     }
 
     suspend fun delete(note: Note) {
-        noteDao.delete(note)
+        noteDao.deleteById(note.id)
     }
 
     fun getNotesByFolder(folderId: Int?): LiveData<List<Note>> = noteDao.getNotesByFolder(folderId)
@@ -32,7 +33,7 @@ class NoteRepository(private val noteDao: NoteDao, private val folderDao: Folder
     fun getNotesByStatus(status: String): LiveData<List<Note>> = noteDao.getNotesByStatus(status)
 
     // Silinen notlar için metodlar
-    fun getDeletedNotes(): LiveData<List<Note>> = noteDao.getDeletedNotes()
+    // fun getDeletedNotes(): LiveData<List<Note>> = noteDao.getDeletedNotes() // Duplicate - already have deletedNotes property
     suspend fun restoreNote(id: Int) = noteDao.restoreNote(id)
     suspend fun restoreAllNotes() = noteDao.restoreAllNotes()
     suspend fun deleteNotePermanently(id: Int) = noteDao.deleteNotePermanently(id)
@@ -76,4 +77,12 @@ class NoteRepository(private val noteDao: NoteDao, private val folderDao: Folder
     suspend fun insertFolder(folder: Folder): Long = folderDao.insert(folder)
     suspend fun updateFolder(folder: Folder) = folderDao.update(folder)
     suspend fun deleteFolder(folder: Folder) = folderDao.delete(folder)
+
+    suspend fun softDeleteById(id: Int) {
+        noteDao.softDeleteById(id, System.currentTimeMillis())
+    }
+
+    suspend fun restoreById(id: Int) {
+        noteDao.restoreById(id)
+    }
 }

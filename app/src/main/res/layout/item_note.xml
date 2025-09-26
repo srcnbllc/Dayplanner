@@ -1,166 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginHorizontal="8dp"
-    android:layout_marginVertical="4dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
-    app:cardBackgroundColor="?attr/colorSurface"
-    app:strokeColor="?attr/colorOutline"
-    app:strokeWidth="1dp"
-    android:clickable="true"
-    android:focusable="true"
-    android:foreground="?attr/selectableItemBackground">
+    android:layout_margin="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="4dp">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:minHeight="120dp">
+        android:padding="16dp">
 
-            <!-- Header with title and status indicators -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:layout_marginBottom="8dp">
-
-                <!-- Selection Checkbox -->
-                <CheckBox
-                    android:id="@+id/selectionCheckBox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:visibility="gone" />
-
-                <TextView
-                    android:id="@+id/titleTextView"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:textColor="?attr/colorOnSurface"
-                    android:maxLines="1"
-                    android:ellipsize="end"
-                    android:text="Title" />
-
-            <!-- Status indicators -->
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <ImageView
-                    android:id="@+id/pinIndicator"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_marginEnd="4dp"
-                    android:src="@drawable/ic_pin"
-                    android:visibility="gone"
-                    app:tint="?attr/colorPrimary" />
-
-                <ImageView
-                    android:id="@+id/lockIndicator"
-                    android:layout_width="16dp"
-                    android:layout_height="16dp"
-                    android:layout_marginEnd="4dp"
-                    android:src="@drawable/ic_lock"
-                    android:visibility="gone"
-                    app:tint="@android:color/holo_red_dark" />
-
-            </LinearLayout>
-
-        </LinearLayout>
-
-            <!-- Description -->
-            <TextView
-                android:id="@+id/descriptionTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="14sp"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:maxLines="2"
-                android:ellipsize="end"
-                android:lineSpacingExtra="2dp"
-                android:layout_marginTop="4dp"
-                android:text="Description" />
-
-            <!-- Tags -->
-            <TextView
-                android:id="@+id/tagsTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:textSize="12sp"
-                android:textColor="?attr/colorPrimary"
-                android:textStyle="italic"
-                android:visibility="gone"
-                android:text="Tags" />
-
-            <!-- Footer with date and actions -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginTop="12dp">
+            android:gravity="center_vertical">
+
+            <ImageView
+                android:id="@+id/lockImageView"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginEnd="8dp"
+                android:contentDescription="Lock State"
+                android:src="@drawable/ic_lock" />
 
             <TextView
-                android:id="@+id/dateTextView"
+                android:id="@+id/titleTextView"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:textSize="12sp"
-                android:textColor="?attr/colorOnSurfaceVariant"
-                android:text="Date" />
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="Title" />
 
-                <!-- Action buttons -->
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/pinButton"
-                        style="@style/Widget.Material3.Button.IconButton"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:layout_marginEnd="4dp"
-                        android:contentDescription="Pin/Unpin"
-                        app:icon="@drawable/ic_pin"
-                        app:iconSize="18dp"
-                        app:iconTint="?attr/colorOnSurfaceVariant" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/lockButton"
-                        style="@style/Widget.Material3.Button.IconButton"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:layout_marginEnd="4dp"
-                        android:contentDescription="Lock/Unlock"
-                        app:icon="@drawable/ic_lock"
-                        app:iconSize="18dp"
-                        app:iconTint="?attr/colorOnSurfaceVariant" />
-
-                    <com.google.android.material.button.MaterialButton
-                        android:id="@+id/moreButton"
-                        style="@style/Widget.Material3.Button.IconButton"
-                        android:layout_width="36dp"
-                        android:layout_height="36dp"
-                        android:contentDescription="Daha fazla"
-                        app:icon="@drawable/ic_more_vert"
-                        app:iconSize="18dp"
-                        app:iconTint="?attr/colorOnSurfaceVariant" />
-
-                </LinearLayout>
-
+            <ImageButton
+                android:id="@+id/overflowButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="More"
+                android:src="@drawable/ic_more_vert"
+                android:background="@android:color/transparent" />
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/descriptionTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:text="Description" />
+
+        <TextView
+            android:id="@+id/dateTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="@android:color/darker_gray"
+            android:text="Date" />
+
     </LinearLayout>
-</com.google.android.material.card.MaterialCardView>
+</androidx.cardview.widget.CardView>

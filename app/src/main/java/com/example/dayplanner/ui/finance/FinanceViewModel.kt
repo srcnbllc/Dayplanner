@@ -35,16 +35,18 @@ class FinanceViewModel(private val financeDao: FinanceDao) : ViewModel() {
 
     private fun loadTransactions() {
         viewModelScope.launch {
-            val allTransactions = financeDao.getAllTransactions()
-            _transactions.value = allTransactions
-            
-            // Calculate totals
-            val income = allTransactions.filter { it.type == TransactionType.INCOME }.sumOf { it.amount }
-            val expense = allTransactions.filter { it.type == TransactionType.EXPENSE }.sumOf { it.amount }
-            
-            _totalIncome.value = income
-            _totalExpense.value = expense
-            _balance.value = income - expense
+            // Get the LiveData and observe it
+            financeDao.getAllTransactions().observeForever { transactions ->
+                _transactions.value = transactions
+                
+                // Calculate totals
+                val income = transactions.filter { it.type == TransactionType.INCOME }.sumOf { it.amount }
+                val expense = transactions.filter { it.type == TransactionType.EXPENSE }.sumOf { it.amount }
+                
+                _totalIncome.value = income
+                _totalExpense.value = expense
+                _balance.value = income - expense
+            }
         }
     }
 
@@ -90,14 +92,18 @@ class FinanceViewModel(private val financeDao: FinanceDao) : ViewModel() {
             } else {
                 financeDao.getTransactionsByCategory(category)
             }
-            _transactions.value = filteredTransactions
+            filteredTransactions.observeForever { transactions ->
+                _transactions.value = transactions
+            }
         }
     }
 
     fun getTransactionsByType(type: TransactionType) {
         viewModelScope.launch {
             val filteredTransactions = financeDao.getTransactionsByType(type)
-            _transactions.value = filteredTransactions
+            filteredTransactions.observeForever { transactions ->
+                _transactions.value = transactions
+            }
         }
     }
 }

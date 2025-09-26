@@ -44,13 +44,13 @@ interface FinanceDao {
     suspend fun deleteTransaction(transaction: Transaction)
 
     @Query("SELECT * FROM transactions ORDER BY date DESC")
-    suspend fun getAllTransactions(): List<Transaction>
+    fun getAllTransactions(): LiveData<List<Transaction>>
 
     @Query("SELECT * FROM transactions WHERE category = :category ORDER BY date DESC")
-    suspend fun getTransactionsByCategory(category: String): List<Transaction>
+    fun getTransactionsByCategory(category: String): LiveData<List<Transaction>>
 
     @Query("SELECT * FROM transactions WHERE type = :type ORDER BY date DESC")
-    suspend fun getTransactionsByType(type: TransactionType): List<Transaction>
+    fun getTransactionsByType(type: TransactionType): LiveData<List<Transaction>>
 
     // Category methods
     @Insert(onConflict = OnConflictStrategy.REPLACE)

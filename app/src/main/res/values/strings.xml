@@ -1,3 +1,57 @@
 <resources>
     <string name="app_name">Dayplanner</string>
+    
+    <!-- Navigation -->
+    <string name="nav_notes">Notlar</string>
+    <string name="nav_finance">Finans</string>
+    <string name="nav_passwords">Şifreler</string>
+    <string name="nav_reports">Raporlar</string>
+    <string name="nav_trash">Çöp Kutusu</string>
+    
+    <!-- Common Actions -->
+    <string name="action_add">Ekle</string>
+    <string name="action_edit">Düzenle</string>
+    <string name="action_delete">Sil</string>
+    <string name="action_save">Kaydet</string>
+    <string name="action_cancel">İptal</string>
+    <string name="action_confirm">Onayla</string>
+    <string name="action_share">Paylaş</string>
+    <string name="action_copy">Kopyala</string>
+    
+    <!-- Notes -->
+    <string name="notes_title">Notlarım</string>
+    <string name="notes_subtitle">Tüm notlarınızı yönetin ve organize edin</string>
+    <string name="note_title_hint">Not başlığı</string>
+    <string name="note_description_hint">Not açıklaması</string>
+    <string name="note_tags_hint">Etiketler (virgülle ayırın)</string>
+    
+    <!-- Security -->
+    <string name="password_hint">6 haneli şifre</string>
+    <string name="password_confirm_hint">Şifreyi tekrar girin</string>
+    <string name="encrypt_note">Şifrele</string>
+    <string name="decrypt_note">Şifreyi Kaldır</string>
+    <string name="locked_note">Kilitli Not</string>
+    <string name="encrypted_note">Şifreli Not</string>
+    
+    <!-- Templates -->
+    <string name="template_daily_plan">Günlük Plan</string>
+    <string name="template_meeting">Toplantı Notları</string>
+    <string name="template_shopping">Alışveriş Listesi</string>
+    <string name="template_travel">Seyahat Planı</string>
+    <string name="template_project">Proje Notları</string>
+    <string name="template_idea">Fikir Notları</string>
+    
+    <!-- Messages -->
+    <string name="msg_note_saved">Not kaydedildi</string>
+    <string name="msg_note_deleted">Not silindi</string>
+    <string name="msg_note_restored">Not geri yüklendi</string>
+    <string name="msg_password_set">Şifre belirlendi</string>
+    <string name="msg_password_removed">Şifre kaldırıldı</string>
+    
+    <!-- Errors -->
+    <string name="error_invalid_password">Geçersiz şifre</string>
+    <string name="error_password_mismatch">Şifreler eşleşmiyor</string>
+    <string name="error_required_fields">Lütfen tüm alanları doldurun</string>
+    <string name="error_network">Ağ hatası</string>
+    
 </resources>

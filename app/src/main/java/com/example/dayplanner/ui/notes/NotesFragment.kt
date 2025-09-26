@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import com.example.dayplanner.utils.CustomToast
+import android.view.HapticFeedbackConstants
 import androidx.appcompat.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
@@ -13,8 +14,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.ItemTouchHelper
-import androidx.recyclerview.widget.RecyclerView
 import androidx.core.widget.addTextChangedListener
 import com.example.dayplanner.AddNoteActivity
 import com.example.dayplanner.NoteAdapter
@@ -79,29 +78,22 @@ class NotesFragment : Fragment() {
                     startActivity(intent)
                 }
             },
-            onPinToggle = { note ->
-                noteViewModel.setPinned(note.id, !note.isPinned)
+            onLockToggle = { note, shouldLock ->
+                if (shouldLock) {
+                    // Şifrele
+                    showPasswordDialog("Şifre Belirle", "Notu şifrelemek için 6 haneli şifre belirleyin:") { password ->
+                        encryptNote(note, password)
+                    }
+                } else {
+                    // Şifre kaldır
+                    showPasswordDialog("Şifreyi Kaldır", "Şifreyi kaldırmak için mevcut şifreyi girin:") { password ->
+                        removeEncryption(note, password)
+                    }
+                }
             },
-            onLockToggle = { note ->
-                handleLockUnlock(note)
-            },
-            onMoreClick = { note ->
-                showNoteOptionsMenu(note)
-            },
-            onLongPress = { note ->
-                showQuickPreview(note)
-            },
-            onSwipeLeft = { note ->
+            onSoftDelete = { note ->
                 showDeleteConfirmation(note)
-            },
-            onSwipeRight = { note ->
-                noteViewModel.setPinned(note.id, !note.isPinned)
-            },
-            onSelectionModeChanged = { enabled ->
-                binding.selectionBar.visibility = if (enabled) View.VISIBLE else View.GONE
-            },
-            isSelectionMode = isSelectionMode,
-            selectedNotes = selectedNotes
+            }
         )
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -131,21 +123,30 @@ class NotesFragment : Fragment() {
         private fun setupFab() {
             try {
                 
-                // Yeni Not butonu
+                // Yeni Not butonu - Rapid click protection
                 binding.addNoteButton.setOnClickListener {
                     try {
+                        // Prevent rapid clicks
+                        binding.addNoteButton.isEnabled = false
+                        
                         val intent = Intent(requireContext(), AddNoteActivity::class.java)
                         startActivity(intent)
+                        
+                        // Re-enable button after a short delay
+                        binding.addNoteButton.postDelayed({
+                            binding.addNoteButton.isEnabled = true
+                        }, 1000)
                     } catch (e: Exception) {
                         android.util.Log.e("NotesFragment", "Error starting AddNoteActivity: ${e.message}", e)
+                        binding.addNoteButton.isEnabled = true // Re-enable on error
                     }
                 }
                 
                 // Sil butonu
                 binding.deleteButton.setOnClickListener {
                     try {
-                        isSelectionMode = true
-                        noteAdapter.setSelectionMode(true)
+                    isSelectionMode = true
+                    // noteAdapter.setSelectionMode(true) // NoteAdapter doesn't have setSelectionMode
                         binding.selectionModeLayout.visibility = View.VISIBLE
                         android.util.Log.d("NotesFragment", "Delete button clicked - selection mode enabled")
                     } catch (e: Exception) {
@@ -205,13 +206,20 @@ class NotesFragment : Fragment() {
             else -> list
         }
         
-        // Arama filtresi
+        // Gelişmiş arama filtresi
         if (currentQuery.isNotEmpty()) {
-            val q = currentQuery
-            list = list.filter { 
-                it.title.contains(q, true) || 
-                it.description.contains(q, true) ||
-                it.tags?.contains(q, true) == true
+            val q = currentQuery.lowercase()
+            list = list.filter { note ->
+                // Başlık, açıklama, etiketler
+                note.title.lowercase().contains(q) || 
+                note.description.lowercase().contains(q) ||
+                note.tags?.lowercase()?.contains(q) == true ||
+                // Tarih arama (gg/aa/yyyy formatında)
+                note.createdAt.toString().contains(q) ||
+                // Şifreli notlar için özel arama
+                (note.isEncrypted && "şifreli".contains(q)) ||
+                (note.isLocked && "kilitli".contains(q)) ||
+                (note.isPinned && "sabitlenmiş".contains(q))
             }
         }
         
@@ -308,6 +316,8 @@ class NotesFragment : Fragment() {
             androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle("Not Seçenekleri")
                 .setItems(options.toTypedArray()) { _, which ->
+                    // Haptic feedback
+                    view?.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY)
                     when (which) {
                         0 -> {
                             // Düzenle
@@ -521,7 +531,7 @@ class NotesFragment : Fragment() {
             
             binding.deleteSelectedButton.setOnClickListener {
                 if (selectedNotes.isNotEmpty()) {
-                    showDeleteSelectedConfirmation()
+                showDeleteSelectedConfirmation()
                 } else {
                     CustomToast.show(requireContext(), "Lütfen silinecek notları seçin")
                 }
@@ -545,7 +555,7 @@ class NotesFragment : Fragment() {
             isSelectionMode = false
             selectedNotes.clear()
             binding.selectionModeLayout.visibility = View.GONE
-            noteAdapter.setSelectionMode(false)
+            // noteAdapter.setSelectionMode(false) // NoteAdapter doesn't have setSelectionMode
         }
 
 

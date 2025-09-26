@@ -17,7 +17,7 @@ class ActivityLogViewModel(application: Application) : AndroidViewModel(applicat
         val database = NoteDatabase.getDatabase(application)
         repository = ActivityLogRepository(database.activityLogDao())
         
-        // Tüm logları yükle
+        // Load all logs
         viewModelScope.launch {
             repository.getAllLogs().collect { logs ->
                 _allLogs.value = logs

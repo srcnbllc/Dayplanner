@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen Layout Dimensions -->
+    <dimen name="screen_padding">16dp</dimen>
+    <dimen name="card_corner">12dp</dimen>
+    <dimen name="form_spacing">12dp</dimen>
+    <dimen name="card_padding">20dp</dimen>
+    <dimen name="card_margin">16dp</dimen>
+    
+    <!-- Button Dimensions -->
+    <dimen name="default_button_height">48dp</dimen>
+    <dimen name="button_padding_horizontal">16dp</dimen>
+    <dimen name="button_padding_vertical">12dp</dimen>
+    <dimen name="button_icon_padding">8dp</dimen>
+    
+    <!-- Icon Dimensions -->
+    <dimen name="icon_size">24dp</dimen>
+    <dimen name="icon_size_small">16dp</dimen>
+    <dimen name="icon_size_large">32dp</dimen>
+    
+    <!-- Input Field Dimensions -->
+    <dimen name="input_vertical_padding">12dp</dimen>
+    <dimen name="input_horizontal_padding">16dp</dimen>
+    <dimen name="input_corner_radius">12dp</dimen>
+    
+    <!-- Bottom Actions -->
+    <dimen name="bottom_actions_height">88dp</dimen>
+    <dimen name="bottom_actions_padding">16dp</dimen>
+    
+    <!-- Text Dimensions -->
+    <dimen name="text_size_title">18sp</dimen>
+    <dimen name="text_size_body">16sp</dimen>
+    <dimen name="text_size_caption">14sp</dimen>
+    <dimen name="text_size_small">12sp</dimen>
+    
+    <!-- Spacing Dimensions -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_small">8dp</dimen>
+    <dimen name="spacing_medium">12dp</dimen>
+    <dimen name="spacing_large">16dp</dimen>
+    <dimen name="spacing_xl">20dp</dimen>
+    <dimen name="spacing_xxl">24dp</dimen>
+    
+    <!-- Card Elevation -->
+    <dimen name="elevation_low">2dp</dimen>
+    <dimen name="elevation_medium">4dp</dimen>
+    <dimen name="elevation_high">8dp</dimen>
+</resources>
+

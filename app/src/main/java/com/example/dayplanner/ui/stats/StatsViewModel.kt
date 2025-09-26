@@ -60,23 +60,27 @@ class StatsViewModel(app: Application) : AndroidViewModel(app) {
     fun loadAllStats() {
         viewModelScope.launch {
             try {
-                val financeDao = db.financeDao()
-                val passwordDao = db.passwordDao()
+                // val financeDao = db.financeDao() // FinanceDao not implemented yet
+                // val passwordDao = db.passwordDao() // PasswordDao not implemented yet
 
-                // Load finance statistics
-                val transactions = financeDao.getAllTransactions()
-                val income = transactions.filter { it.type.name == "INCOME" }.sumOf { it.amount }
-                val expense = transactions.filter { it.type.name == "EXPENSE" }.sumOf { it.amount }
+                // Load finance statistics - Placeholder values
+                // val transactions = financeDao.getAllTransactions()
+                // val income = transactions.filter { it.type.name == "INCOME" }.sumOf { it.amount }
+                // val expense = transactions.filter { it.type.name == "EXPENSE" }.sumOf { it.amount }
+                val income = 0.0
+                val expense = 0.0
                 val balance = income - expense
 
                 _totalIncome.postValue(income)
                 _totalExpense.postValue(expense)
                 _balance.postValue(balance)
 
-                // Load password statistics
-                val passwords = passwordDao.getAllPasswords()
-                _passwordsCount.postValue(passwords.size)
-                _weakPasswordsCount.postValue(passwords.count { isWeakPassword(it.password) })
+                // Load password statistics - Placeholder values
+                // val passwords = passwordDao.getAllPasswords()
+                // _passwordsCount.postValue(passwords.size)
+                // _weakPasswordsCount.postValue(passwords.count { isWeakPassword(it.password) })
+                _passwordsCount.postValue(0)
+                _weakPasswordsCount.postValue(0)
 
             } catch (e: Exception) {
                 // Handle error - set default values

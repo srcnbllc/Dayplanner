@@ -8,11 +8,11 @@
     android:background="?attr/colorSurface"
     tools:context=".AddNoteActivity">
 
-    <!-- App Bar -->
+    <!-- Header with Template Icon -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:elevation="4dp">
+        app:elevation="0dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
@@ -20,16 +20,18 @@
             android:layout_height="?attr/actionBarSize"
             app:title="Yeni Not"
             app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge"
+            app:titleTextColor="?attr/colorOnSurface"
             app:navigationIcon="@drawable/ic_arrow_back"
-            app:titleTextColor="?attr/colorOnSurface"/>
+            app:menu="@menu/menu_add_note_template" />
+
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Scrollable Content -->
+    <!-- Main Content -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/mainScrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="@dimen/bottom_actions_height"
+        android:layout_marginBottom="100dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -38,174 +40,140 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Başlık Kartı -->
+            <!-- Title Field -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:hint="Not Başlığı"
+                style="@style/Widget.App.TextInputLayout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/titleEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapSentences"
+                    android:maxLines="1"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:imeOptions="actionNext" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Description Field -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:hint="Not İçeriği"
+                style="@style/Widget.App.TextInputLayout">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/descriptionEditText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine|textCapSentences"
+                    android:minLines="6"
+                    android:maxLines="15"
+                    android:gravity="top|start"
+                    android:textSize="16sp"
+                    android:imeOptions="actionNext" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Reminder Section -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Not Başlığı"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:fontFamily="sans-serif-medium"/>
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:startIconDrawable="@drawable/ic_title">
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/titleEditText"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Not başlığınızı girin"
-                            android:inputType="textCapSentences"
-                            android:textSize="16sp"
-                            android:fontFamily="sans-serif"/>
-                </com.google.android.material.textfield.TextInputLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                    android:padding="16dp">
 
-            <!-- Tarih ve Hatırlatma Kartı -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Tarih ve Hatırlatma"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:fontFamily="sans-serif-medium"/>
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/dateInputLayout"
-                        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-                        app:startIconDrawable="@drawable/ic_calendar">
-                        <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/dateEditText"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:hint="Planlanan Tarih (YYYY-MM-DD)"
-                            android:inputType="date"
-                            android:focusable="false"
-                            android:clickable="true"
-                            android:textSize="16sp"
-                            android:fontFamily="sans-serif"/>
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <com.google.android.material.checkbox.MaterialCheckBox
+                    <CheckBox
                         android:id="@+id/reminderCheckbox"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hatırlatma Ayarla"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnSurface" />
+
+                    <LinearLayout
+                        android:id="@+id/reminderDetailsLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Hatırlatma ekle"
-                        android:textSize="16sp"
-                        android:fontFamily="sans-serif"/>
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:layout_marginTop="12dp">
+
                         <LinearLayout
-                            android:id="@+id/reminderOptionsLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:visibility="gone">
+                            android:orientation="horizontal"
+                            android:layout_marginBottom="12dp">
 
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            app:startIconDrawable="@drawable/ic_calendar">
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/reminderDateText"
-                                android:layout_width="match_parent"
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:hint="Hatırlatma Tarihi (YYYY-MM-DD)"
-                                android:inputType="date"
-                                android:focusable="false"
-                                android:clickable="true"
-                                android:textSize="16sp"
-                                android:fontFamily="sans-serif"/>
-                        </com.google.android.material.textfield.TextInputLayout>
+                                android:layout_weight="1"
+                                android:layout_marginEnd="8dp"
+                                android:hint="Tarih"
+                                style="@style/Widget.App.TextInputLayout">
 
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginBottom="8dp"
-                            app:startIconDrawable="@drawable/ic_notifications">
-                            <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/reminderTimeText"
-                                android:layout_width="match_parent"
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/reminderDateEditText"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="date"
+                                    android:focusable="false"
+                                    android:clickable="true" />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:hint="Hatırlatma Saati (HH:MM)"
-                                android:inputType="time"
-                                android:focusable="false"
-                                android:clickable="true"
-                                android:textSize="16sp"
-                                android:fontFamily="sans-serif"/>
-                        </com.google.android.material.textfield.TextInputLayout>
+                                android:layout_weight="1"
+                                android:layout_marginStart="8dp"
+                                android:hint="Saat"
+                                style="@style/Widget.App.TextInputLayout">
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/reminderTimeEditText"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="time"
+                                    android:focusable="false"
+                                    android:clickable="true" />
+
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                        </LinearLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            app:startIconDrawable="@drawable/ic_notifications"
-                            app:endIconMode="dropdown_menu">
+                            android:hint="Hatırlatma Süresi"
+                            style="@style/Widget.App.TextInputLayout">
+
                             <AutoCompleteTextView
-                                android:id="@+id/reminderTimeSpinner"
+                                android:id="@+id/reminderPeriodDropdown"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Hatırlatma Zamanı"
                                 android:inputType="none"
                                 android:focusable="false"
-                                android:textSize="16sp"
-                                android:fontFamily="sans-serif"/>
-                        </com.google.android.material.textfield.TextInputLayout>
-                    </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+                                android:clickable="true" />
 
-            <!-- Not İçeriği Kartı -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
-                <LinearLayout
-                    android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="20dp">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Not İçeriği"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:fontFamily="sans-serif-medium"/>
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        app:startIconDrawable="@drawable/ic_note">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/descriptionEditText"
-                        android:layout_width="match_parent"
-        android:layout_height="200dp"
-                        android:hint="Notunuzu buraya yazabilirsiniz..."
-                        android:inputType="textMultiLine|textCapSentences"
-                            android:gravity="top|start"
-                            android:textSize="16sp"
-                            android:fontFamily="sans-serif"/>
-                </com.google.android.material.textfield.TextInputLayout>
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -213,34 +181,103 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="4dp">
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="16dp">
+
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Etiketler ve Özellikler"
-                        android:textSize="18sp"
+                        android:text="Etiketler"
+                        android:textSize="16sp"
                         android:textStyle="bold"
-                        android:fontFamily="sans-serif-medium"/>
-                    <com.google.android.material.textfield.TextInputLayout
+                        android:textColor="?attr/colorOnSurface"
+                        android:layout_marginBottom="8dp" />
+
+                    <com.google.android.material.chip.ChipGroup
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:helperText="Virgülle ayırarak etiket ekleyin (örn: iş, önemli, proje)"
-                        app:startIconDrawable="@drawable/ic_tag">
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/tagsEditText"
-                            android:layout_width="match_parent"
+                        android:layout_marginBottom="8dp">
+
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:hint="Etiketler"
-                            android:inputType="text"
-                            android:textSize="16sp"
-                            android:fontFamily="sans-serif"/>
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:text="Önemli"
+                            android:checkable="true"
+                            style="@style/Widget.Material3.Chip.Filter" />
+
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="İş"
+                            android:checkable="true"
+                            style="@style/Widget.Material3.Chip.Filter" />
+
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Kişisel"
+                            android:checkable="true"
+                            style="@style/Widget.Material3.Chip.Filter" />
+
+                        <com.google.android.material.chip.Chip
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Acil"
+                            android:checkable="true"
+                            style="@style/Widget.Material3.Chip.Filter" />
+
+                    </com.google.android.material.chip.ChipGroup>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- File Attachment Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dosya Ekle"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="?attr/colorOnSurface"
+                        android:layout_marginBottom="12dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/attachFileButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="📎 Dosya Ekle"
+                        android:textSize="14sp"
+                        style="@style/Widget.App.Button.Outlined"
+                        app:icon="@drawable/ic_attach_file"
+                        app:iconGravity="textStart" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/attachmentsRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:visibility="gone" />
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -248,67 +285,38 @@
     </androidx.core.widget.NestedScrollView>
 
     <!-- Bottom Action Buttons -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:layout_margin="16dp"
         app:cardCornerRadius="12dp"
         app:cardElevation="8dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:padding="16dp"
-            android:layout_margin="8dp">
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/cancelButton"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="4dp"
-                android:text="Vazgeç"
-                android:textSize="14sp"
-                android:fontFamily="sans-serif-medium"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                app:icon="@drawable/ic_arrow_back"
-                app:iconGravity="textStart"
-                app:iconSize="18dp"/>
+            android:padding="16dp">
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/saveButton"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginStart="4dp"
-                android:layout_marginEnd="4dp"
+                android:layout_marginEnd="8dp"
                 android:text="Kaydet"
-                android:textSize="14sp"
-                android:fontFamily="sans-serif-medium"
-                android:paddingStart="8dp"
-                android:paddingEnd="8dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                app:icon="@drawable/ic_save"
-                app:iconGravity="textStart"
-                app:iconSize="18dp"/>
+                style="@style/Widget.App.Button" />
+
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/encryptButton"
+                android:id="@+id/savePasswordButton"
                 android:layout_width="0dp"
-                android:layout_height="48dp"
+                android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:layout_marginStart="4dp"
+                android:layout_marginStart="8dp"
                 android:text="Şifreli Kaydet"
-                android:textSize="12sp"
-                android:fontFamily="sans-serif-medium"
-                android:paddingStart="6dp"
-                android:paddingEnd="6dp"
-                android:paddingTop="8dp"
-                android:paddingBottom="8dp"
-                app:icon="@drawable/ic_lock"
-                app:iconGravity="textStart"
-                app:iconSize="16dp"/>
+                style="@style/Widget.App.Button.Outlined" />
+
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

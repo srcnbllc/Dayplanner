@@ -19,8 +19,9 @@
         android:theme="@style/Theme.Dayplanner">
 
         <activity
-            android:name=".MainActivity"
-            android:exported="true">
+            android:name="com.example.dayplanner.MainActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Dayplanner">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
@@ -44,6 +45,16 @@
 
         <activity
             android:name=".SettingsActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".TrashActivity"
+            android:exported="false"
+            android:parentActivityName=".MainActivity" />
+
+        <activity
+            android:name=".TestVerificationActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
 

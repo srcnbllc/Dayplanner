@@ -35,10 +35,10 @@ interface PasswordDao {
     suspend fun deletePassword(password: Password)
 
     @Query("SELECT * FROM passwords ORDER BY title ASC")
-    suspend fun getAllPasswords(): List<Password>
+    fun getAllPasswords(): LiveData<List<Password>>
 
     @Query("SELECT * FROM passwords WHERE category = :category ORDER BY title ASC")
-    suspend fun getPasswordsByCategory(category: String): List<Password>
+    fun getPasswordsByCategory(category: String): LiveData<List<Password>>
 
     @Query("SELECT * FROM passwords WHERE title LIKE '%' || :query || '%' OR username LIKE '%' || :query || '%' ORDER BY title ASC")
     suspend fun searchPasswords(query: String): List<Password>
