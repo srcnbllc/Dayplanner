@@ -15,8 +15,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class TransactionAdapter(
-    private val onClick: (Transaction) -> Unit,
-    private val onLongClick: (Transaction) -> Unit
+    private val onTransactionClick: (Transaction) -> Unit,
+    private val onTransactionDelete: (Transaction) -> Unit
 ) : ListAdapter<Transaction, TransactionAdapter.TransactionViewHolder>(TransactionDiffCallback()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
@@ -35,6 +35,7 @@ class TransactionAdapter(
         private val categoryView: TextView = itemView.findViewById(R.id.transactionCategory)
         private val dateView: TextView = itemView.findViewById(R.id.transactionDate)
         private val amountView: TextView = itemView.findViewById(R.id.transactionAmount)
+        private val iconView: ImageView = itemView.findViewById(R.id.transactionIcon)
 
         fun bind(transaction: Transaction) {
             titleView.text = transaction.title
@@ -61,9 +62,9 @@ class TransactionAdapter(
             }
             iconView.setImageResource(iconRes)
 
-            itemView.setOnClickListener { onClick(transaction) }
+            itemView.setOnClickListener { onTransactionClick(transaction) }
             itemView.setOnLongClickListener { 
-                onLongClick(transaction)
+                onTransactionDelete(transaction)
                 true
             }
         }

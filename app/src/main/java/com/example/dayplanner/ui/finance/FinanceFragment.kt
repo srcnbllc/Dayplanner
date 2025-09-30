@@ -6,9 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -21,7 +19,6 @@ import com.example.dayplanner.finance.TransactionType
 import com.example.dayplanner.NoteDatabase
 import java.text.NumberFormat
 import java.util.*
-import android.util.Log
 import com.example.dayplanner.utils.CustomToast
 
 class FinanceFragment : Fragment() {
@@ -54,80 +51,93 @@ class FinanceFragment : Fragment() {
 
         setupRecyclerView()
         setupAddButton()
-        setupCategorySpinner()
+        setupFilterSpinner()
+        setupDateRangeSpinner()
         observeData()
     }
 
     private fun setupRecyclerView() {
         transactionAdapter = TransactionAdapter(
-            onClick = { transaction ->
-                showEditTransactionDialog(transaction)
+            onTransactionClick = { transaction ->
+                // Handle transaction click - show details or edit
+                showTransactionDetails(transaction)
             },
-            onLongClick = { transaction ->
+            onTransactionDelete = { transaction ->
+                // Handle transaction delete
                 showDeleteConfirmation(transaction)
             }
         )
 
-        binding.transactionsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.transactionsRecyclerView.adapter = transactionAdapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = transactionAdapter
 
         // Swipe to delete
-        val callback = object : ItemTouchHelper.SimpleCallback(
-            0,
-            ItemTouchHelper.LEFT
-        ) {
-            override fun onMove(
-                rv: RecyclerView,
-                vh: RecyclerView.ViewHolder,
-                target: RecyclerView.ViewHolder
-            ): Boolean = false
-
-            override fun onSwiped(vh: RecyclerView.ViewHolder, direction: Int) {
-                val position = vh.bindingAdapterPosition
-                val transaction = transactionAdapter.currentList.getOrNull(position) ?: return
-                viewModel.deleteTransaction(transaction)
+        val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+                return false
             }
-        }
-        ItemTouchHelper(callback).attachToRecyclerView(binding.transactionsRecyclerView)
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                val transaction = transactionAdapter.currentList[position]
+                showDeleteConfirmation(transaction)
+            }
+        })
+        itemTouchHelper.attachToRecyclerView(binding.recyclerView)
     }
 
     private fun setupAddButton() {
         binding.addTransactionButton.setOnClickListener {
+            // Open add transaction dialog
             showAddTransactionDialog()
         }
     }
 
-    private fun setupCategorySpinner() {
-        val adapter = ArrayAdapter<String>(
-            requireContext(),
-            android.R.layout.simple_spinner_item,
-            mutableListOf("Tümü")
-        )
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.categorySpinner.adapter = adapter
-
-        viewModel.categories.observe(viewLifecycleOwner) { categories ->
-            val categoryList = mutableListOf("Tümü")
-            categoryList.addAll(categories)
-            adapter.clear()
-            adapter.addAll(categoryList)
-            adapter.notifyDataSetChanged()
-        }
-
-        binding.categorySpinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selectedCategory = parent?.getItemAtPosition(position) as? String ?: "Tümü"
-                viewModel.getTransactionsByCategory(selectedCategory)
+    private fun setupFilterSpinner() {
+        val filterOptions = listOf("Tümü", "Gelir", "Gider")
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, filterOptions)
+        binding.filterSpinner.setAdapter(adapter)
+        
+        binding.filterSpinner.setOnItemClickListener { _, _, position, _ ->
+            val filter = when (position) {
+                0 -> "ALL"
+                1 -> "INCOME"
+                2 -> "EXPENSE"
+                else -> "ALL"
             }
-            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+            viewModel.setFilter(filter)
         }
+        
+        binding.filterSpinner.setText(filterOptions[0], false)
+    }
+
+    private fun setupDateRangeSpinner() {
+        val dateRangeOptions = listOf("Günlük", "Haftalık", "Aylık", "Yıllık", "Tümü")
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, dateRangeOptions)
+        binding.dateRangeSpinner.setAdapter(adapter)
+        
+        binding.dateRangeSpinner.setOnItemClickListener { _, _, position, _ ->
+            val range = when (position) {
+                0 -> "DAILY"
+                1 -> "WEEKLY"
+                2 -> "MONTHLY"
+                3 -> "YEARLY"
+                4 -> "ALL"
+                else -> "MONTHLY"
+            }
+            viewModel.setDateRange(range)
+        }
+        
+        binding.dateRangeSpinner.setText(dateRangeOptions[2], false) // Default to monthly
     }
 
     private fun observeData() {
+        // Observe transactions
         viewModel.transactions.observe(viewLifecycleOwner) { transactions ->
             transactionAdapter.submitList(transactions)
         }
 
+        // Observe summary data
         viewModel.totalIncome.observe(viewLifecycleOwner) { income ->
             val formatter = NumberFormat.getCurrencyInstance(Locale("tr", "TR"))
             binding.totalIncomeText.text = formatter.format(income)
@@ -141,116 +151,31 @@ class FinanceFragment : Fragment() {
         viewModel.balance.observe(viewLifecycleOwner) { balance ->
             val formatter = NumberFormat.getCurrencyInstance(Locale("tr", "TR"))
             binding.balanceText.text = formatter.format(balance)
+            
+            // Change color based on balance
+            val color = if (balance >= 0) {
+                android.graphics.Color.parseColor("#4CAF50") // Green
+            } else {
+                android.graphics.Color.parseColor("#F44336") // Red
+            }
+            binding.balanceText.setTextColor(color)
         }
     }
 
-    private fun showAddTransactionDialog() {
-        val dialogView = LayoutInflater.from(requireContext())
-            .inflate(R.layout.dialog_add_transaction, null)
-
-        val typeSpinner = dialogView.findViewById<AutoCompleteTextView>(R.id.transactionTypeSpinner)
-        val titleEditText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.titleEditText)
-        val amountEditText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.amountEditText)
-        val categorySpinner = dialogView.findViewById<AutoCompleteTextView>(R.id.categorySpinner)
-        val descriptionEditText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.descriptionEditText)
-
-        // Setup type spinner
-        val typeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, 
-            listOf("Gelir", "Gider"))
-        typeSpinner.setAdapter(typeAdapter)
-
-        // Setup category spinner
-        val categoryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, 
-            listOf("Yemek", "Ulaşım", "Alışveriş", "Fatura", "Maaş", "Diğer"))
-        categorySpinner.setAdapter(categoryAdapter)
+    private fun showTransactionDetails(transaction: Transaction) {
+        // Show transaction details dialog
+        val message = """
+            Başlık: ${transaction.title}
+            Tutar: ${NumberFormat.getCurrencyInstance(Locale("tr", "TR")).format(transaction.amount)}
+            Kategori: ${transaction.category}
+            Tarih: ${Date(transaction.date).toString()}
+            Açıklama: ${transaction.description}
+        """.trimIndent()
 
         AlertDialog.Builder(requireContext())
-            .setView(dialogView)
-            .setPositiveButton("Ekle") { _, _ ->
-                val title = titleEditText.text.toString().trim()
-                val amountText = amountEditText.text.toString().trim()
-                val category = categorySpinner.text.toString().trim()
-                val description = descriptionEditText.text.toString().trim()
-                val type = if (typeSpinner.text.toString() == "Gelir") TransactionType.INCOME else TransactionType.EXPENSE
-
-                if (title.isNotEmpty() && amountText.isNotEmpty() && category.isNotEmpty()) {
-                    try {
-                        val amount = amountText.toDouble()
-                        val transaction = Transaction(
-                            id = 0,
-                            title = title,
-                            amount = amount,
-                            category = category,
-                            description = description,
-                            type = type,
-                            date = System.currentTimeMillis()
-                        )
-                        viewModel.addTransaction(transaction)
-                    } catch (e: NumberFormatException) {
-                        CustomToast.show(requireContext(), "Geçerli bir tutar girin")
-                    }
-                } else {
-                    CustomToast.show(requireContext(), "Tüm alanları doldurun")
-                }
-            }
-            .setNegativeButton("İptal", null)
-            .show()
-    }
-
-    private fun showEditTransactionDialog(transaction: Transaction) {
-        val dialogView = LayoutInflater.from(requireContext())
-            .inflate(R.layout.dialog_add_transaction, null)
-
-        val typeSpinner = dialogView.findViewById<AutoCompleteTextView>(R.id.transactionTypeSpinner)
-        val titleEditText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.titleEditText)
-        val amountEditText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.amountEditText)
-        val categorySpinner = dialogView.findViewById<AutoCompleteTextView>(R.id.categorySpinner)
-        val descriptionEditText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.descriptionEditText)
-
-        // Pre-fill fields
-        typeSpinner.setText(if (transaction.type == TransactionType.INCOME) "Gelir" else "Gider")
-        titleEditText.setText(transaction.title)
-        amountEditText.setText(transaction.amount.toString())
-        categorySpinner.setText(transaction.category)
-        descriptionEditText.setText(transaction.description)
-
-        // Setup adapters
-        val typeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, 
-            listOf("Gelir", "Gider"))
-        typeSpinner.setAdapter(typeAdapter)
-
-        val categoryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, 
-            listOf("Yemek", "Ulaşım", "Alışveriş", "Fatura", "Maaş", "Diğer"))
-        categorySpinner.setAdapter(categoryAdapter)
-
-        AlertDialog.Builder(requireContext())
-            .setView(dialogView)
-            .setPositiveButton("Güncelle") { _, _ ->
-                val title = titleEditText.text.toString().trim()
-                val amountText = amountEditText.text.toString().trim()
-                val category = categorySpinner.text.toString().trim()
-                val description = descriptionEditText.text.toString().trim()
-                val type = if (typeSpinner.text.toString() == "Gelir") TransactionType.INCOME else TransactionType.EXPENSE
-
-                if (title.isNotEmpty() && amountText.isNotEmpty() && category.isNotEmpty()) {
-                    try {
-                        val amount = amountText.toDouble()
-                        val updatedTransaction = transaction.copy(
-                            title = title,
-                            amount = amount,
-                            category = category,
-                            description = description,
-                            type = type
-                        )
-                        viewModel.updateTransaction(updatedTransaction)
-                    } catch (e: NumberFormatException) {
-                        CustomToast.show(requireContext(), "Geçerli bir tutar girin")
-                    }
-                } else {
-                    CustomToast.show(requireContext(), "Tüm alanları doldurun")
-                }
-            }
-            .setNegativeButton("İptal", null)
+            .setTitle("İşlem Detayları")
+            .setMessage(message)
+            .setPositiveButton("Tamam", null)
             .show()
     }
 
@@ -260,9 +185,17 @@ class FinanceFragment : Fragment() {
             .setMessage("Bu işlemi silmek istediğinizden emin misiniz?")
             .setPositiveButton("Sil") { _, _ ->
                 viewModel.deleteTransaction(transaction)
+                CustomToast.show(requireContext(), "İşlem silindi")
             }
-            .setNegativeButton("İptal", null)
+            .setNegativeButton("İptal") { _, _ ->
+                transactionAdapter.notifyDataSetChanged() // Refresh to undo swipe
+            }
             .show()
+    }
+
+    private fun showAddTransactionDialog() {
+        // This will be implemented in the next step with dynamic form
+        CustomToast.show(requireContext(), "İşlem ekleme özelliği yakında eklenecek")
     }
 
     override fun onDestroyView() {
@@ -270,5 +203,3 @@ class FinanceFragment : Fragment() {
         _binding = null
     }
 }
-
-

@@ -7,9 +7,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ArrayAdapter
-import android.widget.AutoCompleteTextView
-import android.widget.CheckBox
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
@@ -52,9 +49,27 @@ class AddNoteActivity : AppCompatActivity() {
             // ViewModel initialization
             noteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
             
-            // Set up action bar
-            supportActionBar?.setDisplayHomeAsUpEnabled(true)
-            supportActionBar?.title = "Yeni Not"
+            // Set up toolbar (no need for setSupportActionBar since toolbar is already in layout)
+            binding.toolbar.setNavigationOnClickListener {
+                finish()
+            }
+
+            // Handle encrypted note editing
+            val noteId = intent.getIntExtra("noteId", -1)
+            val isEncrypted = intent.getBooleanExtra("isEncrypted", false)
+            val decryptedContent = intent.getStringExtra("decryptedContent")
+            
+            if (noteId != -1) {
+                // Editing existing note
+                if (isEncrypted && !decryptedContent.isNullOrEmpty()) {
+                    // Load decrypted content for editing
+                    binding.titleEditText.setText(intent.getStringExtra("title") ?: "")
+                    binding.descriptionEditText.setText(decryptedContent)
+                } else {
+                    // Load normal note
+                    loadNoteForEditing(noteId)
+                }
+            }
 
             setupReminderSection()
             setupFileAttachment()
@@ -68,51 +83,40 @@ class AddNoteActivity : AppCompatActivity() {
         }
     }
     
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        menuInflater.inflate(R.menu.menu_add_note_template, menu)
-        return true
-    }
-    
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            android.R.id.home -> {
-                finish()
-                true
-            }
-            R.id.action_template -> {
-                showTemplateSelector()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
 
     private fun setupReminderSection() {
-        // Setup reminder period dropdown
-        val reminderPeriods = listOf(
-            "5 Minutes Before",
-            "10 Minutes Before", 
-            "30 Minutes Before",
-            "1 Hour Before"
-        )
-        
-        val adapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, reminderPeriods)
-        binding.reminderPeriodDropdown.setAdapter(adapter)
-        
-        // Setup reminder checkbox
-        binding.reminderCheckbox.setOnCheckedChangeListener { _, isChecked ->
+        // Setup reminder switch
+        binding.reminderSwitch.setOnCheckedChangeListener { _, isChecked ->
             binding.reminderDetailsLayout.visibility = if (isChecked) View.VISIBLE else View.GONE
         }
         
-        // Setup date picker
-        binding.reminderDateEditText.setOnClickListener {
+        // Setup date picker button
+        binding.datePickerButton.setOnClickListener {
             showDatePicker()
         }
         
-        // Setup time picker
-        binding.reminderTimeEditText.setOnClickListener {
+        // Setup time picker button
+        binding.timePickerButton.setOnClickListener {
             showTimePicker()
         }
+        
+        // Setup reminder period chips
+        binding.chipOnce.setOnClickListener {
+            updateReminderPeriod("Tek Sefer")
+        }
+        binding.chipDaily.setOnClickListener {
+            updateReminderPeriod("Günlük")
+        }
+        binding.chipWeekly.setOnClickListener {
+            updateReminderPeriod("Haftalık")
+        }
+        binding.chipMonthly.setOnClickListener {
+            updateReminderPeriod("Aylık")
+        }
+    }
+    
+    private fun updateReminderPeriod(period: String) {
+        binding.selectedPeriodText.text = period
     }
 
     private fun setupFileAttachment() {
@@ -153,7 +157,7 @@ class AddNoteActivity : AppCompatActivity() {
         }
         
         binding.descriptionEditText.setOnEditorActionListener { _, _, _ ->
-            binding.reminderCheckbox.requestFocus()
+            binding.reminderSwitch.requestFocus()
             true
         }
     }
@@ -167,7 +171,8 @@ class AddNoteActivity : AppCompatActivity() {
         DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
             val selectedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d", 
                 selectedYear, selectedMonth + 1, selectedDay)
-            binding.reminderDateEditText.setText(selectedDate)
+            binding.selectedDateText.text = selectedDate
+            binding.datePickerButton.text = "Tarih: $selectedDate"
         }, year, month, day).show()
     }
 
@@ -178,7 +183,8 @@ class AddNoteActivity : AppCompatActivity() {
 
         TimePickerDialog(this, { _, selectedHour, selectedMinute ->
             val timeString = String.format(Locale.getDefault(), "%02d:%02d", selectedHour, selectedMinute)
-            binding.reminderTimeEditText.setText(timeString)
+            binding.selectedTimeText.text = timeString
+            binding.timePickerButton.text = "Saat: $timeString"
         }, hour, minute, true).show()
     }
 
@@ -223,32 +229,45 @@ class AddNoteActivity : AppCompatActivity() {
             .show()
     }
 
+    private fun loadNoteForEditing(noteId: Int) {
+        noteViewModel.getNoteById(noteId).observe(this) { note ->
+            note?.let {
+                binding.titleEditText.setText(it.title)
+                binding.descriptionEditText.setText(it.description)
+            }
+        }
+    }
     private fun saveNote(isEncrypted: Boolean = false, password: String = "") {
         try {
             val title = binding.titleEditText.text.toString()
             val description = binding.descriptionEditText.text.toString()
 
             if (title.isNotBlank() && description.isNotBlank()) {
+                val noteId = intent.getIntExtra("noteId", -1)
                 val note = Note(
-                    id = 0,
+                    id = if (noteId != -1) noteId else 0,
                     title = title,
                     description = description,
                     date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
                     isEncrypted = isEncrypted,
                     status = "NEW",
                     createdAt = System.currentTimeMillis(),
-                    reminderMinutesBefore = if (binding.reminderCheckbox.isChecked) {
-                        when (binding.reminderPeriodDropdown.text.toString()) {
-                            "5 Minutes Before" -> 5
-                            "10 Minutes Before" -> 10
-                            "30 Minutes Before" -> 30
-                            "1 Hour Before" -> 60
+                    reminderMinutesBefore = if (binding.reminderSwitch.isChecked) {
+                        when (binding.selectedPeriodText.text.toString()) {
+                            "Tek Sefer" -> 0
+                            "Günlük" -> 1
+                            "Haftalık" -> 7
+                            "Aylık" -> 30
                             else -> null
                         }
                     } else null
                 )
 
-                noteViewModel.insert(note)
+                if (noteId != -1) {
+                    noteViewModel.update(note)
+                } else {
+                    noteViewModel.insert(note)
+                }
                 
                 val message = if (isEncrypted) "Not şifreli olarak kaydedildi" else "Not kaydedildi"
                 CustomToast.show(this, message)

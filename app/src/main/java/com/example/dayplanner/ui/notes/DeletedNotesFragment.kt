@@ -92,10 +92,6 @@ class DeletedNotesFragment : Fragment() {
 
     private fun setupSelectionMode() {
         // Bottom action bar buttons
-        binding.btnCancel.setOnClickListener {
-            exitSelectionMode()
-        }
-        
         binding.checkboxSelectAll.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked) {
                 selectAllNotes()
@@ -110,6 +106,16 @@ class DeletedNotesFragment : Fragment() {
         
         binding.btnDeleteSelected.setOnClickListener {
             showDeleteSelectedConfirmation()
+        }
+        
+        // Cancel selection button
+        binding.cancelSelectionButton.setOnClickListener {
+            exitSelectionMode()
+        }
+        
+        // Select mode button
+        binding.selectModeButton.setOnClickListener {
+            toggleSelectionMode()
         }
     }
 
@@ -148,9 +154,9 @@ class DeletedNotesFragment : Fragment() {
     private fun exitSelectionMode() {
         isSelectionMode = false
         selectedNotes.clear()
-        binding.selectionBar.visibility = View.GONE
+        binding.selectionModeLayout.visibility = View.GONE
         binding.checkboxSelectAll.isChecked = false
-        // noteAdapter.setSelectionMode(false) // NoteAdapter doesn't have setSelectionMode
+        noteAdapter.notifyDataSetChanged()
     }
 
     private fun showRestoreSelectedConfirmation() {
@@ -192,7 +198,7 @@ class DeletedNotesFragment : Fragment() {
                     noteViewModel.restoreNote(noteId)
                 }
                 exitSelectionMode()
-                CustomToast.show(requireContext(), "${selectedNotes.size} not geri yüklendi")
+                // Geri yükleme başarılı - gereksiz toast kaldırıldı
             } catch (e: Exception) {
                 CustomToast.show(requireContext(), "Notlar geri yüklenemedi: ${e.message}")
             }
@@ -270,7 +276,21 @@ class DeletedNotesFragment : Fragment() {
             if (note.isEncrypted || note.encryptedBlob != null) {
                 showPasswordDialog("Şifreli Silinen Not", "Bu notu görüntülemek için şifrenizi girin:") { password ->
                     try {
-                        val encryptedContent = String(note.encryptedBlob ?: return@showPasswordDialog)
+                        // Check if encrypted blob exists
+                        val encryptedBlob = note.encryptedBlob
+                        if (encryptedBlob == null) {
+                            CustomToast.show(requireContext(), "Şifrelenmiş içerik bulunamadı")
+                            return@showPasswordDialog
+                        }
+                        
+                        val encryptedContent = String(encryptedBlob)
+                        
+                        // Verify password before attempting decryption
+                        if (!com.example.dayplanner.security.PasswordManager.verifyPassword(encryptedContent, password)) {
+                            CustomToast.show(requireContext(), "Yanlış şifre")
+                            return@showPasswordDialog
+                        }
+                        
                         val decryptedContent = com.example.dayplanner.security.PasswordManager.decryptNote(encryptedContent, password)
                         
                         // Show read-only view
@@ -348,7 +368,7 @@ class DeletedNotesFragment : Fragment() {
         lifecycleScope.launch {
             try {
                 noteViewModel.restoreNote(note.id)
-                CustomToast.show(requireContext(), "Not geri yüklendi: ${note.title}")
+                // Geri yükleme başarılı - gereksiz toast kaldırıldı
             } catch (e: Exception) {
                 CustomToast.show(requireContext(), "Not geri yüklenemedi: ${e.message}")
             }
@@ -372,7 +392,7 @@ class DeletedNotesFragment : Fragment() {
             .setMessage("Tüm silinen notları geri yüklemek istediğinizden emin misiniz?")
             .setPositiveButton("Geri Yükle") { _, _ ->
                 noteViewModel.restoreAllNotes()
-                CustomToast.show(requireContext(), "Tüm notlar geri yüklendi")
+                // Tüm notlar geri yüklendi - gereksiz toast kaldırıldı
             }
             .setNegativeButton("İptal", null)
             .show()

@@ -6,8 +6,6 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dayplanner.databinding.ActivityMainBinding
 import android.content.pm.ShortcutManager
 import android.content.pm.ShortcutInfo
@@ -40,10 +38,11 @@ class MainActivity : AppCompatActivity() {
             },
             onLockToggle = { note, shouldLock ->
                 if (shouldLock) {
-                    // Şifrele
-                    // Burada şifreleme dialog'u gösterilebilir
+                    // Kilitle
+                    val updated = note.copy(isEncrypted = true, isLocked = true)
+                    noteViewModel.update(updated)
                 } else {
-                    // Şifre kaldır
+                    // Kilidi kaldır
                     val updated = note.copy(isEncrypted = false, isLocked = false)
                     noteViewModel.update(updated)
                 }

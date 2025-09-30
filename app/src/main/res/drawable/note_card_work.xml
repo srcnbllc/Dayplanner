@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- İş Notu Kartı - Kite Design -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    
+    <!-- Gradient arka plan -->
+    <gradient
+        android:angle="135"
+        android:startColor="#FF6B6B"
+        android:endColor="#FF8E8E"
+        android:type="linear" />
+    
+    <!-- Köşeler -->
+    <corners android:radius="16dp" />
+    
+    <!-- Gölge -->
+    <stroke
+        android:width="2dp"
+        android:color="#FF4A4A" />
+        
+</shape>
+

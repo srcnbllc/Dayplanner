@@ -95,9 +95,13 @@ class NotesFragment : Fragment() {
                 showDeleteConfirmation(note)
             },
             onPinToggle = { note, shouldPin ->
-                noteViewModel.setPinned(note.id, shouldPin)
-                val action = if (shouldPin) "pinned" else "unpinned"
-                CustomToast.show(requireContext(), "Note $action successfully")
+                if (shouldPin) {
+                    // Pinleme - şifre olmadan sadece favorileme/işaretleme
+                    pinNote(note)
+                } else {
+                    // Pin kaldırma - şifre olmadan
+                    unpinNote(note)
+                }
             }
         )
 
@@ -141,9 +145,11 @@ class NotesFragment : Fragment() {
                         val intent = Intent(requireContext(), AddNoteActivity::class.java)
                         startActivity(intent)
                         
-                        // Re-enable button after a short delay
+                        // Re-enable button after a short delay (using viewLifecycleOwner for safety)
                         binding.addNoteButton.postDelayed({
-                            binding.addNoteButton.isEnabled = true
+                            if (isAdded && view != null) {
+                                binding.addNoteButton.isEnabled = true
+                            }
                         }, 1000)
                     } catch (e: Exception) {
                         android.util.Log.e("NotesFragment", "Error starting AddNoteActivity: ${e.message}", e)
@@ -204,6 +210,7 @@ class NotesFragment : Fragment() {
         // Use single observer for better performance
         noteViewModel.allNotesSorted.observe(viewLifecycleOwner) { notes ->
             allNotesCache = notes
+            updateStatistics(notes)
             applyFiltersAndSearch()
         }
     }
@@ -215,63 +222,72 @@ class NotesFragment : Fragment() {
             return
         }
         
-        var list = allNotesCache
-        
-        // Apply filter based on currentFilter for better performance
-        list = when (currentFilter) {
-            "RECENTLY_ADDED" -> list.take(50) // Limit to 50 most recent
-            "PINNED" -> list.filter { it.isPinned }
-            "ENCRYPTED" -> list.filter { it.isEncrypted }
-            "PASSWORD_PROTECTED" -> list.filter { it.isEncrypted || it.encryptedBlob != null }
-            else -> list // "ALL" - no additional filtering needed
-        }
-        
-        // Status filtresi
-        currentStatusFilter?.let { status ->
-            list = when (status) {
-                "NEW", "NOTES", "DELETED" -> list.filter { it.status == status }
-                else -> list
-            }
-        }
-        
-        // Optimized search - pre-compute lowercase query
-        if (currentQuery.isNotEmpty()) {
-            val q = currentQuery.lowercase()
-            list = list.filter { note ->
-                // Pre-compute lowercase values for better performance
-                val titleLower = note.title.lowercase()
-                val descLower = note.description.lowercase()
-                val tagsLower = note.tags?.lowercase()
+        // Use coroutine for better performance
+        lifecycleScope.launch {
+            try {
+                var list = allNotesCache
                 
-                titleLower.contains(q) || 
-                descLower.contains(q) ||
-                (tagsLower?.contains(q) == true) ||
-                // Optimized date search
-                note.createdAt.toString().contains(q) ||
-                // Boolean checks (faster than string operations)
-                (note.isEncrypted && q.contains("şifreli")) ||
-                (note.isLocked && q.contains("kilitli")) ||
-                (note.isPinned && q.contains("sabitlenmiş"))
+                // Apply filter based on currentFilter for better performance
+                list = when (currentFilter) {
+                    "RECENTLY_ADDED" -> list.take(50) // Limit to 50 most recent
+                    "PINNED" -> list.filter { it.isPinned }
+                    "ENCRYPTED" -> list.filter { it.isEncrypted }
+                    "PASSWORD_PROTECTED" -> list.filter { it.isEncrypted || it.encryptedBlob != null }
+                    else -> list // "ALL" - no additional filtering needed
+                }
+                
+                // Status filtresi
+                currentStatusFilter?.let { status ->
+                    list = when (status) {
+                        "NEW", "NOTES", "DELETED" -> list.filter { it.status == status }
+                        else -> list
+                    }
+                }
+                
+                // Optimized search - pre-compute lowercase query
+                if (currentQuery.isNotEmpty()) {
+                    val q = currentQuery.lowercase()
+                    list = list.filter { note ->
+                        // Pre-compute lowercase values for better performance
+                        val titleLower = note.title.lowercase()
+                        val descLower = note.description.lowercase()
+                        val tagsLower = note.tags?.lowercase()
+                        
+                        titleLower.contains(q) || 
+                        descLower.contains(q) ||
+                        (tagsLower?.contains(q) == true) ||
+                        // Optimized date search
+                        note.createdAt.toString().contains(q) ||
+                        // Boolean checks (faster than string operations)
+                        (note.isEncrypted && q.contains("şifreli")) ||
+                        (note.isLocked && q.contains("kilitli")) ||
+                        (note.isPinned && q.contains("sabitlenmiş"))
+                    }
+                }
+                
+                // Optimized sorting - only sort if needed
+                val sorted = if (list.size > 1) {
+                    list.sortedWith(compareByDescending<com.example.dayplanner.Note> { it.isPinned }
+                        .thenByDescending { it.createdAt }
+                        .thenByDescending { it.id })
+                } else {
+                    list
+                }
+                
+                // Update UI on main thread
+                noteAdapter.submitList(sorted)
+                
+                // Empty state göster/gizle
+                if (sorted.isEmpty()) {
+                    binding.emptyStateLayout.visibility = android.view.View.VISIBLE
+                    binding.recyclerView.visibility = android.view.View.GONE
+                } else {
+                    binding.emptyStateLayout.visibility = android.view.View.GONE
+                    binding.recyclerView.visibility = android.view.View.VISIBLE
+                }
+            } catch (e: Exception) {
+                android.util.Log.e("NotesFragment", "Error in applyFiltersAndSearch: ${e.message}", e)
             }
-        }
-        
-        // Optimized sorting - only sort if needed
-        val sorted = if (list.size > 1) {
-            list.sortedWith(compareByDescending<com.example.dayplanner.Note> { it.isPinned }
-                .thenByDescending { it.createdAt }
-                .thenByDescending { it.id })
-        } else {
-            list
-        }
-        noteAdapter.submitList(sorted)
-        
-        // Empty state göster/gizle
-        if (sorted.isEmpty()) {
-            binding.emptyStateLayout.visibility = android.view.View.VISIBLE
-            binding.recyclerView.visibility = android.view.View.GONE
-        } else {
-            binding.emptyStateLayout.visibility = android.view.View.GONE
-            binding.recyclerView.visibility = android.view.View.VISIBLE
         }
     }
 
@@ -374,10 +390,8 @@ class NotesFragment : Fragment() {
                             }
                         }
                         2 -> {
-                            // Pin/Unpin
+                            // Pin/Unpin - gereksiz toast kaldırıldı
                             noteViewModel.setPinned(note.id, !note.isPinned)
-                            val action = if (note.isPinned) "unpinned" else "pinned"
-                            CustomToast.show(requireContext(), "Note $action successfully")
                         }
                         3 -> {
                             // Sil/Geri Yükle/Kalıcı Sil
@@ -434,13 +448,15 @@ class NotesFragment : Fragment() {
                 val encryptedContent = PasswordManager.encryptNote(content, password)
                 
                 val updatedNote = note.copy(
-                    isLocked = false,
+                    isLocked = true,  // Kilitli olarak işaretle
                     isEncrypted = true,
                     description = "", // Şifrelenmiş içerik boş
                     encryptedBlob = encryptedContent.toByteArray()
                 )
                 noteViewModel.update(updatedNote)
+                // Şifreleme başarılı - gereksiz toast kaldırıldı
             } catch (e: Exception) {
+                android.util.Log.e("NotesFragment", "Encryption error: ${e.message}", e)
                 CustomToast.show(requireContext(), "Şifreleme hatası: ${e.message}")
             }
         }
@@ -448,33 +464,59 @@ class NotesFragment : Fragment() {
         private fun removeEncryption(note: com.example.dayplanner.Note, password: String) {
             lifecycleScope.launch {
                 try {
-                    android.util.Log.d("NotesFragment", "Removing encryption from note: ${note.title}, isEncrypted: ${note.isEncrypted}, hasBlob: ${note.encryptedBlob != null}")
+                    android.util.Log.d("NotesFragment", "Removing encryption from note: ${note.title}, isEncrypted: ${note.isEncrypted}, isLocked: ${note.isLocked}, hasBlob: ${note.encryptedBlob != null}")
                     
-                    if (!note.isEncrypted && note.encryptedBlob == null) {
-                        CustomToast.show(requireContext(), "Şifrelenmiş not bulunamadı")
+                    // Check if note is actually encrypted - more comprehensive check
+                    val isActuallyEncrypted = note.isEncrypted || note.isLocked || note.encryptedBlob != null
+                    
+                    if (!isActuallyEncrypted) {
+                        CustomToast.show(requireContext(), "Bu not zaten şifrelenmemiş")
                         return@launch
                     }
 
-                    val encryptedContent = String(note.encryptedBlob ?: return@launch)
+                    // Handle different encryption states
+                    val encryptedBlob = note.encryptedBlob
+                    if (encryptedBlob == null) {
+                        // Note is marked as locked/encrypted but has no encrypted content
+                        // This might be a legacy note or corrupted state
+                        android.util.Log.w("NotesFragment", "Note marked as encrypted but no encrypted blob found: ${note.title}")
+                        
+                        // Simply remove encryption flags without password verification
+                        val updatedNote = note.copy(
+                            isLocked = false,
+                            isEncrypted = false,
+                            encryptedBlob = null
+                        )
+                        
+                        noteViewModel.update(updatedNote)
+                        CustomToast.show(requireContext(), "Şifre kaldırıldı (içerik zaten açıktı)")
+                        return@launch
+                    }
+
+                    val encryptedContent = String(encryptedBlob)
                     
+                    // Verify password before attempting decryption
                     if (!PasswordManager.verifyPassword(encryptedContent, password)) {
                         CustomToast.show(requireContext(), "Yanlış şifre")
                         return@launch
                     }
 
+                    // Decrypt the content
                     val decryptedContent = PasswordManager.decryptNote(encryptedContent, password)
                     
+                    // Update note with decrypted content and remove encryption flags
                     val updatedNote = note.copy(
-                        isLocked = false,
+                        isLocked = false,  // Kilitli değil
                         isEncrypted = false,
                         description = decryptedContent,
                         encryptedBlob = null
                     )
                     
-                    android.util.Log.d("NotesFragment", "Updated note: isEncrypted: ${updatedNote.isEncrypted}, hasBlob: ${updatedNote.encryptedBlob != null}")
+                    android.util.Log.d("NotesFragment", "Updated note: isEncrypted: ${updatedNote.isEncrypted}, isLocked: ${updatedNote.isLocked}, hasBlob: ${updatedNote.encryptedBlob != null}")
                     
+                    // Save the updated note
                     noteViewModel.update(updatedNote)
-                    CustomToast.show(requireContext(), "Şifre başarıyla kaldırıldı")
+                    // Şifre kaldırma başarılı - gereksiz toast kaldırıldı
                     
                     // Log success
                     android.util.Log.d("NotesFragment", "Password removed from note: ${note.title}")
@@ -486,32 +528,81 @@ class NotesFragment : Fragment() {
             }
         }
 
+        private fun pinNote(note: com.example.dayplanner.Note) {
+            lifecycleScope.launch {
+                try {
+                    val updatedNote = note.copy(isPinned = true)
+                    noteViewModel.update(updatedNote)
+                    // Pinleme başarılı - gereksiz toast kaldırıldı
+                } catch (e: Exception) {
+                    android.util.Log.e("NotesFragment", "Pin error: ${e.message}", e)
+                    CustomToast.show(requireContext(), "Pinleme hatası: ${e.message}")
+                }
+            }
+        }
+
+        private fun unpinNote(note: com.example.dayplanner.Note) {
+            lifecycleScope.launch {
+                try {
+                    val updatedNote = note.copy(isPinned = false)
+                    noteViewModel.update(updatedNote)
+                    // Pin kaldırma başarılı - gereksiz toast kaldırıldı
+                } catch (e: Exception) {
+                    android.util.Log.e("NotesFragment", "Unpin error: ${e.message}", e)
+                    CustomToast.show(requireContext(), "Pin kaldırma hatası: ${e.message}")
+                }
+            }
+        }
+
         private fun openEncryptedNote(note: com.example.dayplanner.Note, password: String) {
             try {
-                val encryptedContent = String(note.encryptedBlob ?: return)
+                android.util.Log.d("NotesFragment", "Opening encrypted note: ${note.title}")
                 
+                // Check if encrypted blob exists
+                val encryptedBlob = note.encryptedBlob
+                if (encryptedBlob == null) {
+                    CustomToast.show(requireContext(), "Şifrelenmiş içerik bulunamadı")
+                    return
+                }
+                
+                val encryptedContent = String(encryptedBlob)
+                
+                // Verify password before attempting decryption
                 if (!PasswordManager.verifyPassword(encryptedContent, password)) {
                     CustomToast.show(requireContext(), "Yanlış şifre")
                     return
                 }
 
+                // Decrypt the content
                 val decryptedContent = PasswordManager.decryptNote(encryptedContent, password)
                 
-                // Geçici olarak notu açık hale getir (tempNote kullanılmıyor)
+                android.util.Log.d("NotesFragment", "Successfully decrypted note: ${note.title}")
                 
-                // Düzenleme ekranına git
+                // Open AddNoteActivity with decrypted content
                 val intent = Intent(requireContext(), AddNoteActivity::class.java)
                 intent.putExtra("noteId", note.id)
                 intent.putExtra("isEncrypted", true)
                 intent.putExtra("decryptedContent", decryptedContent)
+                intent.putExtra("title", note.title) // Pass the title as well
                 startActivity(intent)
                 
             } catch (e: Exception) {
+                android.util.Log.e("NotesFragment", "Error opening encrypted note: ${e.message}", e)
                 CustomToast.show(requireContext(), "Not açma hatası: ${e.message}")
             }
         }
 
         private fun showDeleteConfirmation(note: com.example.dayplanner.Note) {
+            // Şifrelenmiş notları silmeyi engelle
+            if (note.isEncrypted || note.isLocked || note.encryptedBlob != null) {
+                androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                    .setTitle("Şifreli Not Silinemez")
+                    .setMessage("Şifreli not silinemez. Öncelikle şifreyi kaldırınız.")
+                    .setPositiveButton("Tamam", null)
+                    .show()
+                return
+            }
+            
             androidx.appcompat.app.AlertDialog.Builder(requireContext())
                 .setTitle("Notu Sil")
                 .setMessage("Bu not silinecek ve 30 gün sonra kalıcı olarak silinecek. Geri yüklemek için 'Silinenler' bölümünü kontrol edin.")
@@ -543,19 +634,11 @@ class NotesFragment : Fragment() {
         private fun softDeleteNote(note: com.example.dayplanner.Note) {
             lifecycleScope.launch {
                 try {
-                    val result = noteViewModel.moveToTrashIfDecrypted(note.id)
-                if (result.isSuccess) {
-                    // Note moved to trash successfully
-                } else {
-                    val error = result.exceptionOrNull()
-                    if (error?.message == "ENCRYPTED") {
-                        // Encrypted note cannot be deleted
-                    } else {
-                        // Other deletion error
-                    }
-                }
+                    noteViewModel.softDeleteById(note.id)
+                    CustomToast.show(requireContext(), "Not çöp kutusuna taşındı")
                 } catch (e: Exception) {
                     android.util.Log.e("NotesFragment", "Error soft deleting note: ${e.message}", e)
+                    CustomToast.show(requireContext(), "Silme hatası: ${e.message}")
                 }
             }
         }
@@ -642,19 +725,26 @@ class NotesFragment : Fragment() {
                     var encryptedCount = 0
                     
                     selectedNotes.forEach { noteId ->
-                        val result = noteViewModel.moveToTrashIfDecrypted(noteId)
-                        if (result.isSuccess) {
-                            successCount++
+                        // Şifrelenmiş notları kontrol et
+                        val note = allNotesCache.find { it.id == noteId }
+                        if (note != null && (note.isEncrypted || note.isLocked || note.encryptedBlob != null)) {
+                            encryptedCount++
                         } else {
-                            if (result.exceptionOrNull()?.message == "ENCRYPTED") {
-                                encryptedCount++
+                            val result = noteViewModel.moveToTrashIfDecrypted(noteId)
+                            if (result.isSuccess) {
+                                successCount++
                             }
                         }
                     }
                     
                     exitSelectionMode()
                     
-                    // Notes deleted successfully
+                    // Sonuç mesajı
+                    if (encryptedCount > 0) {
+                        CustomToast.show(requireContext(), "$successCount not silindi, $encryptedCount şifreli not silinemedi")
+                    } else {
+                        CustomToast.show(requireContext(), "$successCount not silindi")
+                    }
                 } catch (e: Exception) {
                     android.util.Log.e("NotesFragment", "Error deleting selected notes: ${e.message}", e)
                 }
@@ -665,23 +755,22 @@ class NotesFragment : Fragment() {
 
         private fun setupFilterSpinner() {
             val filterOptions = listOf(
-                "All",
-                "Recently Added", 
-                "Pinned",
-                "Encrypted",
-                "Password-Protected"
+                "Tümü",
+                "Son Eklenen", 
+                "Şifreli",
+                "Pinlenmiş"
             )
             
             val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, filterOptions)
             binding.filterSpinner.setAdapter(adapter)
             
-            binding.filterSpinner.setOnItemClickListener { _, _, position, _ ->
+            // Use setOnItemClickListener for AutoCompleteTextView dropdown selection
+            binding.filterSpinner.setOnItemClickListener { parent, view, position, id ->
                 when (position) {
                     0 -> currentFilter = "ALL"
                     1 -> currentFilter = "RECENTLY_ADDED"
-                    2 -> currentFilter = "PINNED"
-                    3 -> currentFilter = "ENCRYPTED"
-                    4 -> currentFilter = "PASSWORD_PROTECTED"
+                    2 -> currentFilter = "ENCRYPTED"
+                    3 -> currentFilter = "PINNED"
                 }
                 observeFilteredNotes()
             }
@@ -715,6 +804,27 @@ class NotesFragment : Fragment() {
             dialog.show(parentFragmentManager, "quick_preview")
         }
 
+
+        private fun updateStatistics(notes: List<com.example.dayplanner.Note>) {
+            try {
+                val totalNotes = notes.size
+                val pinnedNotes = notes.count { it.isPinned }
+                val recentNotes = notes.count { 
+                    val currentTime = System.currentTimeMillis()
+                    val weekAgo = currentTime - (7 * 24 * 60 * 60 * 1000)
+                    it.createdAt > weekAgo
+                }
+                
+                // Update UI with proper text colors for visibility
+                binding.totalNotesCount.text = totalNotes.toString()
+                binding.pinnedNotesCount.text = pinnedNotes.toString()
+                binding.recentNotesCount.text = recentNotes.toString()
+                
+                android.util.Log.d("NotesFragment", "Statistics updated: Total=$totalNotes, Pinned=$pinnedNotes, Recent=$recentNotes")
+            } catch (e: Exception) {
+                android.util.Log.e("NotesFragment", "Error updating statistics: ${e.message}", e)
+            }
+        }
 
         override fun onDestroyView() {
             super.onDestroyView()

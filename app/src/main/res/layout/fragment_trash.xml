@@ -5,23 +5,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface"
+    android:background="@drawable/background_pattern"
     tools:context=".ui.trash.TrashFragment">
 
-    <!-- App Bar -->
+    <!-- Kite Design Header -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:elevation="4dp">
+        android:background="@drawable/header_gradient"
+        app:elevation="8dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="Çöp Kutusu"
+            android:background="@drawable/header_gradient"
+            app:title="🗑️ Silinenler"
             app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge"
+            app:titleTextColor="@android:color/white"
             app:navigationIcon="@drawable/ic_arrow_back"
-            app:titleTextColor="?attr/colorOnSurface"/>
+            app:navigationIconTint="@android:color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -53,7 +56,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="🗑️ Çöp Kutusu"
+                        android:text="Çöp Kutusu"
                         android:textSize="18sp"
                         android:textStyle="bold"
                         android:textColor="?attr/colorOnSurface"/>

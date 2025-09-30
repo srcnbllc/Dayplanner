@@ -258,14 +258,6 @@
         app:layout_anchor="@id/selection_bar"
         app:layout_anchorGravity="bottom">
 
-        <Button
-            android:id="@+id/btn_cancel"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Vazgeç"
-            android:textColor="?attr/colorOnSurface"
-            style="@style/Widget.Material3.Button.TextButton" />
-
         <CheckBox
             android:id="@+id/checkbox_select_all"
             android:layout_width="wrap_content"

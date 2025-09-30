@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Fikir Notları - Kite Design -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+    
+    <!-- Kare arka plan -->
+    <path
+        android:fillColor="#FFE66D"
+        android:pathData="M6,6h20v20H6V6z"/>
+    
+    <!-- Ampul -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M16,8c-3.31,0 -6,2.69 -6,6 0,1.5 0.55,2.87 1.46,3.93L12,20h8l-0.46,-2.07C20.45,16.87 21,15.5 21,14c0,-3.31 -2.69,-6 -6,-6z"/>
+    
+    <!-- Işık çizgileri -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M8,24h16v2H8V24z"/>
+        
+</vector>
+

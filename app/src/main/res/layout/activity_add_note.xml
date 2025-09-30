@@ -5,24 +5,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/colorSurface"
+    android:background="@drawable/background_pattern"
     tools:context=".AddNoteActivity">
 
-    <!-- Header with Template Icon -->
+    <!-- Kite Design Header -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:elevation="0dp">
+        android:background="@drawable/header_gradient"
+        app:elevation="8dp">
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            app:title="Yeni Not"
+            android:background="@drawable/header_gradient"
+            app:title="📝 Yeni Not"
             app:titleTextAppearance="@style/TextAppearance.Material3.TitleLarge"
-            app:titleTextColor="?attr/colorOnSurface"
+            app:titleTextColor="@android:color/white"
             app:navigationIcon="@drawable/ic_arrow_back"
-            app:menu="@menu/menu_add_note_template" />
+            app:navigationIconTint="@android:color/white" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -39,6 +41,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="16dp">
+
 
             <!-- Title Field -->
             <com.google.android.material.textfield.TextInputLayout
@@ -81,124 +84,295 @@
 
             </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Reminder Section -->
+            <!-- Kite Design Reminder Section -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
-                    <CheckBox
-                        android:id="@+id/reminderCheckbox"
-                        android:layout_width="wrap_content"
+                    <!-- Reminder Toggle -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Hatırlatma Ayarla"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="?attr/colorOnSurface" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
 
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_note_reminder"
+                            android:tint="@color/kite_green"
+                            android:layout_marginEnd="12dp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="⏰ Hatırlatma Ayarla"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="?attr/colorOnSurface" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/reminderSwitch"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="false"
+                            app:thumbTint="@color/kite_green"
+                            app:trackTint="@color/kite_green" />
+
+                    </LinearLayout>
+
+                    <!-- Reminder Details -->
                     <LinearLayout
                         android:id="@+id/reminderDetailsLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:visibility="gone"
-                        android:layout_marginTop="12dp">
+                        android:layout_marginTop="20dp">
 
+                        <!-- Date and Time Row -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:layout_marginBottom="12dp">
+                            android:layout_marginBottom="16dp">
 
-                            <com.google.android.material.textfield.TextInputLayout
+                            <!-- Date Picker -->
+                            <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:layout_marginEnd="8dp"
-                                android:hint="Tarih"
-                                style="@style/Widget.App.TextInputLayout">
+                                android:orientation="vertical"
+                                android:layout_marginEnd="8dp">
 
-                                <com.google.android.material.textfield.TextInputEditText
-                                    android:id="@+id/reminderDateEditText"
-                                    android:layout_width="match_parent"
+                                <TextView
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:inputType="date"
-                                    android:focusable="false"
-                                    android:clickable="true" />
+                                    android:text="📅 Tarih"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold"
+                                    android:textColor="?attr/colorOnSurface"
+                                    android:layout_marginBottom="8dp" />
 
-                            </com.google.android.material.textfield.TextInputLayout>
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/datePickerButton"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="56dp"
+                                    android:text="Tarih Seç"
+                                    android:textSize="16sp"
+                                    android:backgroundTint="@color/kite_blue"
+                                    style="@style/Widget.App.Button.Outlined"
+                                    app:icon="@drawable/ic_kite_circle"
+                                    app:iconGravity="textStart" />
 
-                            <com.google.android.material.textfield.TextInputLayout
+                            </LinearLayout>
+
+                            <!-- Time Picker -->
+                            <LinearLayout
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
-                                android:layout_marginStart="8dp"
-                                android:hint="Saat"
-                                style="@style/Widget.App.TextInputLayout">
+                                android:orientation="vertical"
+                                android:layout_marginStart="8dp">
 
-                                <com.google.android.material.textfield.TextInputEditText
-                                    android:id="@+id/reminderTimeEditText"
-                                    android:layout_width="match_parent"
+                                <TextView
+                                    android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:inputType="time"
-                                    android:focusable="false"
-                                    android:clickable="true" />
+                                    android:text="🕐 Saat"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold"
+                                    android:textColor="?attr/colorOnSurface"
+                                    android:layout_marginBottom="8dp" />
 
-                            </com.google.android.material.textfield.TextInputLayout>
+                                <com.google.android.material.button.MaterialButton
+                                    android:id="@+id/timePickerButton"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="56dp"
+                                    android:text="Saat Seç"
+                                    android:textSize="16sp"
+                                    android:backgroundTint="@color/kite_yellow"
+                                    style="@style/Widget.App.Button.Outlined"
+                                    app:icon="@drawable/ic_kite_square"
+                                    app:iconGravity="textStart" />
+
+                            </LinearLayout>
 
                         </LinearLayout>
 
-                        <com.google.android.material.textfield.TextInputLayout
+                        <!-- Reminder Periods -->
+                        <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:hint="Hatırlatma Süresi"
-                            style="@style/Widget.App.TextInputLayout">
+                            android:orientation="vertical">
 
-                            <AutoCompleteTextView
-                                android:id="@+id/reminderPeriodDropdown"
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="🔄 Hatırlatma Periyodu"
+                                android:textSize="14sp"
+                                android:textStyle="bold"
+                                android:textColor="?attr/colorOnSurface"
+                                android:layout_marginBottom="12dp" />
+
+                            <com.google.android.material.chip.ChipGroup
+                                android:id="@+id/reminderPeriodChipGroup"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:inputType="none"
-                                android:focusable="false"
-                                android:clickable="true" />
+                                app:singleSelection="true"
+                                app:singleLine="true">
 
-                        </com.google.android.material.textfield.TextInputLayout>
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipOnce"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Tek Sefer"
+                                    android:checkable="true"
+                                    android:checked="true"
+                                    style="@style/Widget.Material3.Chip.Filter" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipDaily"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Günlük"
+                                    android:checkable="true"
+                                    style="@style/Widget.Material3.Chip.Filter" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipWeekly"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Haftalık"
+                                    android:checkable="true"
+                                    style="@style/Widget.Material3.Chip.Filter" />
+
+                                <com.google.android.material.chip.Chip
+                                    android:id="@+id/chipMonthly"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="1"
+                                    android:text="Aylık"
+                                    android:checkable="true"
+                                    style="@style/Widget.Material3.Chip.Filter" />
+
+                            </com.google.android.material.chip.ChipGroup>
+
+                        </LinearLayout>
+
+                        <!-- Selected Date/Time Display -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_marginTop="16dp"
+                            android:padding="12dp"
+                            android:background="@drawable/note_card_reminder"
+                            android:gravity="center_vertical">
+
+                            <ImageView
+                                android:layout_width="24dp"
+                                android:layout_height="24dp"
+                                android:src="@drawable/ic_note_reminder"
+                                android:tint="@android:color/white"
+                                android:layout_marginEnd="12dp" />
+
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/selectedDateText"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Tarih seçilmedi"
+                                    android:textSize="14sp"
+                                    android:textStyle="bold"
+                                    android:textColor="@android:color/white" />
+
+                                <TextView
+                                    android:id="@+id/selectedTimeText"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="Saat seçilmedi"
+                                    android:textSize="12sp"
+                                    android:textColor="@android:color/white"
+                                    android:alpha="0.8" />
+
+                            </LinearLayout>
+
+                            <TextView
+                                android:id="@+id/selectedPeriodText"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tek Sefer"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:textColor="@android:color/white"
+                                android:background="@drawable/note_card_work"
+                                android:padding="8dp"
+                                android:layout_marginStart="8dp" />
+
+                        </LinearLayout>
 
                     </LinearLayout>
 
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Etiketler Kartı -->
+            <!-- Kite Design Etiketler Kartı -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Etiketler"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="?attr/colorOnSurface"
-                        android:layout_marginBottom="8dp" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_kite_star"
+                            android:tint="@color/kite_red"
+                            android:layout_marginEnd="12dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="🏷️ Etiketler"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="?attr/colorOnSurface" />
+
+                    </LinearLayout>
 
                     <com.google.android.material.chip.ChipGroup
                         android:layout_width="match_parent"
@@ -238,28 +412,44 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- File Attachment Section -->
+            <!-- Kite Design File Attachment Section -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="4dp">
+                app:cardCornerRadius="16dp"
+                app:cardElevation="6dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="16dp">
+                    android:padding="20dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Dosya Ekle"
-                        android:textSize="16sp"
-                        android:textStyle="bold"
-                        android:textColor="?attr/colorOnSurface"
-                        android:layout_marginBottom="12dp" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginBottom="16dp">
+
+                        <ImageView
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            android:src="@drawable/ic_kite_square"
+                            android:tint="@color/kite_yellow"
+                            android:layout_marginEnd="12dp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="📎 Dosya Ekle"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="?attr/colorOnSurface" />
+
+                    </LinearLayout>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/attachFileButton"
@@ -267,8 +457,9 @@
                         android:layout_height="wrap_content"
                         android:text="📎 Dosya Ekle"
                         android:textSize="14sp"
+                        android:backgroundTint="@color/kite_yellow"
                         style="@style/Widget.App.Button.Outlined"
-                        app:icon="@drawable/ic_attach_file"
+                        app:icon="@drawable/ic_kite_square"
                         app:iconGravity="textStart" />
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -284,13 +475,13 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <!-- Bottom Action Buttons -->
+    <!-- Kite Design Bottom Action Buttons -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_margin="16dp"
-        app:cardCornerRadius="12dp"
+        app:cardCornerRadius="16dp"
         app:cardElevation="8dp">
 
         <LinearLayout
@@ -302,19 +493,23 @@
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/saveButton"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
                 android:layout_weight="1"
                 android:layout_marginEnd="8dp"
                 android:text="Kaydet"
+                android:textSize="16sp"
+                android:backgroundTint="@color/kite_blue"
                 style="@style/Widget.App.Button" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/savePasswordButton"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
                 android:layout_weight="1"
                 android:layout_marginStart="8dp"
                 android:text="Şifreli Kaydet"
+                android:textSize="16sp"
+                android:backgroundTint="@color/kite_green"
                 style="@style/Widget.App.Button.Outlined" />
 
         </LinearLayout>

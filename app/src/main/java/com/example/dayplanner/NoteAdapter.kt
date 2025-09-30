@@ -78,18 +78,24 @@ class NoteAdapter(
                 }
             }
 
-            // Lock icon: show only if encrypted, red if locked
+            // Lock icon: show only if locked/encrypted, red if locked
             val lockIcon: ImageView = binding.lockImageView
-            val isEncrypted = note.isEncrypted || note.encryptedBlob != null
-            lockIcon.visibility = if (isEncrypted) android.view.View.VISIBLE else android.view.View.GONE
-            if (isEncrypted) {
-                val colorRes = android.R.color.holo_red_dark
+            val isLocked = note.isLocked || note.isEncrypted || note.encryptedBlob != null
+            lockIcon.visibility = if (isLocked) android.view.View.VISIBLE else android.view.View.GONE
+            if (isLocked) {
+                // Kite Design kırmızı renk kullan
+                val colorRes = R.color.kite_red
                 lockIcon.setColorFilter(ContextCompat.getColor(itemView.context, colorRes))
             }
 
-            // Pin icon: show if pinned
+            // Pin icon: show if pinned, green color
             val pinIcon: ImageView = binding.pinImageView
             pinIcon.visibility = if (note.isPinned) android.view.View.VISIBLE else android.view.View.GONE
+            if (note.isPinned) {
+                // Kite Design yeşil renk kullan
+                val colorRes = R.color.kite_green
+                pinIcon.setColorFilter(ContextCompat.getColor(itemView.context, colorRes))
+            }
 
             itemView.setOnClickListener {
                 if (isSelectionMode) {
@@ -105,9 +111,9 @@ class NoteAdapter(
                 popup.menuInflater.inflate(R.menu.menu_note_item, popup.menu)
                 
                 // Show only relevant actions - single option per action type
-                val isEncrypted = note.isEncrypted || note.encryptedBlob != null
-                popup.menu.findItem(R.id.action_lock).isVisible = !isEncrypted
-                popup.menu.findItem(R.id.action_unlock).isVisible = isEncrypted
+                val isLocked = note.isLocked || note.isEncrypted || note.encryptedBlob != null
+                popup.menu.findItem(R.id.action_lock).isVisible = !isLocked
+                popup.menu.findItem(R.id.action_unlock).isVisible = isLocked
                 popup.menu.findItem(R.id.action_pin).isVisible = !note.isPinned
                 popup.menu.findItem(R.id.action_unpin).isVisible = note.isPinned
                 

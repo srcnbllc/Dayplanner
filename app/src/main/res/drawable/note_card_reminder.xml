@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Hatırlatıcı Not Kartı - Kite Design -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    
+    <!-- Gradient arka plan -->
+    <gradient
+        android:angle="135"
+        android:startColor="#A8E6CF"
+        android:endColor="#B8EBD9"
+        android:type="linear" />
+    
+    <!-- Köşeler -->
+    <corners android:radius="16dp" />
+    
+    <!-- Gölge -->
+    <stroke
+        android:width="2dp"
+        android:color="#98D6BF" />
+        
+</shape>
+

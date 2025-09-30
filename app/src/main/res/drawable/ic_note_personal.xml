@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Kişisel Notlar - Kite Design -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="32dp"
+    android:height="32dp"
+    android:viewportWidth="32"
+    android:viewportHeight="32">
+    
+    <!-- Üçgen arka plan -->
+    <path
+        android:fillColor="#4ECDC4"
+        android:pathData="M16,4L28,24H4L16,4Z"/>
+    
+    <!-- Kalp -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M16,12c-2,-2 -4,-4 -6,-2 -2,2 -2,4 0,6l6,6 6,-6c2,-2 2,-4 0,-6 -2,-2 -4,0 -6,2z"/>
+        
+</vector>
+

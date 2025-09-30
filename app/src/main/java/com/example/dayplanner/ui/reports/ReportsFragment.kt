@@ -10,7 +10,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
 import com.example.dayplanner.NoteViewModel
 import com.example.dayplanner.R
 import com.example.dayplanner.databinding.FragmentReportsBinding

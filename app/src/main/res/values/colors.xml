@@ -61,4 +61,12 @@
     <color name="material_dynamic_green">#4CAF50</color>
     <color name="material_dynamic_blue">#2196F3</color>
     <color name="material_dynamic_orange">#FF9800</color>
+
+    <!-- Kite Design Colors - Basit ve Canlı -->
+    <color name="kite_red">#FF6B6B</color>
+    <color name="kite_blue">#4ECDC4</color>
+    <color name="kite_yellow">#FFE66D</color>
+    <color name="kite_green">#A8E6CF</color>
+    <color name="kite_purple">#A8A8FF</color>
+    <color name="kite_orange">#FFB366</color>
 </resources>

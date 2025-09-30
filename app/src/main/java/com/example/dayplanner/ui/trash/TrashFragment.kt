@@ -103,14 +103,27 @@ class TrashFragment : Fragment() {
         if (note.isEncrypted || note.isLocked || note.encryptedBlob != null) {
             showPasswordDialog("Şifreli Not", "Bu notu açmak için şifrenizi girin:") { password ->
                 try {
-                    val decryptedContent = PasswordManager.decryptNote(
-                        String(note.encryptedBlob ?: ByteArray(0)), 
-                        password
-                    )
+                    // Check if encrypted blob exists
+                    val encryptedBlob = note.encryptedBlob
+                    if (encryptedBlob == null) {
+                        CustomToast.show(requireContext(), "Şifrelenmiş içerik bulunamadı")
+                        return@showPasswordDialog
+                    }
+                    
+                    val encryptedContent = String(encryptedBlob)
+                    
+                    // Verify password before attempting decryption
+                    if (!PasswordManager.verifyPassword(encryptedContent, password)) {
+                        CustomToast.show(requireContext(), "Yanlış şifre")
+                        return@showPasswordDialog
+                    }
+                    
+                    val decryptedContent = PasswordManager.decryptNote(encryptedContent, password)
                     val intent = Intent(requireContext(), AddNoteActivity::class.java)
                     intent.putExtra("noteId", note.id)
                     intent.putExtra("decryptedContent", decryptedContent)
                     intent.putExtra("isEncrypted", true)
+                    intent.putExtra("title", note.title) // Pass the title as well
                     startActivity(intent)
                 } catch (e: Exception) {
                     CustomToast.show(requireContext(), "Şifre yanlış veya not bozuk")

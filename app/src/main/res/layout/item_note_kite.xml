@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Kite Design Not Kartı Örneği -->
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="6dp"
+    android:background="@drawable/note_card_work">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:gravity="center_vertical">
+
+        <!-- Kite Design İkon -->
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_note_work"
+            android:tint="@android:color/white"
+            android:layout_marginEnd="16dp" />
+
+        <!-- Not İçeriği -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/noteTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Örnek İş Notu"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/white"
+                android:fontFamily="sans-serif-medium" />
+
+            <TextView
+                android:id="@+id/noteContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bu bir örnek iş notudur. Kite Design stili ile tasarlanmıştır."
+                android:textSize="14sp"
+                android:textColor="@android:color/white"
+                android:alpha="0.9"
+                android:layout_marginTop="4dp"
+                android:maxLines="2"
+                android:ellipsize="end" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/noteDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Bugün"
+                    android:textSize="12sp"
+                    android:textColor="@android:color/white"
+                    android:alpha="0.8" />
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_weight="1" />
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:src="@drawable/ic_kite_star"
+                    android:tint="@android:color/white"
+                    android:alpha="0.8" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <!-- Aksiyon Butonu -->
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_kite_triangle"
+            android:tint="@android:color/white"
+            android:alpha="0.7"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
+
