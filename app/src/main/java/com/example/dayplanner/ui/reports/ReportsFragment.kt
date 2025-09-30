@@ -78,9 +78,9 @@ class ReportsFragment : Fragment() {
             refreshReports()
         }
         
-        // Trash card click - open trash page
+        // Trash card click - çöp kutusu artık raporlar içerisinde
         binding.trashCard.setOnClickListener {
-            openTrashPage()
+            CustomToast.show(requireContext(), "Çöp kutusu raporlar bölümünde")
         }
     }
 
@@ -179,17 +179,6 @@ class ReportsFragment : Fragment() {
         importLauncher.launch("application/json")
     }
     
-    private fun openTrashPage() {
-        try {
-            // Navigate to TrashActivity instead of fragment to avoid duplicates
-            val intent = Intent(requireContext(), com.example.dayplanner.TrashActivity::class.java)
-            startActivity(intent)
-        } catch (e: Exception) {
-            android.util.Log.e("ReportsFragment", "Error opening trash page: ${e.message}", e)
-            CustomToast.show(requireContext(), "Çöp kutusu sayfası açılamadı")
-        }
-    }
-
     private fun observeFinanceData() {
         try {
             // Get finance data from database

@@ -79,7 +79,7 @@ class PasswordsViewModel(private val passwordDao: PasswordDao) : ViewModel() {
     fun searchPasswords(query: String) {
         _searchQuery.value = query
         viewModelScope.launch {
-            val filteredPasswords = if (query.isEmpty()) {
+            if (query.isEmpty()) {
                 passwordDao.getAllPasswords().observeForever { passwords ->
                     _passwords.value = passwords
                 }

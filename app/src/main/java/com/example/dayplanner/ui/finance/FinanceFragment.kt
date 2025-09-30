@@ -10,7 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.example.dayplanner.R
 import com.example.dayplanner.TransactionAdapter
 import com.example.dayplanner.databinding.FragmentFinanceBinding
 import com.example.dayplanner.finance.FinanceDao
@@ -68,8 +67,8 @@ class FinanceFragment : Fragment() {
             }
         )
 
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerView.adapter = transactionAdapter
+        binding.transactionsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.transactionsRecyclerView.adapter = transactionAdapter
 
         // Swipe to delete
         val itemTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
@@ -78,12 +77,12 @@ class FinanceFragment : Fragment() {
             }
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
-                val position = viewHolder.adapterPosition
+                val position = viewHolder.bindingAdapterPosition
                 val transaction = transactionAdapter.currentList[position]
                 showDeleteConfirmation(transaction)
             }
         })
-        itemTouchHelper.attachToRecyclerView(binding.recyclerView)
+        itemTouchHelper.attachToRecyclerView(binding.transactionsRecyclerView)
     }
 
     private fun setupAddButton() {
@@ -96,39 +95,26 @@ class FinanceFragment : Fragment() {
     private fun setupFilterSpinner() {
         val filterOptions = listOf("Tümü", "Gelir", "Gider")
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, filterOptions)
-        binding.filterSpinner.setAdapter(adapter)
+        binding.categorySpinner.adapter = adapter
         
-        binding.filterSpinner.setOnItemClickListener { _, _, position, _ ->
-            val filter = when (position) {
-                0 -> "ALL"
-                1 -> "INCOME"
-                2 -> "EXPENSE"
-                else -> "ALL"
+        binding.categorySpinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val filter = when (position) {
+                    0 -> "ALL"
+                    1 -> "INCOME"
+                    2 -> "EXPENSE"
+                    else -> "ALL"
+                }
+                viewModel.setFilter(filter)
             }
-            viewModel.setFilter(filter)
+            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
         }
-        
-        binding.filterSpinner.setText(filterOptions[0], false)
     }
 
     private fun setupDateRangeSpinner() {
-        val dateRangeOptions = listOf("Günlük", "Haftalık", "Aylık", "Yıllık", "Tümü")
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, dateRangeOptions)
-        binding.dateRangeSpinner.setAdapter(adapter)
-        
-        binding.dateRangeSpinner.setOnItemClickListener { _, _, position, _ ->
-            val range = when (position) {
-                0 -> "DAILY"
-                1 -> "WEEKLY"
-                2 -> "MONTHLY"
-                3 -> "YEARLY"
-                4 -> "ALL"
-                else -> "MONTHLY"
-            }
-            viewModel.setDateRange(range)
-        }
-        
-        binding.dateRangeSpinner.setText(dateRangeOptions[2], false) // Default to monthly
+        // Date range functionality will be added later
+        // For now, just set default to monthly
+        viewModel.setDateRange("MONTHLY")
     }
 
     private fun observeData() {
@@ -155,7 +141,7 @@ class FinanceFragment : Fragment() {
             // Change color based on balance
             val color = if (balance >= 0) {
                 android.graphics.Color.parseColor("#4CAF50") // Green
-            } else {
+                } else {
                 android.graphics.Color.parseColor("#F44336") // Red
             }
             binding.balanceText.setTextColor(color)
@@ -194,8 +180,11 @@ class FinanceFragment : Fragment() {
     }
 
     private fun showAddTransactionDialog() {
-        // This will be implemented in the next step with dynamic form
-        CustomToast.show(requireContext(), "İşlem ekleme özelliği yakında eklenecek")
+        val dialog = AddTransactionDialog.newInstance { transaction ->
+            viewModel.addTransaction(transaction)
+            CustomToast.show(requireContext(), "İşlem eklendi")
+        }
+        dialog.show(parentFragmentManager, "AddTransactionDialog")
     }
 
     override fun onDestroyView() {

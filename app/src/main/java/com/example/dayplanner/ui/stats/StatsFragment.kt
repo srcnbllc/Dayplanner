@@ -125,9 +125,8 @@ class StatsFragment : Fragment() {
         // Kart tıklama olayı
         binding.deletedNotesCard.setOnClickListener {
             try {
-                // Navigate to TrashActivity to avoid duplicates
-                val intent = Intent(requireContext(), com.example.dayplanner.TrashActivity::class.java)
-                startActivity(intent)
+                // Çöp kutusu artık raporlar içerisinde
+                CustomToast.show(requireContext(), "Çöp kutusu raporlar bölümünde")
             } catch (e: Exception) {
                 android.util.Log.e("StatsFragment", "Error opening deleted notes: ${e.message}", e)
                 CustomToast.show(requireContext(), "Silinen notlar açılamadı: ${e.message}")

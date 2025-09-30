@@ -8,6 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.dayplanner.R
 import com.example.dayplanner.finance.Transaction
 import com.example.dayplanner.finance.TransactionType
 import java.text.NumberFormat
@@ -35,7 +36,6 @@ class TransactionAdapter(
         private val categoryView: TextView = itemView.findViewById(R.id.transactionCategory)
         private val dateView: TextView = itemView.findViewById(R.id.transactionDate)
         private val amountView: TextView = itemView.findViewById(R.id.transactionAmount)
-        private val iconView: ImageView = itemView.findViewById(R.id.transactionIcon)
 
         fun bind(transaction: Transaction) {
             titleView.text = transaction.title

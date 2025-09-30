@@ -113,11 +113,14 @@ class FinanceViewModel(private val financeDao: FinanceDao) : ViewModel() {
     private fun loadCategories() {
         viewModelScope.launch {
             try {
-                financeDao.getAllCategories().observeForever { categoryList ->
-                    _categories.value = categoryList
-                    _incomeCategories.value = categoryList.filter { it.type == TransactionType.INCOME }
-                    _expenseCategories.value = categoryList.filter { it.type == TransactionType.EXPENSE }
+                val categoryList = financeDao.getAllCategoryNames()
+                // Convert category names to Category objects
+                val categories = categoryList.map { name ->
+                    Category(name = name, type = TransactionType.INCOME) // Default type
                 }
+                _categories.value = categories
+                _incomeCategories.value = categories.filter { it.type == TransactionType.INCOME }
+                _expenseCategories.value = categories.filter { it.type == TransactionType.EXPENSE }
             } catch (e: Exception) {
                 // Handle error
             }

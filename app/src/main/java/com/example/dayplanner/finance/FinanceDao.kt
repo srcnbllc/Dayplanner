@@ -78,7 +78,17 @@ interface FinanceDao {
     fun getAllCategories(): LiveData<List<Category>>
 
     @Query("SELECT name FROM categories ORDER BY name ASC")
-    suspend fun getAllCategories(): List<String>
+    suspend fun getAllCategoryNames(): List<String>
+
+    // Transaction CRUD operations
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTransaction(transaction: Transaction): Long
+
+    @Update
+    suspend fun updateTransaction(transaction: Transaction)
+
+    @Delete
+    suspend fun deleteTransaction(transaction: Transaction)
 
     // Synchronous methods for export/import
     @Query("SELECT * FROM transactions ORDER BY date DESC")

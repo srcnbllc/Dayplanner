@@ -108,7 +108,7 @@ class SimpleAddNoteActivity : AppCompatActivity() {
 
         try {
             noteViewModel.insert(note)
-            CustomToast.show(this, "Not başarıyla kaydedildi!", )
+            CustomToast.show(this, "Not kaydedildi!")
             finish()
         } catch (e: Exception) {
             android.util.Log.e("SimpleAddNoteActivity", "Error saving note: ${e.message}", e)

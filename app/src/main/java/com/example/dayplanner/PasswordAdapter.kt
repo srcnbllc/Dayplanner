@@ -1,15 +1,10 @@
 package com.example.dayplanner
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import com.example.dayplanner.utils.CustomToast
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -28,36 +23,40 @@ class PasswordAdapter(
     }
 
     override fun onBindViewHolder(holder: PasswordViewHolder, position: Int) {
-        holder.bind(getItem(position))
+        val password = getItem(position)
+        holder.bind(password)
     }
 
     inner class PasswordViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val titleView: TextView = itemView.findViewById(R.id.titleTextView)
+        private val usernameView: TextView = itemView.findViewById(R.id.usernameTextView)
+        private val categoryView: TextView = itemView.findViewById(R.id.categoryTextView)
+        private val websiteView: TextView = itemView.findViewById(R.id.websiteTextView)
         private val iconView: ImageView = itemView.findViewById(R.id.passwordIcon)
-        private val titleView: TextView = itemView.findViewById(R.id.passwordTitle)
-        private val usernameView: TextView = itemView.findViewById(R.id.passwordUsername)
-        private val categoryView: TextView = itemView.findViewById(R.id.passwordCategory)
-        private val copyButton: ImageButton = itemView.findViewById(R.id.copyButton)
-        private val viewButton: ImageButton = itemView.findViewById(R.id.viewButton)
 
         fun bind(password: Password) {
             titleView.text = password.title
             usernameView.text = password.username
             categoryView.text = password.category
+            websiteView.text = password.website ?: ""
+            websiteView.visibility = if (password.website.isNullOrEmpty()) View.GONE else View.VISIBLE
 
-            // Set icon based on category
+            // Set category icon
             val iconRes = when (password.category.lowercase()) {
-                "sosyal medya" -> android.R.drawable.ic_menu_share
-                "e-posta" -> android.R.drawable.ic_menu_send
-                "banka" -> android.R.drawable.ic_menu_myplaces
-                "iş" -> android.R.drawable.ic_menu_edit
-                "e-ticaret" -> android.R.drawable.ic_menu_edit
-                else -> android.R.drawable.ic_dialog_alert
+                "sosyal medya" -> R.drawable.ic_share
+                "e-posta" -> R.drawable.ic_mail
+                "banka" -> R.drawable.ic_money
+                "iş" -> R.drawable.ic_work_note
+                "e-ticaret" -> R.drawable.ic_shopping_cart
+                else -> R.drawable.ic_security
             }
             iconView.setImageResource(iconRes)
 
             itemView.setOnClickListener { onClick(password) }
-            copyButton.setOnClickListener { onCopy(password) }
-            viewButton.setOnClickListener { onView(password) }
+            itemView.setOnLongClickListener {
+                onCopy(password)
+                true
+            }
         }
     }
 

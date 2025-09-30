@@ -95,7 +95,15 @@ class DataExportImportManager(private val context: Context) {
                     category = transactionJson.getString("category"),
                     description = transactionJson.optString("description", ""),
                     type = com.example.dayplanner.finance.TransactionType.valueOf(transactionJson.getString("type")),
-                    date = transactionJson.getLong("date")
+                    subtype = transactionJson.optString("subtype", ""),
+                    currency = transactionJson.optString("currency", "TRY"),
+                    date = transactionJson.getLong("date"),
+                    isRecurring = transactionJson.optBoolean("isRecurring", false),
+                    recurringInterval = if (transactionJson.has("recurringInterval") && !transactionJson.isNull("recurringInterval")) 
+                        transactionJson.getString("recurringInterval") else null,
+                    reminder = transactionJson.optBoolean("reminder", false),
+                    meta = if (transactionJson.has("meta") && !transactionJson.isNull("meta")) 
+                        transactionJson.getString("meta") else null
                 )
                 // financeDao.insertTransaction(transaction) // FinanceDao not implemented yet
             }
@@ -155,7 +163,13 @@ class DataExportImportManager(private val context: Context) {
                 put("category", transaction.category)
                 put("description", transaction.description)
                 put("type", transaction.type.name)
+                put("subtype", transaction.subtype)
+                put("currency", transaction.currency)
                 put("date", transaction.date)
+                put("isRecurring", transaction.isRecurring)
+                put("recurringInterval", transaction.recurringInterval)
+                put("reminder", transaction.reminder)
+                put("meta", transaction.meta)
             }
             jsonArray.put(transactionJson)
         }

@@ -22,41 +22,49 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         
-        // Quick Actions (Shortcuts) ekle
-        setupQuickActions()
+        try {
+            binding = ActivityMainBinding.inflate(layoutInflater)
+            setContentView(binding.root)
+            
+            // Quick Actions (Shortcuts) ekle
+            setupQuickActions()
 
-        // NoteAdapter'ı RecyclerView'a bağlamak için oluşturduk
-        noteAdapter = NoteAdapter(
-            onClick = { note ->
-                // Herhangi bir not'a tıklandığında notu düzenlemek için AddNoteActivity'ye geçiş yapıyoruz
-                val intent = Intent(this, AddNoteActivity::class.java)
-                intent.putExtra("noteId", note.id)
-                startActivity(intent)
-            },
-            onLockToggle = { note, shouldLock ->
-                if (shouldLock) {
-                    // Kilitle
-                    val updated = note.copy(isEncrypted = true, isLocked = true)
-                    noteViewModel.update(updated)
-                } else {
-                    // Kilidi kaldır
-                    val updated = note.copy(isEncrypted = false, isLocked = false)
-                    noteViewModel.update(updated)
+            // NoteAdapter'ı RecyclerView'a bağlamak için oluşturduk
+            noteAdapter = NoteAdapter(
+                onClick = { note ->
+                    // Herhangi bir not'a tıklandığında notu düzenlemek için AddNoteActivity'ye geçiş yapıyoruz
+                    val intent = Intent(this, AddNoteActivity::class.java)
+                    intent.putExtra("noteId", note.id)
+                    startActivity(intent)
+                },
+                onLockToggle = { note, shouldLock ->
+                    if (shouldLock) {
+                        // Kilitle
+                        val updated = note.copy(isEncrypted = true, isLocked = true)
+                        noteViewModel.update(updated)
+                    } else {
+                        // Kilidi kaldır
+                        val updated = note.copy(isEncrypted = false, isLocked = false)
+                        noteViewModel.update(updated)
+                    }
+                },
+                onSoftDelete = { note ->
+                    noteViewModel.softDeleteById(note.id)
+                },
+                onPinToggle = { note, shouldPin ->
+                    noteViewModel.setPinned(note.id, shouldPin)
                 }
-            },
-            onSoftDelete = { note ->
-                noteViewModel.softDeleteById(note.id)
-            },
-            onPinToggle = { note, shouldPin ->
-                noteViewModel.setPinned(note.id, shouldPin)
-            }
-        )
+            )
 
-        // Navigation setup
-        setupNavigation()
+            // Navigation setup
+            setupNavigation()
+        } catch (e: Exception) {
+            android.util.Log.e("MainActivity", "Error in onCreate: ${e.message}", e)
+            // Fallback: Show error message and finish
+            android.widget.Toast.makeText(this, "Uygulama başlatılamadı: ${e.message}", android.widget.Toast.LENGTH_LONG).show()
+            finish()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
@@ -65,15 +73,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.action_open_trash -> {
-                // Navigate to TrashActivity
-                val intent = Intent(this, TrashActivity::class.java)
-                startActivity(intent)
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
+        return super.onOptionsItemSelected(item)
     }
     
     private fun setupQuickActions() {
@@ -116,11 +116,15 @@ class MainActivity : AppCompatActivity() {
     }
     
     private fun setupNavigation() {
-        val navHostFragment = supportFragmentManager
-            .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
-        
-        // Bottom navigation ile NavController'ı bağla
-        binding.bottomNavigation.setupWithNavController(navController)
+        try {
+            val navHostFragment = supportFragmentManager
+                .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+            val navController = navHostFragment.navController
+            
+            // Bottom navigation ile NavController'ı bağla
+            binding.bottomNavigation.setupWithNavController(navController)
+        } catch (e: Exception) {
+            android.util.Log.e("MainActivity", "Error in setupNavigation: ${e.message}", e)
+        }
     }
 }

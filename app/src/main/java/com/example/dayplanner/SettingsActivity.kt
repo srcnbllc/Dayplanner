@@ -82,7 +82,7 @@ class SettingsActivity : AppCompatActivity() {
             binding.exportDataButton.isEnabled = true
 
             if (success) {
-                CustomToast.show(this@SettingsActivity, "Veriler başarıyla dışa aktarıldı")
+                CustomToast.show(this@SettingsActivity, "Veriler dışa aktarıldı")
             } else {
                 CustomToast.show(this@SettingsActivity, "Dışa aktarma başarısız")
             }
@@ -100,7 +100,7 @@ class SettingsActivity : AppCompatActivity() {
             binding.importDataButton.isEnabled = true
 
             if (success) {
-                CustomToast.show(this@SettingsActivity, "Veriler başarıyla içe aktarıldı")
+                CustomToast.show(this@SettingsActivity, "Veriler içe aktarıldı")
             } else {
                 CustomToast.show(this@SettingsActivity, "İçe aktarma başarısız")
             }

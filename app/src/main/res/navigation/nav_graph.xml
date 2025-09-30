@@ -26,10 +26,5 @@
         android:name="com.example.dayplanner.ui.reports.ReportsFragment"
         android:label="Raporlar" />
 
-    <fragment
-        android:id="@+id/trashFragment"
-        android:name="com.example.dayplanner.ui.trash.TrashFragment"
-        android:label="Çöp Kutusu" />
-
 </navigation>
 

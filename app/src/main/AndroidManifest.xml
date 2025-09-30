@@ -49,11 +49,6 @@
             android:parentActivityName=".MainActivity" />
 
         <activity
-            android:name=".TrashActivity"
-            android:exported="false"
-            android:parentActivityName=".MainActivity" />
-
-        <activity
             android:name=".TestVerificationActivity"
             android:exported="false"
             android:parentActivityName=".MainActivity" />

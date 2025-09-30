@@ -43,6 +43,9 @@ interface PasswordDao {
     @Query("SELECT * FROM passwords WHERE title LIKE '%' || :query || '%' OR username LIKE '%' || :query || '%' ORDER BY title ASC")
     suspend fun searchPasswords(query: String): List<Password>
 
+    @Query("SELECT * FROM passwords WHERE title LIKE '%' || :query || '%' OR username LIKE '%' || :query || '%' ORDER BY title ASC")
+    fun searchPasswordsLive(query: String): LiveData<List<Password>>
+
     // Category methods
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCategory(category: PasswordCategory)

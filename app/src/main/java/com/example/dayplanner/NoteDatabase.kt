@@ -33,7 +33,7 @@ import com.example.dayplanner.ActivityLog
     PasswordItem::class,
     PasswordHistory::class,
     ActivityLog::class
-], version = 6, exportSchema = false)
+], version = 8, exportSchema = false)
 abstract class NoteDatabase : RoomDatabase() {
 
     abstract fun noteDao(): NoteDao
@@ -53,7 +53,7 @@ abstract class NoteDatabase : RoomDatabase() {
                     NoteDatabase::class.java,
                     "note_database"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
                     .build()
                 INSTANCE = instance
                 instance
@@ -203,6 +203,56 @@ abstract class NoteDatabase : RoomDatabase() {
                         passwordItemId INTEGER NOT NULL,
                         encryptedPassword BLOB NOT NULL,
                         changedAt TEXT NOT NULL
+                    )
+                """)
+            }
+        }
+
+        // 6 -> 7: Update transactions table with new fields
+        private val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Drop old transactions table and recreate with new structure
+                database.execSQL("DROP TABLE IF EXISTS transactions")
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS transactions (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        type TEXT NOT NULL,
+                        subtype TEXT NOT NULL,
+                        title TEXT NOT NULL,
+                        amount REAL NOT NULL,
+                        currency TEXT NOT NULL DEFAULT 'TRY',
+                        category TEXT NOT NULL,
+                        description TEXT NOT NULL DEFAULT '',
+                        date INTEGER NOT NULL,
+                        isRecurring INTEGER NOT NULL DEFAULT 0,
+                        recurringInterval TEXT,
+                        reminder INTEGER NOT NULL DEFAULT 0,
+                        meta TEXT
+                    )
+                """)
+                
+                // Update categories table to include type and icon
+                database.execSQL("DROP TABLE IF EXISTS categories")
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS categories (
+                        name TEXT PRIMARY KEY NOT NULL,
+                        type TEXT NOT NULL DEFAULT 'INCOME',
+                        icon TEXT
+                    )
+                """)
+            }
+        }
+
+        // 7 -> 8: Fix categories table structure
+        private val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                // Drop and recreate categories table with correct structure
+                database.execSQL("DROP TABLE IF EXISTS categories")
+                database.execSQL("""
+                    CREATE TABLE IF NOT EXISTS categories (
+                        name TEXT PRIMARY KEY NOT NULL,
+                        type TEXT NOT NULL DEFAULT 'INCOME',
+                        icon TEXT
                     )
                 """)
             }
