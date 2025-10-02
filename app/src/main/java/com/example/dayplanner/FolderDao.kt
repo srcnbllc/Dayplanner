@@ -1,17 +1,16 @@
 package com.example.dayplanner
 
+import androidx.room.*
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
-import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface FolderDao {
+    @Query("SELECT * FROM folder_table ORDER BY name ASC")
+    fun getAllFolders(): LiveData<List<Folder>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(folder: Folder): Long
+    suspend fun insert(folder: Folder)
 
     @Update
     suspend fun update(folder: Folder)
@@ -19,8 +18,9 @@ interface FolderDao {
     @Delete
     suspend fun delete(folder: Folder)
 
-    @Query("SELECT * FROM folder_table ORDER BY name ASC")
-    fun getAllFolders(): LiveData<List<Folder>>
+    @Query("SELECT * FROM folder_table WHERE id = :id")
+    suspend fun getFolderById(id: Int): Folder?
+
+    @Query("DELETE FROM folder_table WHERE id = :id")
+    suspend fun deleteById(id: Int)
 }
-
-

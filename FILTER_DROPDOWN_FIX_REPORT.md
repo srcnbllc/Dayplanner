@@ -152,3 +152,5 @@ binding.filterSpinner.setOnItemClickListener { parent, view, position, id ->
 
 **Filtre dropdown sorunu çözüldü! Artık tüm filtre seçenekleri düzgün çalışacak.** 🚀
 
+
+

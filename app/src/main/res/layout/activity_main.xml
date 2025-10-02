@@ -43,8 +43,9 @@
         android:background="?attr/colorSurface"
         app:menu="@menu/bottom_nav_menu"
         app:labelVisibilityMode="labeled"
-        app:itemIconTint="?attr/colorOnSurfaceVariant"
-        app:itemTextColor="?attr/colorOnSurfaceVariant"
+        app:itemIconTint="@color/bottom_nav_colors"
+        app:itemTextColor="@color/bottom_nav_colors"
+        app:itemRippleColor="?attr/colorSecondaryContainer"
         app:itemActiveIndicatorStyle="@style/ActiveIndicator"
         app:elevation="8dp" />
 

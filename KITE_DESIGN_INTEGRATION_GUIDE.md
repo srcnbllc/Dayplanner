@@ -135,3 +135,5 @@ implementation 'com.airbnb.android:lottie:6.0.0'
 - Erişilebilirlik özelliklerini ekleyin
 - Performans testleri yapın
 
+
+

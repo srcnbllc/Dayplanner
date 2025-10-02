@@ -67,7 +67,11 @@ class DataExportImportManager(private val context: Context) {
                     id = 0, // Let database generate new ID
                     title = noteJson.getString("title"),
                     description = noteJson.getString("description"),
-                    date = noteJson.getString("date"),
+                    date = try {
+                        noteJson.getString("date").toLong()
+                    } catch (e: Exception) {
+                        System.currentTimeMillis()
+                    },
                     folderId = if (noteJson.has("folderId") && !noteJson.isNull("folderId")) 
                         noteJson.getInt("folderId") else null,
                     isPinned = noteJson.optBoolean("isPinned", false),
@@ -101,9 +105,18 @@ class DataExportImportManager(private val context: Context) {
                     isRecurring = transactionJson.optBoolean("isRecurring", false),
                     recurringInterval = if (transactionJson.has("recurringInterval") && !transactionJson.isNull("recurringInterval")) 
                         transactionJson.getString("recurringInterval") else null,
-                    reminder = transactionJson.optBoolean("reminder", false),
-                    meta = if (transactionJson.has("meta") && !transactionJson.isNull("meta")) 
-                        transactionJson.getString("meta") else null
+                    reminder = if (transactionJson.has("reminder") && !transactionJson.isNull("reminder")) 
+                        transactionJson.getLong("reminder") else null,
+                    meta = if (transactionJson.has("meta") && !transactionJson.isNull("meta")) {
+                        try {
+                            val metaString = transactionJson.getString("meta")
+                            val gson = com.google.gson.Gson()
+                            val type = object : com.google.gson.reflect.TypeToken<Map<String, Any>>() {}.type
+                            gson.fromJson(metaString, type)
+                        } catch (e: Exception) {
+                            null
+                        }
+                    } else null
                 )
                 // financeDao.insertTransaction(transaction) // FinanceDao not implemented yet
             }

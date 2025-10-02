@@ -145,3 +145,5 @@
 4. Kullanıcı geri bildirimlerini alın
 5. Sürekli iyileştirin
 
+
+

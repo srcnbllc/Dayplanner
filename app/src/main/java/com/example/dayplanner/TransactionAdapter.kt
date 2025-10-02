@@ -3,14 +3,13 @@ package com.example.dayplanner
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.dayplanner.R
 import com.example.dayplanner.finance.Transaction
 import com.example.dayplanner.finance.TransactionType
+import com.example.dayplanner.R
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -31,41 +30,34 @@ class TransactionAdapter(
     }
 
     inner class TransactionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val iconView: ImageView = itemView.findViewById(R.id.transactionIcon)
-        private val titleView: TextView = itemView.findViewById(R.id.transactionTitle)
-        private val categoryView: TextView = itemView.findViewById(R.id.transactionCategory)
-        private val dateView: TextView = itemView.findViewById(R.id.transactionDate)
-        private val amountView: TextView = itemView.findViewById(R.id.transactionAmount)
+        private val titleTextView: TextView = itemView.findViewById(R.id.titleTextView)
+        private val amountTextView: TextView = itemView.findViewById(R.id.amountTextView)
+        private val categoryTextView: TextView = itemView.findViewById(R.id.categoryTextView)
+        private val dateTextView: TextView = itemView.findViewById(R.id.dateTextView)
+        private val typeIndicator: View = itemView.findViewById(R.id.typeIndicator)
+        
+        // Performance optimization: Cache formatters
+        private val currencyFormatter = NumberFormat.getCurrencyInstance(Locale("tr", "TR"))
+        private val dateFormatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
         fun bind(transaction: Transaction) {
-            titleView.text = transaction.title
-            categoryView.text = transaction.category
-            dateView.text = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date(transaction.date))
+            titleTextView.text = transaction.title
+            categoryTextView.text = transaction.category
             
-            val formatter = NumberFormat.getCurrencyInstance(Locale("tr", "TR"))
-            val amount = if (transaction.type == com.example.dayplanner.finance.TransactionType.INCOME) transaction.amount else -transaction.amount
-            amountView.text = formatter.format(amount.toDouble())
+            // Use cached formatters for better performance
+            amountTextView.text = currencyFormatter.format(transaction.amount)
+            dateTextView.text = dateFormatter.format(Date(transaction.date))
             
-            // Set color based on transaction type
-            val color = if (transaction.type == com.example.dayplanner.finance.TransactionType.INCOME) 
-                android.R.color.holo_green_dark else android.R.color.holo_red_dark
-            amountView.setTextColor(itemView.context.getColor(color))
-            
-            // Set icon based on category
-            val iconRes = when (transaction.category.lowercase()) {
-                "yemek", "restoran" -> android.R.drawable.ic_menu_myplaces
-                "ulaşım", "benzin" -> android.R.drawable.ic_menu_directions
-                "alışveriş" -> android.R.drawable.ic_menu_manage
-                "fatura" -> android.R.drawable.ic_menu_edit
-                "maaş" -> android.R.drawable.ic_menu_myplaces
-                else -> android.R.drawable.ic_menu_edit
+            // Use Kite Design colors
+            val color = if (transaction.type == TransactionType.INCOME) {
+                itemView.context.getColor(R.color.kite_green)
+            } else {
+                itemView.context.getColor(R.color.kite_red)
             }
-            iconView.setImageResource(iconRes)
-
-            itemView.setOnClickListener { onTransactionClick(transaction) }
-            itemView.setOnLongClickListener { 
-                onTransactionDelete(transaction)
-                true
+            typeIndicator.setBackgroundColor(color)
+            
+            itemView.setOnClickListener {
+                onTransactionClick(transaction)
             }
         }
     }

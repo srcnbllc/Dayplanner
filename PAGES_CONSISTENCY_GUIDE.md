@@ -168,3 +168,5 @@ Notlar ve yeni not ekleme sayfaları artık tam uyumlu:
 
 Kite Design tutarlılığı başarıyla sağlandı! 🎨
 
+
+

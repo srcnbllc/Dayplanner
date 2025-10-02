@@ -1,0 +1,6 @@
+27:            android:exported="true"
+37:            android:exported="false"
+42:            android:exported="false"
+47:            android:exported="false"
+52:            android:exported="false"
+57:            android:exported="false"

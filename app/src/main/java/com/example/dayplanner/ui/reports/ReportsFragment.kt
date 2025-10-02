@@ -25,7 +25,10 @@ class ReportsFragment : Fragment() {
     private var _binding: FragmentReportsBinding? = null
     private val binding get() = _binding!!
     
-    private val noteViewModel: NoteViewModel by viewModels()
+    private val noteViewModel: NoteViewModel by lazy {
+        val factory = com.example.dayplanner.NoteViewModelFactory(requireActivity().application)
+        androidx.lifecycle.ViewModelProvider(this, factory)[com.example.dayplanner.NoteViewModel::class.java]
+    }
     
     // Modern ActivityResultLauncher for file picking
     private val importLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->

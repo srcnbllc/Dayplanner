@@ -202,3 +202,5 @@ Hatırlatma bölümü artık Kite Design stili ile:
 
 Kite Design hatırlatma sistemi başarıyla uygulandı! 🎨
 
+
+

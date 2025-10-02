@@ -248,7 +248,7 @@ class AddNoteActivity : AppCompatActivity() {
                     id = if (noteId != -1) noteId else 0,
                     title = title,
                     description = description,
-                    date = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                    date = System.currentTimeMillis(),
                     isEncrypted = isEncrypted,
                     status = "NEW",
                     createdAt = System.currentTimeMillis(),

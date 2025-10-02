@@ -74,7 +74,7 @@ class NoteRepository(private val noteDao: NoteDao, private val folderDao: Folder
 
     // Folder APIs
     fun getAllFolders(): LiveData<List<Folder>> = folderDao.getAllFolders()
-    suspend fun insertFolder(folder: Folder): Long = folderDao.insert(folder)
+    suspend fun insertFolder(folder: Folder) = folderDao.insert(folder)
     suspend fun updateFolder(folder: Folder) = folderDao.update(folder)
     suspend fun deleteFolder(folder: Folder) = folderDao.delete(folder)
 

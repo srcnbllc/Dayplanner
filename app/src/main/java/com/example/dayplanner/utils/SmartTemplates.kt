@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.example.dayplanner.Note
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -102,7 +103,7 @@ object SmartTemplates {
         return Note(
             title = title,
             description = description,
-            date = currentDateTime.format(dateFormatter),
+            date = currentDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli(),
             tags = template.tags,
             createdAt = System.currentTimeMillis(),
             isPinned = false,

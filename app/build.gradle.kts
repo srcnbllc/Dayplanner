@@ -15,6 +15,9 @@ android {
             versionCode = 1
             versionName = "1.0"
 
+            // Vector drawables support
+            vectorDrawables.useSupportLibrary = true
+
             // 16 KB page size support
             ndk {
                 abiFilters += listOf("arm64-v8a", "armeabi-v7a", "x86_64", "x86")
@@ -105,4 +108,17 @@ dependencies {
 
     // Coroutines Tasks (await için gerekli)
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.7.3")
+    
+    // MPAndroidChart for analytics
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    
+    // Enhanced Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4")
+    
+    // Enhanced Lifecycle
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    
+    // Gson for JSON serialization
+    implementation("com.google.code.gson:gson:2.10.1")
 }

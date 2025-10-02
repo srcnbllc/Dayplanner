@@ -7,25 +7,30 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import kotlinx.coroutines.launch
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dayplanner.TransactionAdapter
 import com.example.dayplanner.databinding.FragmentFinanceBinding
-import com.example.dayplanner.finance.FinanceDao
+import com.example.dayplanner.finance.FinanceRepository
+import com.example.dayplanner.finance.CurrencyConverter
 import com.example.dayplanner.finance.Transaction
 import com.example.dayplanner.finance.TransactionType
 import com.example.dayplanner.NoteDatabase
 import java.text.NumberFormat
 import java.util.*
 import com.example.dayplanner.utils.CustomToast
+import com.example.dayplanner.R
 
 class FinanceFragment : Fragment() {
 
     private var _binding: FragmentFinanceBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var financeDao: FinanceDao
+    private lateinit var financeRepository: FinanceRepository
     private lateinit var transactionAdapter: TransactionAdapter
     private lateinit var viewModel: FinanceViewModel
 
@@ -41,18 +46,34 @@ class FinanceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Initialize database
+        // Initialize database and repository
         val database = NoteDatabase.getDatabase(requireContext())
-        financeDao = database.financeDao()
+        val currencyConverter = CurrencyConverter()
+        financeRepository = FinanceRepository(database.financeDao(), currencyConverter)
         
-        // Initialize ViewModel after DAO is ready
-        viewModel = FinanceViewModel(financeDao)
+        // Initialize ViewModel with factory
+        val factory = FinanceViewModelFactory(financeRepository)
+        viewModel = androidx.lifecycle.ViewModelProvider(this, factory)[FinanceViewModel::class.java]
 
         setupRecyclerView()
-        setupAddButton()
+        setupFab()
+        setupAnalyticsButton()
+        setupCurrencyConverterButton()
         setupFilterSpinner()
         setupDateRangeSpinner()
         observeData()
+        
+        // Ensure all buttons are visible
+        ensureButtonsVisible()
+    }
+
+    private fun ensureButtonsVisible() {
+        // Force visibility of all buttons and layouts
+        binding.addTransactionFab.visibility = View.VISIBLE
+        binding.analyticsButton.visibility = View.VISIBLE
+        binding.currencyConverterButton.visibility = View.VISIBLE
+        
+        // Debug log removed
     }
 
     private fun setupRecyclerView() {
@@ -85,66 +106,107 @@ class FinanceFragment : Fragment() {
         itemTouchHelper.attachToRecyclerView(binding.transactionsRecyclerView)
     }
 
-    private fun setupAddButton() {
-        binding.addTransactionButton.setOnClickListener {
+    private fun setupFab() {
+        // Setup Floating Action Button
+        binding.addTransactionFab.setOnClickListener {
             // Open add transaction dialog
             showAddTransactionDialog()
         }
     }
 
+    private fun setupAnalyticsButton() {
+        binding.analyticsButton.visibility = View.VISIBLE
+        binding.analyticsButton.setOnClickListener {
+            // Navigate to analytics fragment
+            navigateToAnalytics()
+        }
+    }
+
+    private fun setupCurrencyConverterButton() {
+        binding.currencyConverterButton.visibility = View.VISIBLE
+        binding.currencyConverterButton.setOnClickListener {
+            // Navigate to currency converter fragment
+            navigateToCurrencyConverter()
+        }
+    }
+
     private fun setupFilterSpinner() {
-        val filterOptions = listOf("Tümü", "Gelir", "Gider")
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, filterOptions)
-        binding.categorySpinner.adapter = adapter
-        
-        binding.categorySpinner.onItemSelectedListener = object : android.widget.AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: android.widget.AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val filter = when (position) {
-                    0 -> "ALL"
-                    1 -> "INCOME"
-                    2 -> "EXPENSE"
-                    else -> "ALL"
-                }
-                viewModel.setFilter(filter)
+        // Setup filter chips
+        binding.allChip.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                viewModel.setTypeFilter("ALL")
             }
-            override fun onNothingSelected(parent: android.widget.AdapterView<*>?) {}
+        }
+        
+        binding.incomeChip.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                viewModel.setTypeFilter("INCOME")
+            }
+        }
+        
+        binding.expenseChip.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                viewModel.setTypeFilter("EXPENSE")
+            }
         }
     }
 
     private fun setupDateRangeSpinner() {
-        // Date range functionality will be added later
-        // For now, just set default to monthly
-        viewModel.setDateRange("MONTHLY")
+        // Setup date range chips
+        binding.dailyChip.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                viewModel.setFilter("DAILY")
+            }
+        }
+        
+        binding.weeklyChip.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                viewModel.setFilter("WEEKLY")
+            }
+        }
+        
+        binding.monthlyChip.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                viewModel.setFilter("MONTHLY")
+            }
+        }
+        
+        binding.yearlyChip.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                viewModel.setFilter("YEARLY")
+            }
+        }
+        
+        // Set default to monthly
+        binding.monthlyChip.isChecked = true
     }
 
+    // Performance optimization: Cache formatters
+    private val currencyFormatter = NumberFormat.getCurrencyInstance(Locale("tr", "TR"))
+    
     private fun observeData() {
-        // Observe transactions
-        viewModel.transactions.observe(viewLifecycleOwner) { transactions ->
-            transactionAdapter.submitList(transactions)
-        }
-
-        // Observe summary data
-        viewModel.totalIncome.observe(viewLifecycleOwner) { income ->
-            val formatter = NumberFormat.getCurrencyInstance(Locale("tr", "TR"))
-            binding.totalIncomeText.text = formatter.format(income)
-        }
-
-        viewModel.totalExpense.observe(viewLifecycleOwner) { expense ->
-            val formatter = NumberFormat.getCurrencyInstance(Locale("tr", "TR"))
-            binding.totalExpenseText.text = formatter.format(expense)
-        }
-
-        viewModel.balance.observe(viewLifecycleOwner) { balance ->
-            val formatter = NumberFormat.getCurrencyInstance(Locale("tr", "TR"))
-            binding.balanceText.text = formatter.format(balance)
-            
-            // Change color based on balance
-            val color = if (balance >= 0) {
-                android.graphics.Color.parseColor("#4CAF50") // Green
-                } else {
-                android.graphics.Color.parseColor("#F44336") // Red
+        // Observe transactions with performance optimization
+        lifecycleScope.launch {
+            viewModel.optimizedTransactions.collect { transactions ->
+                transactionAdapter.submitList(transactions)
             }
-            binding.balanceText.setTextColor(color)
+        }
+
+        // Observe summary data with cached formatter
+        lifecycleScope.launch {
+            viewModel.totals.collect { totals ->
+                binding.totalIncomeText.text = currencyFormatter.format(totals.income)
+                binding.totalExpenseText.text = currencyFormatter.format(totals.expense)
+                binding.balanceText.text = currencyFormatter.format(totals.balance)
+                
+                // Use Kite Design colors
+                val color = if (totals.balance >= 0) {
+                    requireContext().getColor(R.color.kite_green)
+                } else {
+                    requireContext().getColor(R.color.kite_red)
+                }
+                binding.balanceText.setTextColor(color)
+            }
         }
     }
 
@@ -170,8 +232,8 @@ class FinanceFragment : Fragment() {
             .setTitle("İşlemi Sil")
             .setMessage("Bu işlemi silmek istediğinizden emin misiniz?")
             .setPositiveButton("Sil") { _, _ ->
-                viewModel.deleteTransaction(transaction)
-                CustomToast.show(requireContext(), "İşlem silindi")
+                viewModel.deleteTransaction(transaction.id)
+                // Transaction deleted successfully
             }
             .setNegativeButton("İptal") { _, _ ->
                 transactionAdapter.notifyDataSetChanged() // Refresh to undo swipe
@@ -180,11 +242,29 @@ class FinanceFragment : Fragment() {
     }
 
     private fun showAddTransactionDialog() {
-        val dialog = AddTransactionDialog.newInstance { transaction ->
+        val dialog = AddTransactionDialogAdvanced.newInstance { transaction ->
             viewModel.addTransaction(transaction)
-            CustomToast.show(requireContext(), "İşlem eklendi")
+            // Transaction added successfully
         }
-        dialog.show(parentFragmentManager, "AddTransactionDialog")
+        dialog.show(parentFragmentManager, "AddTransactionDialogAdvanced")
+    }
+
+    private fun navigateToAnalytics() {
+        // Navigate to analytics fragment using Navigation Component
+        try {
+            findNavController().navigate(R.id.analyticsFragment)
+        } catch (e: Exception) {
+            // Navigation failed silently
+        }
+    }
+
+    private fun navigateToCurrencyConverter() {
+        // Navigate to currency converter fragment using Navigation Component
+        try {
+            findNavController().navigate(R.id.currencyConverterFragment)
+        } catch (e: Exception) {
+            // Navigation failed silently
+        }
     }
 
     override fun onDestroyView() {

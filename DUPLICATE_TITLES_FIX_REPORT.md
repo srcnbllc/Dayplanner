@@ -78,3 +78,5 @@ Card: "Çöp Kutusu"  ← DÜZELTİLDİ
 
 **Uygulama genelinde mükerrer başlık sorunu çözüldü!** 🚀
 
+
+

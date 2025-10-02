@@ -53,14 +53,14 @@
                     android:gravity="center">
 
                     <!-- Profil Fotoğrafı -->
-                    <ImageView
+                    <com.google.android.material.imageview.ShapeableImageView
                         android:id="@+id/profileImageView"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         android:layout_gravity="center"
                         android:src="@drawable/ic_add"
-                        android:background="@drawable/dialog_background"
-                        android:padding="16dp" />
+                        app:strokeColor="?attr/colorPrimary"
+                        app:strokeWidth="2dp" />
 
                     <!-- Profil Adı -->
                     <TextView

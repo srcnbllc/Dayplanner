@@ -1,83 +1,416 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:background="@drawable/background_pattern"
+    tools:context=".ui.finance.FinanceFragment">
 
-    <!-- Summary Cards -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:layout_marginBottom="56dp">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp">
+        android:orientation="vertical"
+        android:padding="16dp">
 
+        <!-- Modern Header Banner -->
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp"
-            app:cardCornerRadius="12dp"
-            app:cardElevation="4dp">
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="6dp"
+            android:background="@drawable/header_gradient">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp"
-                android:gravity="center">
+                android:padding="24dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_kite_star"
+                        android:tint="@android:color/white"
+                        android:alpha="0.9" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_marginStart="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="💰 Finansal İşlemler"
+                            android:textSize="24sp"
+                            android:textStyle="bold"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="@android:color/white" />
 
                 <TextView
                     android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Gelir, gider ve bakiye bilgilerinizi yönetin"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"
+                            android:textColor="@android:color/white"
+                            android:alpha="0.8"
+                            android:layout_marginTop="4dp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+                <!-- Stats Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Toplam Gelir"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/darker_gray" />
+                    android:orientation="horizontal"
+                    android:layout_marginTop="16dp">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
 
                 <TextView
                     android:id="@+id/totalIncomeText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="₺0"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@android:color/holo_green_dark" />
+                    android:text="₺0,00"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Gelir"
+                            android:textSize="12sp"
+                            android:textColor="@android:color/white"
+                            android:alpha="0.8" />
+
+            </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="40dp"
+                        android:background="@android:color/white"
+                        android:alpha="0.3" />
+
+                    <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                        <TextView
+                            android:id="@+id/totalExpenseText"
+                            android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                            android:text="₺0,00"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gider"
+                    android:textSize="12sp"
+                            android:textColor="@android:color/white"
+                            android:alpha="0.8" />
+
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="40dp"
+                        android:background="@android:color/white"
+                        android:alpha="0.3" />
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:gravity="center">
+
+                <TextView
+                            android:id="@+id/balanceText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="₺0,00"
+                            android:textSize="20sp"
+                            android:textStyle="bold"
+                            android:textColor="@android:color/white" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Bakiye"
+                            android:textSize="12sp"
+                            android:textColor="@android:color/white"
+                            android:alpha="0.8" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- Filter Options -->
         <com.google.android.material.card.MaterialCardView
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginStart="8dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="4dp">
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Filtreler"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="?attr/colorOnSurface"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Type Filter Chips -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/filterChipGroup"
+                    android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+        app:singleSelection="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/allChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tümü"
+            android:checked="true"
+            style="@style/Widget.MaterialComponents.Chip.Filter" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/incomeChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gelir"
+            style="@style/Widget.MaterialComponents.Chip.Filter" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/expenseChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gider"
+            style="@style/Widget.MaterialComponents.Chip.Filter" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+                <!-- Date Range Filter Chips -->
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/dateRangeChipGroup"
+                    android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:singleSelection="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/dailyChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Günlük"
+            style="@style/Widget.MaterialComponents.Chip.Filter" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/weeklyChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Haftalık"
+            style="@style/Widget.MaterialComponents.Chip.Filter" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/monthlyChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aylık"
+            android:checked="true"
+            style="@style/Widget.MaterialComponents.Chip.Filter" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/yearlyChip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Yıllık"
+            style="@style/Widget.MaterialComponents.Chip.Filter" />
+
+    </com.google.android.material.chip.ChipGroup>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Action Buttons -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <!-- Main Action Buttons -->
+    <LinearLayout
+                    android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+                    android:gravity="center_vertical">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/addTransactionButton"
+                        style="@style/Widget.App.Button"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        android:text="Yeni İşlem"
+                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:fontFamily="sans-serif-medium"
+                        android:backgroundTint="@color/kite_blue"
+                        app:icon="@drawable/ic_kite_circle"
+                        app:iconSize="20dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/analyticsButton"
+                        style="@style/Widget.App.Button.Outlined"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        android:text="Analiz"
+                        android:textSize="14sp"
+                        android:fontFamily="sans-serif-medium"
+                        app:strokeColor="@color/kite_yellow"
+                        app:iconTint="@color/kite_yellow"
+                        app:icon="@drawable/ic_kite_triangle"
+                        app:iconSize="20dp" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/currencyConverterButton"
+                        style="@style/Widget.App.Button.Outlined"
+                        android:layout_width="0dp"
+                        android:layout_height="48dp"
+                        android:layout_weight="1"
+                        android:text="Döviz Çevirici"
+                        android:textSize="12sp"
+                        android:fontFamily="sans-serif-medium"
+                        app:strokeColor="@color/kite_green"
+                        app:iconTint="@color/kite_green"
+                        app:icon="@drawable/ic_kite_star"
+                        app:iconSize="18dp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Transactions List -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/transactionsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:padding="8dp"
+                android:nestedScrollingEnabled="false"
+                tools:listitem="@layout/item_transaction" />
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Empty State -->
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/emptyStateLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:visibility="gone"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="40dp"
                 android:gravity="center">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Toplam Gider"
-                    android:textSize="12sp"
-                    android:textColor="@android:color/darker_gray" />
+                <ImageView
+                    android:layout_width="120dp"
+                    android:layout_height="120dp"
+                    android:alpha="0.6"
+                    android:src="@drawable/ic_add"
+                    app:tint="?attr/colorOnSurfaceVariant" />
 
                 <TextView
-                    android:id="@+id/totalExpenseText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="₺0"
+                    android:layout_marginTop="16dp"
+                    android:text="Henüz işlem yok"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="@android:color/holo_red_dark" />
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="?attr/colorOnSurfaceVariant" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="İlk işleminizi eklemek için + butonuna basın"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif"
+                    android:textColor="?attr/colorOnSurfaceVariant"
+                    android:gravity="center" />
 
             </LinearLayout>
 
@@ -85,72 +418,20 @@
 
     </LinearLayout>
 
-    <!-- Balance Card -->
-    <com.google.android.material.card.MaterialCardView
-        android:layout_width="match_parent"
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Floating Action Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addTransactionFab"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="4dp">
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:layout_marginBottom="80dp"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="@color/kite_blue"
+        app:tint="@android:color/white"
+        app:fabSize="normal"
+        app:elevation="8dp" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Bakiye"
-                android:textSize="12sp"
-                android:textColor="@android:color/darker_gray" />
-
-            <TextView
-                android:id="@+id/balanceText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="₺0"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                android:textColor="@android:color/black" />
-
-        </LinearLayout>
-
-    </com.google.android.material.card.MaterialCardView>
-
-    <!-- Filter and Add Buttons -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="16dp">
-
-        <Spinner
-            android:id="@+id/categorySpinner"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginEnd="8dp" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/addTransactionButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="+ Ekle"
-            android:layout_marginStart="8dp"
-            style="@style/Widget.App.Button" />
-
-    </LinearLayout>
-
-    <!-- Transactions List -->
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/transactionsRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-</LinearLayout>
-
-
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

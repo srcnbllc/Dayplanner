@@ -26,7 +26,10 @@ class StatsFragment : Fragment() {
     private var _binding: FragmentStatsBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: StatsViewModel by viewModels()
+    private val viewModel: StatsViewModel by lazy {
+        val factory = StatsViewModelFactory(requireActivity().application)
+        androidx.lifecycle.ViewModelProvider(this, factory)[StatsViewModel::class.java]
+    }
     private lateinit var financeDao: FinanceDao
     private lateinit var passwordDao: PasswordDao
 

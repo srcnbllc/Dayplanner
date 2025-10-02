@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.dayplanner.utils.CustomToast
+import com.example.dayplanner.utils.getFormattedDate
 import androidx.fragment.app.DialogFragment
 import com.example.dayplanner.databinding.DialogQuickPreviewBinding
 import com.example.dayplanner.security.PasswordManager

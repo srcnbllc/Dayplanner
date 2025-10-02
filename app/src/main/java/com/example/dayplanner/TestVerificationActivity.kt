@@ -98,7 +98,7 @@ class TestVerificationActivity : AppCompatActivity() {
                 val testNote = Note(
                     title = "Test Note ${System.currentTimeMillis()}",
                     description = "This is a test note for verification",
-                    date = "2024-01-01",
+                    date = System.currentTimeMillis(),
                     tags = "test, verification",
                     status = "NEW"
                 )
@@ -121,7 +121,7 @@ class TestVerificationActivity : AppCompatActivity() {
                 val testNote = Note(
                     title = "Encrypted Test Note",
                     description = "This note will be encrypted",
-                    date = "2024-01-01",
+                    date = System.currentTimeMillis(),
                     tags = "test, encrypted",
                     status = "NOTES"
                 )
@@ -155,7 +155,7 @@ class TestVerificationActivity : AppCompatActivity() {
                 val testNote = Note(
                     title = "Lock Test Note",
                     description = "This note will be locked/unlocked",
-                    date = "2024-01-01",
+                    date = System.currentTimeMillis(),
                     tags = "test, lock",
                     status = "NOTES",
                     isLocked = false
@@ -183,9 +183,9 @@ class TestVerificationActivity : AppCompatActivity() {
             try {
                 // Create multiple test notes
                 val notes = listOf(
-                    Note(title = "Delete Test 1", description = "Will be deleted", date = "2024-01-01", status = "NOTES"),
-                    Note(title = "Delete Test 2", description = "Will be deleted", date = "2024-01-01", status = "NOTES"),
-                    Note(title = "Delete Test 3", description = "Will be deleted", date = "2024-01-01", status = "NOTES")
+                    Note(title = "Delete Test 1", description = "Will be deleted", date = System.currentTimeMillis(), status = "NOTES"),
+                    Note(title = "Delete Test 2", description = "Will be deleted", date = System.currentTimeMillis(), status = "NOTES"),
+                    Note(title = "Delete Test 3", description = "Will be deleted", date = System.currentTimeMillis(), status = "NOTES")
                 )
                 
                 notes.forEach { note ->
@@ -223,7 +223,7 @@ class TestVerificationActivity : AppCompatActivity() {
                 val testNote = Note(
                     title = "Restore Test Note",
                     description = "This note will be restored",
-                    date = "2024-01-01",
+                    date = System.currentTimeMillis(),
                     status = "NOTES"
                 )
                 

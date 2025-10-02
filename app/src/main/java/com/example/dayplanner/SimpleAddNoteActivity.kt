@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.dayplanner.databinding.ActivitySimpleAddNoteBinding
 import com.example.dayplanner.NoteViewModel
 import java.time.LocalDateTime
+import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Calendar
 import java.util.Locale
@@ -99,7 +101,15 @@ class SimpleAddNoteActivity : AppCompatActivity() {
         val note = Note(
             title = title,
             description = description,
-            date = date.ifEmpty { LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) },
+            date = if (date.isNotEmpty()) {
+                try {
+                    LocalDate.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd")).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+                } catch (e: Exception) {
+                    System.currentTimeMillis()
+                }
+            } else {
+                System.currentTimeMillis()
+            },
             isPinned = false,
             isLocked = false,
             status = "ACTIVE",

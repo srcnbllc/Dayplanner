@@ -18,6 +18,9 @@ import androidx.core.widget.addTextChangedListener
 import com.example.dayplanner.AddNoteActivity
 import com.example.dayplanner.NoteAdapter
 import com.example.dayplanner.NoteViewModel
+import com.example.dayplanner.NoteViewModelFactory
+import com.example.dayplanner.NoteRepository
+import com.example.dayplanner.NoteDatabase
 import com.example.dayplanner.R
 import com.example.dayplanner.databinding.FragmentNotesBinding
 import com.example.dayplanner.security.BiometricHelper
@@ -34,7 +37,10 @@ class NotesFragment : Fragment() {
     private var _binding: FragmentNotesBinding? = null
     private val binding get() = _binding!!
 
-    private val noteViewModel: NoteViewModel by viewModels()
+    private val noteViewModel: NoteViewModel by lazy {
+        val factory = NoteViewModelFactory(requireActivity().application)
+        androidx.lifecycle.ViewModelProvider(this, factory)[NoteViewModel::class.java]
+    }
     private lateinit var noteAdapter: NoteAdapter
     private var allNotesCache: List<com.example.dayplanner.Note> = emptyList()
     private var currentQuery: String = ""

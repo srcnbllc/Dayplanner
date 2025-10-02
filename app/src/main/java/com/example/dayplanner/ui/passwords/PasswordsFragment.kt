@@ -33,9 +33,7 @@ class PasswordsFragment : Fragment() {
 
     private lateinit var passwordDao: PasswordDao
     private lateinit var passwordAdapter: PasswordAdapter
-    private val viewModel: PasswordsViewModel by viewModels {
-        PasswordsViewModelFactory(passwordDao)
-    }
+    private lateinit var viewModel: PasswordsViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -52,6 +50,10 @@ class PasswordsFragment : Fragment() {
         // Initialize database
         val database = NoteDatabase.getDatabase(requireContext())
         passwordDao = database.passwordDao()
+        
+        // Initialize ViewModel
+        val factory = PasswordsViewModelFactory(passwordDao)
+        viewModel = androidx.lifecycle.ViewModelProvider(this, factory)[PasswordsViewModel::class.java]
 
         setupRecyclerView()
         setupAddButton()

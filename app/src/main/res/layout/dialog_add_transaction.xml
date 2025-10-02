@@ -3,38 +3,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:fillViewport="true">
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <!-- Header -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="İşlem Ekle"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginBottom="20dp"
-            android:textColor="@color/primary_color" />
+        android:orientation="vertical">
 
         <!-- Transaction Type -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="İşlem Türü"
-            app:startIconDrawable="@drawable/ic_menu_edit">
+            android:layout_marginBottom="8dp"
+            android:hint="İşlem Türü">
 
-            <AutoCompleteTextView
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/transactionTypeSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="none"
-                android:text="Gelir" />
+                android:dropDownHeight="wrap_content"
+                android:dropDownVerticalOffset="4dp"
+ />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -42,15 +32,17 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Alt Tür"
-            app:startIconDrawable="@drawable/ic_menu_edit">
+            android:layout_marginBottom="8dp"
+            android:hint="Alt Tür">
 
-            <AutoCompleteTextView
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/subtypeSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none" />
+                android:inputType="none"
+                android:dropDownHeight="wrap_content"
+                android:dropDownVerticalOffset="4dp"
+ />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -58,9 +50,8 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Başlık"
-            app:startIconDrawable="@drawable/ic_menu_edit">
+            android:layout_marginBottom="8dp"
+            android:hint="Başlık">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/titleEditText"
@@ -70,60 +61,54 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Amount and Currency -->
-        <LinearLayout
+        <!-- Amount -->
+        <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="12dp">
+            android:layout_marginBottom="8dp"
+            android:hint="Tutar">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="0dp"
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/amountEditText"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
-                android:layout_marginEnd="8dp"
-                android:hint="Tutar"
-                app:startIconDrawable="@drawable/ic_menu_edit">
+                android:inputType="numberDecimal" />
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/amountEditText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="numberDecimal" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-            </com.google.android.material.textfield.TextInputLayout>
+        <!-- Currency -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:hint="Para Birimi">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="0dp"
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                android:id="@+id/currencySpinner"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="Para Birimi"
-                app:startIconDrawable="@drawable/ic_menu_edit">
+                android:inputType="none"
+                android:dropDownHeight="wrap_content"
+                android:dropDownVerticalOffset="4dp"
+ />
 
-                <AutoCompleteTextView
-                    android:id="@+id/currencySpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:text="TRY" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-        </LinearLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Category -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Kategori"
-            app:startIconDrawable="@drawable/ic_menu_edit">
+            android:layout_marginBottom="8dp"
+            android:hint="Kategori">
 
-            <AutoCompleteTextView
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/categorySpinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none" />
+                android:inputType="none"
+                android:dropDownHeight="wrap_content"
+                android:dropDownVerticalOffset="4dp"
+ />
 
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -131,9 +116,8 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Tarih"
-            app:startIconDrawable="@drawable/ic_menu_edit">
+            android:layout_marginBottom="8dp"
+            android:hint="Tarih">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/dateEditText"
@@ -145,53 +129,55 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Recurring Transaction -->
+        <!-- Recurring Switch -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="12dp"
-            android:gravity="center_vertical">
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Düzenli İşlem"
+                android:text="Tekrarlanan İşlem"
                 android:textSize="16sp" />
 
-            <Switch
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/recurringSwitch"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:thumbTint="?attr/colorPrimary"
+                app:trackTint="?attr/colorPrimaryContainer" />
 
         </LinearLayout>
 
-        <!-- Recurring Interval (Hidden by default) -->
+        <!-- Recurring Interval -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/recurringIntervalLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
+            android:layout_marginBottom="8dp"
             android:hint="Tekrar Aralığı"
-            android:visibility="gone"
-            app:startIconDrawable="@drawable/ic_menu_edit">
+            android:visibility="gone">
 
-            <AutoCompleteTextView
+            <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/recurringIntervalSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none" />
+                android:inputType="none"
+                android:dropDownHeight="wrap_content"
+                android:dropDownVerticalOffset="4dp"
+ />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Reminder -->
+        <!-- Reminder Switch -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="12dp"
-            android:gravity="center_vertical">
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="0dp"
@@ -200,10 +186,12 @@
                 android:text="Hatırlatma"
                 android:textSize="16sp" />
 
-            <Switch
+            <com.google.android.material.switchmaterial.SwitchMaterial
                 android:id="@+id/reminderSwitch"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                app:thumbTint="?attr/colorPrimary"
+                app:trackTint="?attr/colorPrimaryContainer" />
 
         </LinearLayout>
 
@@ -211,9 +199,8 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:hint="Açıklama"
-            app:startIconDrawable="@drawable/ic_menu_edit">
+            android:layout_marginBottom="8dp"
+            android:hint="Açıklama">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/descriptionEditText"
@@ -229,30 +216,32 @@
             android:id="@+id/dynamicFieldsContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_marginBottom="16dp" />
+            android:layout_marginBottom="16dp"
+            android:orientation="vertical" />
 
-        <!-- Action Buttons -->
+        <!-- Buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="end">
+            android:orientation="horizontal">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/cancelButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="İptal"
                 android:layout_marginEnd="8dp"
-                style="@style/Widget.Material3.Button.TextButton" />
+                android:layout_weight="1"
+                android:text="İptal"
+                style="@style/Widget.Material3.Button.OutlinedButton" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/saveButton"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_weight="1"
                 android:text="Kaydet"
-                style="@style/Widget.Material3.Button" />
+                style="@style/Widget.MaterialComponents.Button" />
 
         </LinearLayout>
 

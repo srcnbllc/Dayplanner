@@ -127,8 +127,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:checked="false"
-                            app:thumbTint="@color/kite_green"
-                            app:trackTint="@color/kite_green" />
+                            app:thumbTint="?attr/colorPrimary"
+                            app:trackTint="?attr/colorPrimaryContainer" />
 
                     </LinearLayout>
 

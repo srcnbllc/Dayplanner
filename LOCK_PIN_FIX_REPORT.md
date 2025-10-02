@@ -154,3 +154,5 @@ data class Note(
 
 **Ana sorun MainActivity.kt'deki eksik kilitleme kodu idi. Şimdi tüm kilit ve pin işlemleri düzgün çalışacak!** 🚀
 
+
+

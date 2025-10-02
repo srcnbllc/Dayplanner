@@ -149,3 +149,5 @@ override fun onOptionsItemSelected(item: MenuItem): Boolean {
 
 **ActionBar hatası çözüldü! AddNoteActivity artık hatasız açılacak.** 🚀
 
+
+

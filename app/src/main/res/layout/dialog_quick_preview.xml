@@ -108,6 +108,8 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:text="Sabitle"
+            android:insetLeft="0dp"
+            android:insetRight="0dp"
             app:icon="@drawable/ic_pin"
             app:iconSize="16dp"/>
 
@@ -118,6 +120,8 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:text="Düzenle"
+            android:insetLeft="0dp"
+            android:insetRight="0dp"
             app:icon="@drawable/ic_edit"
             app:iconSize="16dp"/>
 
@@ -127,6 +131,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Sil"
+            android:insetLeft="0dp"
+            android:insetRight="0dp"
             app:icon="@drawable/ic_delete"
             app:iconSize="16dp"
             app:iconTint="@color/material_dynamic_red"/>

@@ -10,74 +10,107 @@ import com.google.gson.reflect.TypeToken
 @Entity(tableName = "transactions")
 @TypeConverters(Converters::class)
 data class Transaction(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
-    val type: TransactionType, // Gelir/Gider
-    val subtype: String, // Maaş, Serbest Gelir, Kira Gideri, vb.
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val type: TransactionType,
+    val category: String,
+    val subtype: String? = null,
     val title: String,
     val amount: Double,
-    val currency: String = "TRY", // Para birimi
-    val category: String,
-    val description: String = "",
-    val date: Long, // Unix timestamp
+    val currency: String = "TRY",
+    val paymentType: PaymentType = PaymentType.CASH,
+    val date: Long,
+    val description: String? = null,
     val isRecurring: Boolean = false,
-    val recurringInterval: String? = null, // daily, weekly, monthly, yearly
-    val reminder: Boolean = false,
-    val meta: String? = null // JSON string for dynamic fields
+    val recurringInterval: String? = null,
+    val reminder: Long? = null,
+    val meta: Map<String, Any>? = null,
+    val isDebt: Boolean = false,
+    val debtId: Long? = null,
+    val status: TransactionStatus = TransactionStatus.ACTIVE
 )
-
-enum class TransactionType {
-    INCOME, EXPENSE
-}
-
-enum class IncomeSubtype {
-    SALARY, // Maaş
-    FREELANCE, // Serbest Gelir
-    RENTAL_INCOME, // Kira Geliri
-    INVESTMENT_RETURN, // Yatırım Getirisi
-    RECEIVABLE, // Alacak
-    BONUS, // Prim / Bonus
-    PENSION, // Emekli Maaşı
-    INTEREST_DIVIDEND, // Faiz / Temettü
-    OTHER_INCOME // Diğer Gelirler
-}
-
-enum class ExpenseSubtype {
-    RENT_EXPENSE, // Kira Gideri
-    BANK_LOAN, // Banka Kredisi
-    BILL_PAYMENT, // Fatura Ödemeleri
-    INSURANCE, // Sigorta
-    TAX_FEE, // Vergi/Harç
-    EDUCATION, // Eğitim
-    HEALTHCARE, // Sağlık
-    TRANSPORTATION, // Ulaşım
-    FOOD_GROCERY, // Gıda / Market
-    SHOPPING, // Alışveriş
-    TRAVEL, // Tatiller / Seyahat
-    SUBSCRIPTIONS, // Abonelikler
-    OTHER_EXPENSE // Diğer Giderler
-}
 
 @Entity(tableName = "categories")
 data class Category(
-    @PrimaryKey val name: String,
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val name: String,
     val type: TransactionType,
     val icon: String? = null
 )
 
-// Type converters for Room database
+@Entity(tableName = "debts")
+data class Debt(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0,
+    val title: String,
+    val amount: Double,
+    val currency: String = "TRY",
+    val dueDate: Long? = null,
+    val isPaid: Boolean = false,
+    val createdAt: Long = System.currentTimeMillis()
+)
+
+@Entity(tableName = "currency_rates")
+data class CurrencyRate(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val base: String,
+    val currency: String,
+    val rate: Double,
+    val timestamp: Long = System.currentTimeMillis()
+)
+
+@Entity(tableName = "finance_record")
+data class FinanceRecord(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val title: String,
+    val amount: Double,
+    val currency: String = "TRY",
+    val date: Long,
+    val description: String? = null,
+    val category: String? = null,
+    val isRecurring: Boolean = false,
+    val recurringInterval: String? = null,
+    val createdAt: Long = System.currentTimeMillis()
+)
+
+@Entity(tableName = "installment")
+data class Installment(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val financeRecordId: Int,
+    val amount: Double,
+    val dueDate: Long,
+    val isPaid: Boolean = false,
+    val paidDate: Long? = null
+)
+
+@Entity(tableName = "payment_reminder")
+data class PaymentReminder(
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 0,
+    val financeRecordId: Int,
+    val reminderTime: Long,
+    val isTriggered: Boolean = false
+)
+
 class Converters {
     @TypeConverter
     fun fromString(value: String?): Map<String, Any>? {
-        if (value == null) return null
-        val gson = Gson()
-        val type = object : TypeToken<Map<String, Any>>() {}.type
-        return gson.fromJson(value, type)
+        return if (value == null) null else {
+            val gson = Gson()
+            val type = object : TypeToken<Map<String, Any>>() {}.type
+            gson.fromJson(value, type)
+        }
     }
 
     @TypeConverter
     fun fromMap(map: Map<String, Any>?): String? {
-        if (map == null) return null
-        val gson = Gson()
-        return gson.toJson(map)
+        return if (map == null) null else {
+            val gson = Gson()
+            gson.toJson(map)
+        }
     }
 }

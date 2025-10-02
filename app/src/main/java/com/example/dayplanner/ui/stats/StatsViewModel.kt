@@ -41,8 +41,11 @@ class StatsViewModel(app: Application) : AndroidViewModel(app) {
     val weakPasswordsCount: LiveData<Int> = _weakPasswordsCount
 
     private val notesObserver = Observer<List<Note>> { notes ->
-        val todayStr = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-        val todayNotes = notes.filter { it.date == todayStr }
+        val today = LocalDate.now()
+        val todayNotes = notes.filter { note ->
+            val noteDate = LocalDate.ofEpochDay(note.date / (24 * 60 * 60 * 1000))
+            noteDate == today
+        }
         _completedCount.postValue(todayNotes.size)
         _streakDays.postValue(computeStreak(notes))
     }
@@ -50,6 +53,11 @@ class StatsViewModel(app: Application) : AndroidViewModel(app) {
     init {
         allNotesLiveData.observeForever(notesObserver)
         loadAllStats()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        allNotesLiveData.removeObserver(notesObserver)
     }
 
     private fun computeStreak(notes: List<Note>): Int {
@@ -102,11 +110,6 @@ class StatsViewModel(app: Application) : AndroidViewModel(app) {
         _balance.postValue(0.0)
         _passwordsCount.postValue(0)
         _weakPasswordsCount.postValue(0)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        allNotesLiveData.removeObserver(notesObserver)
     }
 
     // İsteğe bağlı mock veri

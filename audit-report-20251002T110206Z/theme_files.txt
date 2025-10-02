@@ -1,0 +1,2 @@
+app/src/main/res/values/styles.xml
+app/src/main/res/values-night/styles.xml

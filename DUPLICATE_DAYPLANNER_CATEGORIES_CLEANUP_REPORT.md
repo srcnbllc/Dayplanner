@@ -200,3 +200,5 @@ app:title="📝 Notlarım"
 
 **Artık uygulama daha temiz, basit ve odaklı!** 🚀
 
+
+

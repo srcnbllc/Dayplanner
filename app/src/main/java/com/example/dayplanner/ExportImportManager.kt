@@ -91,7 +91,11 @@ object ExportImportManager {
                             id = 0, // New ID will be assigned
                             title = noteJson.getString("title"),
                             description = noteJson.getString("description"),
-                            date = noteJson.getString("date"),
+                            date = try {
+                                noteJson.getString("date").toLong()
+                            } catch (e: Exception) {
+                                System.currentTimeMillis()
+                            },
                             folderId = if (noteJson.isNull("folderId")) null else noteJson.getInt("folderId"),
                             isPinned = noteJson.getBoolean("isPinned"),
                             isLocked = noteJson.getBoolean("isLocked"),

@@ -1,32 +1,19 @@
 package com.example.dayplanner.passwords
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
+import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PasswordDao {
-    // Original methods for PasswordItem
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertItem(item: PasswordItem): Long
+    @Query("SELECT * FROM passwords ORDER BY title ASC")
+    fun getAllPasswords(): Flow<List<Password>>
 
-    @Update
-    suspend fun updateItem(item: PasswordItem)
-
-    @Delete
-    suspend fun deleteItem(item: PasswordItem)
-
-    @Query("SELECT * FROM password_item ORDER BY service ASC")
-    fun getAllItems(): LiveData<List<PasswordItem>>
+    @Query("SELECT * FROM password_categories ORDER BY name ASC")
+    fun getAllCategories(): Flow<List<PasswordCategory>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertHistory(history: PasswordHistory): Long
-
-    @Query("SELECT * FROM password_history WHERE passwordItemId = :itemId ORDER BY changedAt DESC LIMIT 3")
-    fun getLastThree(itemId: Int): LiveData<List<PasswordHistory>>
-
-    // New methods for Password
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertPassword(password: Password): Long
+    suspend fun insertPassword(password: Password)
 
     @Update
     suspend fun updatePassword(password: Password)
@@ -34,28 +21,21 @@ interface PasswordDao {
     @Delete
     suspend fun deletePassword(password: Password)
 
-    @Query("SELECT * FROM passwords ORDER BY title ASC")
-    fun getAllPasswords(): LiveData<List<Password>>
-
-    @Query("SELECT * FROM passwords WHERE category = :category ORDER BY title ASC")
-    fun getPasswordsByCategory(category: String): LiveData<List<Password>>
-
-    @Query("SELECT * FROM passwords WHERE title LIKE '%' || :query || '%' OR username LIKE '%' || :query || '%' ORDER BY title ASC")
-    suspend fun searchPasswords(query: String): List<Password>
-
-    @Query("SELECT * FROM passwords WHERE title LIKE '%' || :query || '%' OR username LIKE '%' || :query || '%' ORDER BY title ASC")
-    fun searchPasswordsLive(query: String): LiveData<List<Password>>
-
-    // Category methods
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertCategory(category: PasswordCategory)
 
-    @Query("SELECT name FROM password_categories ORDER BY name ASC")
-    suspend fun getAllCategories(): List<String>
+    @Query("SELECT * FROM passwords WHERE title LIKE '%' || :query || '%' OR username LIKE '%' || :query || '%' OR website LIKE '%' || :query || '%' ORDER BY title ASC")
+    fun searchPasswords(query: String): Flow<List<Password>>
 
-    // Synchronous methods for export/import
+    @Query("SELECT * FROM passwords WHERE category = :category ORDER BY title ASC")
+    fun getPasswordsByCategory(category: String): Flow<List<Password>>
+
+    @Query("SELECT * FROM passwords WHERE id = :id")
+    suspend fun getPasswordById(id: Int): Password?
+
+    @Query("DELETE FROM passwords WHERE id = :id")
+    suspend fun deletePasswordById(id: Int)
+
     @Query("SELECT * FROM passwords ORDER BY title ASC")
     suspend fun getAllPasswordsSync(): List<Password>
 }
-
-

@@ -1,0 +1,15 @@
+app/src/main/java/com/example/dayplanner/finance/EnumConverters.kt:9:    @TypeConverter
+app/src/main/java/com/example/dayplanner/finance/EnumConverters.kt:12:    @TypeConverter
+app/src/main/java/com/example/dayplanner/finance/EnumConverters.kt:16:    @TypeConverter
+app/src/main/java/com/example/dayplanner/finance/EnumConverters.kt:19:    @TypeConverter
+app/src/main/java/com/example/dayplanner/finance/EnumConverters.kt:23:    @TypeConverter
+app/src/main/java/com/example/dayplanner/finance/EnumConverters.kt:26:    @TypeConverter
+app/src/main/java/com/example/dayplanner/finance/RoomEnumConversters.kt:16:    @TypeConverter
+app/src/main/java/com/example/dayplanner/finance/RoomEnumConversters.kt:19:    @TypeConverter
+app/src/main/java/com/example/dayplanner/finance/RoomEnumConversters.kt:23:    @TypeConverter
+app/src/main/java/com/example/dayplanner/finance/RoomEnumConversters.kt:26:    @TypeConverter
+app/src/main/java/com/example/dayplanner/finance/RoomEnumConversters.kt:30:    @TypeConverter
+app/src/main/java/com/example/dayplanner/finance/RoomEnumConversters.kt:33:    @TypeConverter
+app/src/main/java/com/example/dayplanner/finance/Transaction.kt:15:@TypeConverters(Converters::class)
+app/src/main/java/com/example/dayplanner/finance/Transaction.kt:104:    @TypeConverter
+app/src/main/java/com/example/dayplanner/finance/Transaction.kt:113:    @TypeConverter

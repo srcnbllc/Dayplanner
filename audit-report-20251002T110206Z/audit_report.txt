@@ -1,0 +1,89 @@
+PROJECT AUDIT - Thu Oct  2 08:02:06 UTC 2025
+1) ENVIRONMENT CHECKS
+WARN: xmllint not found: XML syntax checks will be skipped
+WARN: aapt not found (optional)
+WARN: jq missing (optional for JSON parsing)
+
+2) PROJECT STRUCTURE
+.
+.git
+.git/hooks
+.git/info
+.git/logs
+.git/objects
+.git/refs
+.gradle
+.gradle/8.13
+.gradle/buildOutputCleanup
+.gradle/vcs-1
+.idea
+.idea/caches
+.kotlin
+.kotlin/sessions
+app
+app/build
+app/src
+audit-report-20251002T110206Z
+build
+build/reports
+gradle
+gradle/wrapper
+
+Found settings.gradle(.kts)
+
+3) Resource & source lists
+XML count: 108
+Kotlin files: 72
+Resources: 117
+
+4) XML SYNTAX CHECK (xmllint)
+WARN: xmllint not installed; skipping XML well-formedness checks
+
+5) GRADLE BUILD & LINT (assembleDebug, lint)
+ERROR: gradle assembleDebug FAILED. See ./audit-report-20251002T110206Z/gradle_assemble.log
+WARN: gradle lintDebug reported issues. See ./audit-report-20251002T110206Z/gradle_lint.log
+
+6) UNUSED RESOURCES (heuristic)
+Possible unused drawables saved to ./audit-report-20251002T110206Z/possibly_unused_drawables.txt (heuristic). Review before removal.
+
+7) LAYOUT VISIBILITY & ICON TINT CHECKS
+Visibility occurrences: 14
+Icon usages: 67
+WARN: If icon usages exist without iconTint or iconSize, icons may be invisible in some themes.
+
+8) ID CROSS-CHECK (code vs layouts)
+IDs referenced in code but missing in layouts: 0
+IDs in layouts but not referenced in code: 0
+
+9) NAVIGATION GRAPH vs Fragment/Activities
+app/src/main/res/navigation/nav_graph.xml
+Inspecting app/src/main/res/navigation/nav_graph.xml
+
+10) ROOM / Flow / LiveData HEURISTICS
+Entities found: 24
+
+11) INFINITE LOOPS / BLOCKING CALLS HEURISTIC
+Possible infinite loops: 0
+Blocking calls: 0
+Toast occurrences: 3
+WARN: Check Toast usage inside loops or background threads.
+
+12) MANIFEST CHECKS
+Permissions listed: 2
+
+13) THEME/STYLE CHECKS
+Theme files:
+app/src/main/res/values/styles.xml
+app/src/main/res/values-night/styles.xml
+
+14) HARDCODED STRINGS
+Hardcoded strings occurrences: 215
+
+15) SUMMARY & NEXT STEPS
+FILES GENERATED: 31
+Inspect ./audit-report-20251002T110206Z for detailed files. Critical errors written to ./audit-report-20251002T110206Z/errors.txt
+ERROR: Errors/warnings were recorded. Open ./audit-report-20251002T110206Z/errors.txt and ./audit-report-20251002T110206Z/audit_report.txt
+Cleanup instructions created: ./audit-report-20251002T110206Z/cleanup_instructions.sh (disabled by default for safety)
+Manual checks guide saved: ./audit-report-20251002T110206Z/manual_checks.md
+AI limitations doc saved: ./audit-report-20251002T110206Z/ai_limitations.md
+AUDIT COMPLETE. Review files in ./audit-report-20251002T110206Z. Important: do NOT run cleanup move/delete commands without review.

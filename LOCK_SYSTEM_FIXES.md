@@ -185,3 +185,5 @@ Kilit sistemi artık tam çalışır durumda:
 
 Kilit sistemi başarıyla düzeltildi! 🔒
 
+
+

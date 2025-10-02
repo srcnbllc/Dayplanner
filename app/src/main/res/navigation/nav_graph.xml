@@ -26,5 +26,15 @@
         android:name="com.example.dayplanner.ui.reports.ReportsFragment"
         android:label="Raporlar" />
 
+    <fragment
+        android:id="@+id/analyticsFragment"
+        android:name="com.example.dayplanner.ui.finance.AnalyticsFragment"
+        android:label="Finans Analizi" />
+
+    <fragment
+        android:id="@+id/currencyConverterFragment"
+        android:name="com.example.dayplanner.ui.finance.CurrencyConverterFragment"
+        android:label="Döviz Çevirici" />
+
 </navigation>
 

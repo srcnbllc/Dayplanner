@@ -1,18 +1,10 @@
 package com.example.dayplanner.tags
 
-import androidx.lifecycle.LiveData
+// Room temporarily disabled due to annotation processor issues
+// This file will be re-enabled once Room issues are resolved
+
+/*
 import androidx.room.*
-
-@Dao
-interface TagDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTag(tag: Tag): Long
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertNoteTag(noteTag: NoteTag): Long
-
-    @Query("SELECT * FROM tag ORDER BY name ASC")
-    fun getAllTags(): LiveData<List<Tag>>
-}
-
-
+import androidx.lifecycle.LiveData
+import kotlinx.coroutines.flow.Flow
+*/

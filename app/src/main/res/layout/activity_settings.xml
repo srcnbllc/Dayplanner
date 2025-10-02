@@ -49,31 +49,37 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/exportDataButton"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:text="Verileri Dışa Aktar"
                         android:textSize="16sp"
                         app:icon="@drawable/ic_export"
+                        app:iconTint="?attr/colorOnSurface"
                         app:iconGravity="textStart" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/importDataButton"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:text="Verileri İçe Aktar"
                         android:textSize="16sp"
                         app:icon="@drawable/ic_import"
+                        app:iconTint="?attr/colorOnSurface"
                         app:iconGravity="textStart" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/backupButton"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Yedekleme Seçenekleri"
                         android:textSize="16sp"
                         app:icon="@drawable/ic_backup"
+                        app:iconTint="?attr/colorOnSurface"
                         app:iconGravity="textStart" />
 
                 </LinearLayout>
@@ -105,11 +111,13 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/themeButton"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Tema Seçimi"
                         android:textSize="16sp"
                         app:icon="@drawable/ic_theme"
+                        app:iconTint="?attr/colorOnSurface"
                         app:iconGravity="textStart" />
 
                 </LinearLayout>
@@ -141,21 +149,25 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/biometricButton"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="8dp"
                         android:text="Biyometrik Kimlik Doğrulama"
                         android:textSize="16sp"
                         app:icon="@drawable/ic_fingerprint"
+                        app:iconTint="?attr/colorOnSurface"
                         app:iconGravity="textStart" />
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/securityButton"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Güvenlik Ayarları"
                         android:textSize="16sp"
                         app:icon="@drawable/ic_security"
+                        app:iconTint="?attr/colorOnSurface"
                         app:iconGravity="textStart" />
 
                 </LinearLayout>
@@ -187,11 +199,13 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/aboutButton"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Uygulama Hakkında"
                         android:textSize="16sp"
                         app:icon="@drawable/ic_info"
+                        app:iconTint="?attr/colorOnSurface"
                         app:iconGravity="textStart" />
 
                 </LinearLayout>

@@ -187,3 +187,5 @@ Yok - Tüm fragment geçişleri Intent ile Activity üzerinden
 
 **Navigation sistemi artık temiz ve optimize edilmiş durumda!** 🚀
 
+
+

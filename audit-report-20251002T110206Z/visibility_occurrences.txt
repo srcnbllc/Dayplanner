@@ -1,0 +1,14 @@
+app/src/main/res/layout/activity_add_note.xml:141:                        android:visibility="gone"
+app/src/main/res/layout/activity_add_note.xml:470:                        android:visibility="gone" />
+app/src/main/res/layout/activity_settings.xml:221:                android:visibility="gone" />
+app/src/main/res/layout/dialog_add_transaction.xml:162:            android:visibility="gone">
+app/src/main/res/layout/dialog_quick_preview.xml:95:        android:visibility="gone"/>
+app/src/main/res/layout/fragment_deleted_notes.xml:128:            android:visibility="gone"
+app/src/main/res/layout/fragment_deleted_notes.xml:206:            android:visibility="gone">
+app/src/main/res/layout/fragment_deleted_notes.xml:257:        android:visibility="gone"
+app/src/main/res/layout/fragment_notes.xml:314:                    android:visibility="gone">
+app/src/main/res/layout/fragment_notes.xml:383:            android:visibility="gone"
+app/src/main/res/layout/fragment_notes.xml:439:        android:visibility="gone"
+app/src/main/res/layout/item_note.xml:27:                android:visibility="gone" />
+app/src/main/res/layout/item_note.xml:44:                android:visibility="gone" />
+app/src/main/res/layout/item_password.xml:65:                android:visibility="gone" />

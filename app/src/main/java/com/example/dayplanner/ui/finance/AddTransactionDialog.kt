@@ -9,10 +9,13 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Switch
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.example.dayplanner.utils.CustomToast
 import androidx.fragment.app.DialogFragment
 import com.example.dayplanner.R
 import com.example.dayplanner.finance.*
+import com.example.dayplanner.finance.IncomeSubtype
+import com.example.dayplanner.finance.ExpenseSubtype
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import java.text.SimpleDateFormat
@@ -27,10 +30,10 @@ class AddTransactionDialog : DialogFragment() {
     private lateinit var currencySpinner: com.google.android.material.textfield.MaterialAutoCompleteTextView
     private lateinit var categorySpinner: com.google.android.material.textfield.MaterialAutoCompleteTextView
     private lateinit var dateEditText: TextInputEditText
-    private lateinit var recurringSwitch: Switch
+    private lateinit var recurringSwitch: SwitchMaterial
     private lateinit var recurringIntervalLayout: TextInputLayout
     private lateinit var recurringIntervalSpinner: com.google.android.material.textfield.MaterialAutoCompleteTextView
-    private lateinit var reminderSwitch: Switch
+    private lateinit var reminderSwitch: SwitchMaterial
     private lateinit var descriptionEditText: TextInputEditText
     private lateinit var dynamicFieldsContainer: LinearLayout
     private lateinit var cancelButton: Button
@@ -401,8 +404,8 @@ class AddTransactionDialog : DialogFragment() {
             date = selectedDate,
             isRecurring = isRecurring,
             recurringInterval = recurringInterval,
-            reminder = reminder,
-            meta = if (meta.isNotEmpty()) com.google.gson.Gson().toJson(meta) else null
+            reminder = if (reminder) System.currentTimeMillis() + (24 * 60 * 60 * 1000) else null, // 24 hours from now
+            meta = if (meta.isNotEmpty()) meta else null
         )
     }
 }

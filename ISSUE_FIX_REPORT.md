@@ -172,3 +172,5 @@ if (note.isPinned) {
 
 **Tüm sorunlar çözüldü! Proje test edilebilir durumda.** 🚀
 
+
+

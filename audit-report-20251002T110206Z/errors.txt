@@ -1,0 +1,9 @@
+WARN: xmllint not found: XML syntax checks will be skipped
+WARN: aapt not found (optional)
+WARN: jq missing (optional for JSON parsing)
+WARN: xmllint not installed; skipping XML well-formedness checks
+ERROR: gradle assembleDebug FAILED. See ./audit-report-20251002T110206Z/gradle_assemble.log
+WARN: gradle lintDebug reported issues. See ./audit-report-20251002T110206Z/gradle_lint.log
+WARN: If icon usages exist without iconTint or iconSize, icons may be invisible in some themes.
+WARN: Check Toast usage inside loops or background threads.
+ERROR: Errors/warnings were recorded. Open ./audit-report-20251002T110206Z/errors.txt and ./audit-report-20251002T110206Z/audit_report.txt

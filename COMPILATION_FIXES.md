@@ -176,3 +176,5 @@ AddNoteActivity.kt artık Kite Design ile uyumlu:
 
 Proje derlenmeye hazır! 🚀
 
+
+

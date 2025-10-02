@@ -46,7 +46,9 @@
                 android:layout_marginTop="2dp"
                 android:textSize="12sp"
                 android:textColor="?attr/colorOnSurfaceVariant"
-                android:text="Activity Description" />
+                android:text="Activity Description"
+                android:ellipsize="end"
+                android:singleLine="true" />
 
         </LinearLayout>
 

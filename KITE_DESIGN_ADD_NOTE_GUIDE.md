@@ -165,3 +165,5 @@ Yeni not ekleme sayfası artık Kite Design stili ile:
 
 Kite Design başarıyla uygulandı! 🎨
 
+
+

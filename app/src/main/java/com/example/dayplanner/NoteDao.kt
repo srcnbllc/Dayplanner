@@ -5,21 +5,18 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Delete
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface NoteDao {
-
     // Yeni bir not eklemek için
     @Insert
     suspend fun insert(note: Note)
 
     // Notu ID'ye göre sorgulamak için
     @Query("SELECT * FROM note_table WHERE id = :id")
-    fun getNoteById(id: Int): LiveData<Note?>  // LiveData kullanarak verinin güncel takibi sağlanır
-
-    // Tüm notları sorgulamak için (silinmemiş olanlar)
-    @Query("SELECT * FROM note_table WHERE status != 'DELETED' ORDER BY id DESC")
-    fun getAllNotes(): LiveData<List<Note>>  // Tüm notlar listesi, LiveData ile döndürülür
+    fun getNoteById(id: Int): LiveData<Note?>
 
     // Notu güncellemek için
     @Update
@@ -89,11 +86,9 @@ interface NoteDao {
     @Query("SELECT * FROM note_table WHERE status = :status ORDER BY createdAt DESC")
     fun getNotesByStatusSortedByDate(status: String): LiveData<List<Note>>
 
-    // Duruma göre başlığa göre sıralı getirmek için
     @Query("SELECT * FROM note_table WHERE status = :status ORDER BY title ASC")
     fun getNotesByStatusSortedByTitle(status: String): LiveData<List<Note>>
 
-    // Duruma göre son düzenlemeye göre sıralı getirmek için
     @Query("SELECT * FROM note_table WHERE status = :status ORDER BY createdAt DESC")
     fun getNotesByStatusSortedByLastEdited(status: String): LiveData<List<Note>>
 
@@ -106,8 +101,8 @@ interface NoteDao {
     suspend fun getAllNotesSync(): List<Note>
 
     // Filter queries for Task 1
-    @Query("SELECT * FROM note_table WHERE status != 'DELETED' ORDER BY isPinned DESC, createdAt DESC")
-    fun getAllNotesSorted(): LiveData<List<Note>>
+    @Query("SELECT * FROM note_table WHERE status != 'DELETED' ORDER BY createdAt DESC")
+    fun getAllNotes(): LiveData<List<Note>>
 
     @Query("SELECT * FROM note_table WHERE status != 'DELETED' ORDER BY createdAt DESC LIMIT 50")
     fun getRecentlyAddedNotes(): LiveData<List<Note>>
@@ -120,4 +115,7 @@ interface NoteDao {
 
     @Query("SELECT * FROM note_table WHERE (isEncrypted = 1 OR encryptedBlob IS NOT NULL) AND status != 'DELETED' ORDER BY createdAt DESC")
     fun getPasswordProtectedNotes(): LiveData<List<Note>>
+
+    @Query("SELECT * FROM note_table WHERE status != 'DELETED' ORDER BY createdAt DESC")
+    fun getAllNotesSorted(): LiveData<List<Note>>
 }

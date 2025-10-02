@@ -25,7 +25,10 @@ class DeletedNotesFragment : Fragment() {
     private var _binding: FragmentDeletedNotesBinding? = null
     private val binding get() = _binding!!
 
-    private val noteViewModel: NoteViewModel by viewModels()
+    private val noteViewModel: NoteViewModel by lazy {
+        val factory = com.example.dayplanner.NoteViewModelFactory(requireActivity().application)
+        androidx.lifecycle.ViewModelProvider(this, factory)[com.example.dayplanner.NoteViewModel::class.java]
+    }
     private lateinit var noteAdapter: NoteAdapter
     private var isSelectionMode: Boolean = false
     private var selectedNotes: MutableSet<Int> = mutableSetOf()

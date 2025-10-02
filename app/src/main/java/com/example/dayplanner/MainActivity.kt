@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.dayplanner.databinding.ActivityMainBinding
 import android.content.pm.ShortcutManager
@@ -17,8 +16,6 @@ import androidx.navigation.ui.setupWithNavController
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
-    private val noteViewModel: NoteViewModel by viewModels() // ViewModel'i kullanıyoruz
-    private lateinit var noteAdapter: NoteAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,33 +26,6 @@ class MainActivity : AppCompatActivity() {
             
             // Quick Actions (Shortcuts) ekle
             setupQuickActions()
-
-            // NoteAdapter'ı RecyclerView'a bağlamak için oluşturduk
-            noteAdapter = NoteAdapter(
-                onClick = { note ->
-                    // Herhangi bir not'a tıklandığında notu düzenlemek için AddNoteActivity'ye geçiş yapıyoruz
-                    val intent = Intent(this, AddNoteActivity::class.java)
-                    intent.putExtra("noteId", note.id)
-                    startActivity(intent)
-                },
-                onLockToggle = { note, shouldLock ->
-                    if (shouldLock) {
-                        // Kilitle
-                        val updated = note.copy(isEncrypted = true, isLocked = true)
-                        noteViewModel.update(updated)
-                    } else {
-                        // Kilidi kaldır
-                        val updated = note.copy(isEncrypted = false, isLocked = false)
-                        noteViewModel.update(updated)
-                    }
-                },
-                onSoftDelete = { note ->
-                    noteViewModel.softDeleteById(note.id)
-                },
-                onPinToggle = { note, shouldPin ->
-                    noteViewModel.setPinned(note.id, shouldPin)
-                }
-            )
 
             // Navigation setup
             setupNavigation()

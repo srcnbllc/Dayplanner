@@ -171,3 +171,5 @@ Activity_main.xml:
 
 **Artık tüm navigation butonları çalışıyor ve mükerrer butonlar yok!** 🚀
 
+
+

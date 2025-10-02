@@ -133,3 +133,5 @@ Notlar sayfası artık modern Kite Design stili ile tasarlandı:
 
 Kite Design başarıyla uygulandı! 🎨
 
+
+

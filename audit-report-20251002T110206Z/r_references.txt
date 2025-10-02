@@ -1,0 +1,198 @@
+app/src/main/java/com/example/dayplanner/AddNoteActivity.kt:293:            .inflate(android.R.layout.simple_list_item_1, parent, false)
+app/src/main/java/com/example/dayplanner/AddNoteActivity.kt:305:            itemView.findViewById<android.widget.TextView>(android.R.id.text1).text = 
+app/src/main/java/com/example/dayplanner/MainActivity.kt:57:                    .setIcon(Icon.createWithResource(this, android.R.drawable.ic_input_add))
+app/src/main/java/com/example/dayplanner/MainActivity.kt:66:                    .setIcon(Icon.createWithResource(this, android.R.drawable.ic_menu_edit))
+app/src/main/java/com/example/dayplanner/MainActivity.kt:76:                    .setIcon(Icon.createWithResource(this, R.drawable.ic_lock))
+app/src/main/java/com/example/dayplanner/MainActivity.kt:91:                .findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+app/src/main/java/com/example/dayplanner/NoteAdapter.kt:115:                popup.menu.findItem(R.id.action_lock).isVisible = !isLocked
+app/src/main/java/com/example/dayplanner/NoteAdapter.kt:116:                popup.menu.findItem(R.id.action_unlock).isVisible = isLocked
+app/src/main/java/com/example/dayplanner/NoteAdapter.kt:117:                popup.menu.findItem(R.id.action_pin).isVisible = !note.isPinned
+app/src/main/java/com/example/dayplanner/NoteAdapter.kt:118:                popup.menu.findItem(R.id.action_unpin).isVisible = note.isPinned
+app/src/main/java/com/example/dayplanner/NoteAdapter.kt:122:                        R.id.action_lock -> {
+app/src/main/java/com/example/dayplanner/NoteAdapter.kt:126:                        R.id.action_unlock -> {
+app/src/main/java/com/example/dayplanner/NoteAdapter.kt:130:                        R.id.action_pin -> {
+app/src/main/java/com/example/dayplanner/NoteAdapter.kt:134:                        R.id.action_unpin -> {
+app/src/main/java/com/example/dayplanner/NoteAdapter.kt:138:                        R.id.action_delete -> {
+app/src/main/java/com/example/dayplanner/notifications/NotificationHelper.kt:102:            "finance" -> R.drawable.ic_money
+app/src/main/java/com/example/dayplanner/notifications/NotificationHelper.kt:103:            "password" -> R.drawable.ic_security
+app/src/main/java/com/example/dayplanner/notifications/NotificationHelper.kt:104:            "important" -> R.drawable.ic_priority
+app/src/main/java/com/example/dayplanner/notifications/NotificationHelper.kt:105:            else -> R.drawable.ic_note
+app/src/main/java/com/example/dayplanner/PasswordAdapter.kt:21:            .inflate(R.layout.item_password, parent, false)
+app/src/main/java/com/example/dayplanner/PasswordAdapter.kt:31:        private val titleView: TextView = itemView.findViewById(R.id.titleTextView)
+app/src/main/java/com/example/dayplanner/PasswordAdapter.kt:32:        private val usernameView: TextView = itemView.findViewById(R.id.usernameTextView)
+app/src/main/java/com/example/dayplanner/PasswordAdapter.kt:33:        private val categoryView: TextView = itemView.findViewById(R.id.categoryTextView)
+app/src/main/java/com/example/dayplanner/PasswordAdapter.kt:34:        private val websiteView: TextView = itemView.findViewById(R.id.websiteTextView)
+app/src/main/java/com/example/dayplanner/PasswordAdapter.kt:35:        private val iconView: ImageView = itemView.findViewById(R.id.passwordIcon)
+app/src/main/java/com/example/dayplanner/PasswordAdapter.kt:46:                "sosyal medya" -> R.drawable.ic_share
+app/src/main/java/com/example/dayplanner/PasswordAdapter.kt:47:                "e-posta" -> R.drawable.ic_mail
+app/src/main/java/com/example/dayplanner/PasswordAdapter.kt:48:                "banka" -> R.drawable.ic_money
+app/src/main/java/com/example/dayplanner/PasswordAdapter.kt:49:                "iş" -> R.drawable.ic_work_note
+app/src/main/java/com/example/dayplanner/PasswordAdapter.kt:50:                "e-ticaret" -> R.drawable.ic_shopping_cart
+app/src/main/java/com/example/dayplanner/PasswordAdapter.kt:51:                else -> R.drawable.ic_security
+app/src/main/java/com/example/dayplanner/ProfileActivity.kt:10:        setContentView(R.layout.activity_profile)
+app/src/main/java/com/example/dayplanner/QuickPreviewDialog.kt:85:            if (note.isPinned) android.R.drawable.ic_menu_edit else android.R.drawable.ic_menu_edit
+app/src/main/java/com/example/dayplanner/TransactionAdapter.kt:23:            .inflate(R.layout.item_transaction, parent, false)
+app/src/main/java/com/example/dayplanner/TransactionAdapter.kt:32:        private val titleTextView: TextView = itemView.findViewById(R.id.titleTextView)
+app/src/main/java/com/example/dayplanner/TransactionAdapter.kt:33:        private val amountTextView: TextView = itemView.findViewById(R.id.amountTextView)
+app/src/main/java/com/example/dayplanner/TransactionAdapter.kt:34:        private val categoryTextView: TextView = itemView.findViewById(R.id.categoryTextView)
+app/src/main/java/com/example/dayplanner/TransactionAdapter.kt:35:        private val dateTextView: TextView = itemView.findViewById(R.id.dateTextView)
+app/src/main/java/com/example/dayplanner/TransactionAdapter.kt:36:        private val typeIndicator: View = itemView.findViewById(R.id.typeIndicator)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:58:        return inflater.inflate(R.layout.dialog_add_transaction, container, false)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:70:        transactionTypeSpinner = view.findViewById(R.id.transactionTypeSpinner)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:71:        subtypeSpinner = view.findViewById(R.id.subtypeSpinner)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:72:        titleEditText = view.findViewById(R.id.titleEditText)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:73:        amountEditText = view.findViewById(R.id.amountEditText)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:74:        currencySpinner = view.findViewById(R.id.currencySpinner)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:75:        categorySpinner = view.findViewById(R.id.categorySpinner)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:76:        dateEditText = view.findViewById(R.id.dateEditText)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:77:        recurringSwitch = view.findViewById(R.id.recurringSwitch)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:78:        recurringIntervalLayout = view.findViewById(R.id.recurringIntervalLayout)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:79:        recurringIntervalSpinner = view.findViewById(R.id.recurringIntervalSpinner)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:80:        reminderSwitch = view.findViewById(R.id.reminderSwitch)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:81:        descriptionEditText = view.findViewById(R.id.descriptionEditText)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:82:        dynamicFieldsContainer = view.findViewById(R.id.dynamicFieldsContainer)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:83:        cancelButton = view.findViewById(R.id.cancelButton)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:84:        saveButton = view.findViewById(R.id.saveButton)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:93:        val transactionTypeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, transactionTypes)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:98:        val currencyAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, currencies)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:103:        val intervalAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, intervals)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:142:        val subtypeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, subtypes)
+app/src/main/java/com/example/dayplanner/ui/finance/AddTransactionDialog.kt:151:        val categoryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, categories)
+app/src/main/java/com/example/dayplanner/ui/finance/AnalyticsFragment.kt:26:        return inflater.inflate(R.layout.fragment_analytics, container, false)
+app/src/main/java/com/example/dayplanner/ui/finance/AnalyticsFragment.kt:30:        pieChart = view.findViewById(R.id.pieChart)
+app/src/main/java/com/example/dayplanner/ui/finance/AnalyticsFragment.kt:31:        lineChart = view.findViewById(R.id.lineChart)
+app/src/main/java/com/example/dayplanner/ui/finance/FinanceFragment.kt:237:            .replace(android.R.id.content, analyticsFragment)
+app/src/main/java/com/example/dayplanner/ui/notes/DeletedNotesFragment.kt:132:            binding.selectModeButton.setIconResource(android.R.drawable.ic_menu_close_clear_cancel)
+app/src/main/java/com/example/dayplanner/ui/notes/DeletedNotesFragment.kt:137:            binding.selectModeButton.setIconResource(R.drawable.ic_check_box)
+app/src/main/java/com/example/dayplanner/ui/notes/NotesFragment.kt:770:            val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, filterOptions)
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:117:            android.R.layout.simple_spinner_item,
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:120:        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:149:            .inflate(R.layout.dialog_add_password, null)
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:151:        val titleEditText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.titleEditText)
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:152:        val usernameEditText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.usernameEditText)
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:153:        val passwordEditText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.passwordEditText)
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:154:        val categorySpinner = dialogView.findViewById<AutoCompleteTextView>(R.id.categorySpinner)
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:155:        val websiteEditText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.websiteEditText)
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:156:        val notesEditText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.notesEditText)
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:157:        val generatePasswordButton = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.generatePasswordButton)
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:160:        val categoryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, 
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:239:            .inflate(R.layout.dialog_add_password, null)
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:241:        val titleEditText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.titleEditText)
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:242:        val usernameEditText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.usernameEditText)
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:243:        val passwordEditText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.passwordEditText)
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:244:        val categorySpinner = dialogView.findViewById<AutoCompleteTextView>(R.id.categorySpinner)
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:245:        val websiteEditText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.websiteEditText)
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:246:        val notesEditText = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.notesEditText)
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:247:        val generatePasswordButton = dialogView.findViewById<com.google.android.material.button.MaterialButton>(R.id.generatePasswordButton)
+app/src/main/java/com/example/dayplanner/ui/passwords/PasswordsFragment.kt:258:        val categoryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, 
+app/src/main/java/com/example/dayplanner/ui/stats/StatsFragment.kt:66:            RecentActivity("Yeni not eklendi", "Alışveriş listesi", "2 saat önce", android.R.drawable.ic_dialog_info),
+app/src/main/java/com/example/dayplanner/ui/stats/StatsFragment.kt:67:            RecentActivity("İşlem eklendi", "Maaş - ₺15,000", "4 saat önce", android.R.drawable.ic_dialog_info),
+app/src/main/java/com/example/dayplanner/ui/stats/StatsFragment.kt:68:            RecentActivity("Şifre güncellendi", "Gmail hesabı", "1 gün önce", android.R.drawable.ic_dialog_info),
+app/src/main/java/com/example/dayplanner/ui/stats/StatsFragment.kt:69:            RecentActivity("Not tamamlandı", "Proje raporu", "2 gün önce", android.R.drawable.ic_dialog_info)
+app/src/main/java/com/example/dayplanner/ui/stats/StatsFragment.kt:170:            .inflate(com.example.dayplanner.R.layout.item_recent_activity, parent, false)
+app/src/main/java/com/example/dayplanner/ui/stats/StatsFragment.kt:181:        private val iconImage: android.widget.ImageView = itemView.findViewById(com.example.dayplanner.R.id.iconImage)
+app/src/main/java/com/example/dayplanner/ui/stats/StatsFragment.kt:182:        private val titleText: android.widget.TextView = itemView.findViewById(com.example.dayplanner.R.id.titleText)
+app/src/main/java/com/example/dayplanner/ui/stats/StatsFragment.kt:183:        private val descriptionText: android.widget.TextView = itemView.findViewById(com.example.dayplanner.R.id.descriptionText)
+app/src/main/java/com/example/dayplanner/ui/stats/StatsFragment.kt:184:        private val timeText: android.widget.TextView = itemView.findViewById(com.example.dayplanner.R.id.timeText)
+app/src/main/res/layout/activity_add_note.xml:8:    android:background="@drawable/background_pattern"
+app/src/main/res/layout/activity_add_note.xml:15:        android:background="@drawable/header_gradient"
+app/src/main/res/layout/activity_add_note.xml:22:            android:background="@drawable/header_gradient"
+app/src/main/res/layout/activity_add_note.xml:26:            app:navigationIcon="@drawable/ic_arrow_back"
+app/src/main/res/layout/activity_add_note.xml:111:                            android:src="@drawable/ic_note_reminder"
+app/src/main/res/layout/activity_add_note.xml:176:                                    app:icon="@drawable/ic_kite_circle"
+app/src/main/res/layout/activity_add_note.xml:206:                                    app:icon="@drawable/ic_kite_square"
+app/src/main/res/layout/activity_add_note.xml:283:                            android:background="@drawable/note_card_reminder"
+app/src/main/res/layout/activity_add_note.xml:289:                                android:src="@drawable/ic_note_reminder"
+app/src/main/res/layout/activity_add_note.xml:327:                                android:background="@drawable/note_card_work"
+app/src/main/res/layout/activity_add_note.xml:362:                            android:src="@drawable/ic_kite_star"
+app/src/main/res/layout/activity_add_note.xml:439:                            android:src="@drawable/ic_kite_square"
+app/src/main/res/layout/activity_add_note.xml:462:                        app:icon="@drawable/ic_kite_square"
+app/src/main/res/layout/activity_main.xml:7:    android:background="@drawable/background_pattern"
+app/src/main/res/layout/activity_main.xml:13:        android:background="@drawable/header_gradient"
+app/src/main/res/layout/activity_main.xml:20:            android:background="@drawable/header_gradient"
+app/src/main/res/layout/activity_profile.xml:23:            app:navigationIcon="@drawable/ic_arrow_back"
+app/src/main/res/layout/activity_profile.xml:61:                        android:src="@drawable/ic_add"
+app/src/main/res/layout/activity_settings.xml:58:                        app:icon="@drawable/ic_export"
+app/src/main/res/layout/activity_settings.xml:70:                        app:icon="@drawable/ic_import"
+app/src/main/res/layout/activity_settings.xml:81:                        app:icon="@drawable/ic_backup"
+app/src/main/res/layout/activity_settings.xml:119:                        app:icon="@drawable/ic_theme"
+app/src/main/res/layout/activity_settings.xml:158:                        app:icon="@drawable/ic_fingerprint"
+app/src/main/res/layout/activity_settings.xml:169:                        app:icon="@drawable/ic_security"
+app/src/main/res/layout/activity_settings.xml:207:                        app:icon="@drawable/ic_info"
+app/src/main/res/layout/activity_simple_add_note.xml:17:        app:navigationIcon="@drawable/ic_arrow_back" />
+app/src/main/res/layout/activity_simple_add_note.xml:54:                app:startIconDrawable="@drawable/ic_calendar">
+app/src/main/res/layout/activity_test_verification.xml:23:            app:navigationIcon="@drawable/ic_arrow_back"
+app/src/main/res/layout/activity_test_verification.xml:83:                app:icon="@drawable/ic_check"
+app/src/main/res/layout/dialog_quick_preview.xml:8:    android:background="@drawable/dialog_background">
+app/src/main/res/layout/dialog_quick_preview.xml:32:            app:icon="@drawable/ic_close"
+app/src/main/res/layout/dialog_quick_preview.xml:113:            app:icon="@drawable/ic_pin"
+app/src/main/res/layout/dialog_quick_preview.xml:125:            app:icon="@drawable/ic_edit"
+app/src/main/res/layout/dialog_quick_preview.xml:136:            app:icon="@drawable/ic_delete"
+app/src/main/res/layout/fragment_deleted_notes.xml:89:                    app:icon="@drawable/ic_restore"
+app/src/main/res/layout/fragment_deleted_notes.xml:102:                    app:icon="@drawable/ic_delete_forever"
+app/src/main/res/layout/fragment_deleted_notes.xml:114:                    app:icon="@drawable/ic_check_box"
+app/src/main/res/layout/fragment_deleted_notes.xml:148:                    app:icon="@drawable/ic_restore"
+app/src/main/res/layout/fragment_deleted_notes.xml:161:                    app:icon="@drawable/ic_delete_forever"
+app/src/main/res/layout/fragment_deleted_notes.xml:173:                    app:icon="@drawable/ic_close"
+app/src/main/res/layout/fragment_deleted_notes.xml:194:                tools:listitem="@layout/item_note" />
+app/src/main/res/layout/fragment_finance.xml:235:            app:icon="@drawable/ic_info"
+app/src/main/res/layout/fragment_finance.xml:250:            app:icon="@drawable/ic_refresh"
+app/src/main/res/layout/fragment_finance.xml:264:            app:icon="@drawable/ic_add"
+app/src/main/res/layout/fragment_notes.xml:7:    android:background="@drawable/background_pattern"
+app/src/main/res/layout/fragment_notes.xml:29:            android:background="@drawable/header_gradient">
+app/src/main/res/layout/fragment_notes.xml:46:                        android:src="@drawable/ic_kite_star"
+app/src/main/res/layout/fragment_notes.xml:197:                app:startIconDrawable="@drawable/ic_search">
+app/src/main/res/layout/fragment_notes.xml:240:                    app:startIconDrawable="@drawable/ic_refresh"
+app/src/main/res/layout/fragment_notes.xml:330:                        app:icon="@drawable/ic_check_box"
+app/src/main/res/layout/fragment_notes.xml:348:                        app:icon="@drawable/ic_close"
+app/src/main/res/layout/fragment_notes.xml:373:                tools:listitem="@layout/item_note" />
+app/src/main/res/layout/fragment_notes.xml:398:                    android:src="@drawable/ic_note"
+app/src/main/res/layout/fragment_passwords.xml:27:                android:src="@drawable/ic_security"
+app/src/main/res/layout/fragment_passwords.xml:85:                android:drawableStart="@drawable/ic_search"
+app/src/main/res/layout/fragment_reports.xml:98:                        app:icon="@drawable/ic_export"
+app/src/main/res/layout/fragment_reports.xml:111:                        app:icon="@drawable/ic_import"
+app/src/main/res/layout/fragment_reports.xml:123:                        app:icon="@drawable/ic_refresh"
+app/src/main/res/layout/fragment_stats.xml:82:                            android:src="@drawable/ic_note"
+app/src/main/res/layout/fragment_stats.xml:128:                            android:src="@drawable/ic_streak"
+app/src/main/res/layout/fragment_stats.xml:183:                            android:src="@drawable/ic_check"
+app/src/main/res/layout/fragment_stats.xml:229:                            android:src="@drawable/ic_pin"
+app/src/main/res/layout/fragment_stats.xml:481:                    tools:listitem="@layout/item_recent_activity" />
+app/src/main/res/layout/fragment_stats.xml:510:                    android:src="@drawable/ic_delete"
+app/src/main/res/layout/item_note.xml:35:                android:src="@drawable/ic_lock" />
+app/src/main/res/layout/item_note.xml:43:                android:src="@drawable/ic_push_pin"
+app/src/main/res/layout/item_note.xml:62:                android:src="@drawable/ic_more_vert"
+app/src/main/res/layout/item_note_kite.xml:10:    android:background="@drawable/note_card_work">
+app/src/main/res/layout/item_note_kite.xml:23:            android:src="@drawable/ic_note_work"
+app/src/main/res/layout/item_note_kite.xml:79:                    android:src="@drawable/ic_kite_star"
+app/src/main/res/layout/item_note_kite.xml:91:            android:src="@drawable/ic_kite_triangle"
+app/src/main/res/layout/item_password.xml:23:            android:src="@drawable/ic_security"
+app/src/main/res/layout/item_password.xml:24:            android:background="@drawable/dialog_background"
+app/src/main/res/layout/item_password.xml:79:                android:src="@drawable/ic_edit"
+app/src/main/res/layout/item_password.xml:87:                android:src="@drawable/ic_info"
+app/src/main/res/layout/item_recent_activity.xml:24:            android:src="@drawable/ic_info"
+app/src/main/res/menu/bottom_nav_menu.xml:6:        android:icon="@drawable/ic_note" />
+app/src/main/res/menu/bottom_nav_menu.xml:10:        android:icon="@drawable/ic_money" />
+app/src/main/res/menu/bottom_nav_menu.xml:14:        android:icon="@drawable/ic_security" />
+app/src/main/res/menu/bottom_nav_menu.xml:18:        android:icon="@drawable/ic_info" />
+app/src/main/res/menu/menu_add_note.xml:8:        android:icon="@drawable/ic_template"
+app/src/main/res/menu/menu_add_note.xml:14:        android:icon="@drawable/ic_save"
+app/src/main/res/menu/menu_add_note_template.xml:7:        android:icon="@drawable/ic_template"
+app/src/main/res/menu/menu_note_item.xml:7:        android:icon="@drawable/ic_lock"
+app/src/main/res/menu/menu_note_item.xml:13:        android:icon="@drawable/ic_lock_open"
+app/src/main/res/menu/menu_note_item.xml:19:        android:icon="@drawable/ic_pin"
+app/src/main/res/menu/menu_note_item.xml:25:        android:icon="@drawable/ic_pin"
+app/src/main/res/menu/menu_note_item.xml:31:        android:icon="@drawable/ic_edit"
+app/src/main/res/menu/menu_note_item.xml:37:        android:icon="@drawable/ic_delete"
+app/src/main/res/menu/menu_note_item.xml:43:        android:icon="@drawable/ic_share"
+app/src/main/res/menu/top_app_bar_menu.xml:7:        android:icon="@drawable/ic_add"
+app/src/main/res/menu/top_app_bar_menu.xml:12:        android:icon="@drawable/ic_search"
+app/src/main/res/menu/top_app_bar_menu.xml:18:                android:icon="@drawable/ic_priority"/>
+app/src/main/res/menu/top_app_bar_menu.xml:22:                android:icon="@drawable/ic_note"/>
+app/src/main/res/menu/top_app_bar_menu.xml:26:                android:icon="@drawable/ic_delete"/>
+app/src/main/res/menu/top_app_bar_menu.xml:32:        android:icon="@drawable/ic_settings"
+app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml:3:    <background android:drawable="@drawable/ic_launcher_background" />
+app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml:4:    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml:5:    <monochrome android:drawable="@drawable/ic_launcher_foreground" />
+app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml:3:    <background android:drawable="@drawable/ic_launcher_background" />
+app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml:4:    <foreground android:drawable="@drawable/ic_launcher_foreground" />
+app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml:5:    <monochrome android:drawable="@drawable/ic_launcher_foreground" />

@@ -89,18 +89,19 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/exportButton"
-                        style="@style/Widget.App.Button.Outlined"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginEnd="8dp"
                         android:text="Dışa Aktar"
                         app:icon="@drawable/ic_export"
+                        app:iconTint="?attr/colorOnSurface"
                         app:iconSize="18dp"/>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/importButton"
-                        style="@style/Widget.App.Button.Outlined"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -108,17 +109,19 @@
                         android:layout_marginEnd="4dp"
                         android:text="İçe Aktar"
                         app:icon="@drawable/ic_import"
+                        app:iconTint="?attr/colorOnSurface"
                         app:iconSize="18dp"/>
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/refreshButton"
-                        style="@style/Widget.App.Button.Outlined"
+                        style="@style/Widget.Material3.Button.OutlinedButton"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:layout_marginStart="8dp"
                         android:text="Yenile"
                         app:icon="@drawable/ic_refresh"
+                        app:iconTint="?attr/colorOnSurface"
                         app:iconSize="18dp"/>
 
                 </LinearLayout>
