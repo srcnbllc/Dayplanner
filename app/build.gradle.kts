@@ -12,8 +12,8 @@ android {
             applicationId = "com.example.dayplanner"
             minSdk = 24
             targetSdk = 34
-            versionCode = 1
-            versionName = "1.0"
+            versionCode = 32
+            versionName = "3.2"
 
             // Vector drawables support
             vectorDrawables.useSupportLibrary = true

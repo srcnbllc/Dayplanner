@@ -5,7 +5,7 @@
   
   **Modern, Güvenli ve Kullanıcı Dostu Not Yönetimi**
   
-  [![Version](https://img.shields.io/badge/version-3.0-blue.svg)](https://github.com/srcnbllc/Dayplanner/releases/tag/v3.0)
+  [![Version](https://img.shields.io/badge/version-3.2-blue.svg)](https://github.com/srcnbllc/Dayplanner/releases/tag/v3.2)
   [![Android](https://img.shields.io/badge/Android-24%2B-green.svg)](https://developer.android.com/)
   [![Kotlin](https://img.shields.io/badge/Kotlin-1.9-purple.svg)](https://kotlinlang.org/)
   [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
